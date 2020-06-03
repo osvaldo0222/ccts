@@ -2,17 +2,15 @@ package com.project.ccts.service;
 
 import com.project.ccts.model.Credential;
 import com.project.ccts.repository.CredentialRepository;
-import com.project.ccts.service.common.ICrudOperation;
-import com.project.ccts.util.Logger;
+import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-
 @Service
 @Transactional
-public class CredentialService implements ICrudOperation<Credential, Long> {
+public class CredentialService extends AbstractCrud<Credential, Long> {
 
     private CredentialRepository credentialRepository;
 
@@ -22,28 +20,8 @@ public class CredentialService implements ICrudOperation<Credential, Long> {
     }
 
     @Override
-    public Credential createOrUpdate(Credential entity) {
-        return credentialRepository.save(entity);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        Credential credential = credentialRepository.findById(id).orElse(null);
-        if (credential != null) {
-            credentialRepository.delete(credential);
-        } else {
-            Logger.getInstance().getLog(this.getClass()).error("This user ...");
-        }
-    }
-
-    @Override
-    public Collection<Credential> findAll() {
-        return credentialRepository.findAll();
-    }
-
-    @Override
-    public Credential findById(Long id) {
-        return credentialRepository.findById(id).orElse(null);
+    public JpaRepository<Credential, Long> getDao() {
+        return credentialRepository;
     }
 
     public Credential findByUsername(String username) { return credentialRepository.findByUsername(username); }

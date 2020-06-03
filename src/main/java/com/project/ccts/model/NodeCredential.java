@@ -1,20 +1,21 @@
 package com.project.ccts.model;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
+import com.project.ccts.model.enums.NodeStatus;
+
+import javax.persistence.*;
 
 @Entity
 public class NodeCredential extends Credential {
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private NodeStatus status;
     @OneToOne(mappedBy = "nodeCredential")
     private Node node;
 
-    public String getStatus() {
+    public NodeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(NodeStatus status) {
         this.status = status;
     }
 

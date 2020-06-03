@@ -8,7 +8,7 @@ import java.util.Date;
 @Entity
 public class Visit {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     private Tag tag;

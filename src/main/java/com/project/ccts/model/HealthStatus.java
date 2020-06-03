@@ -8,7 +8,7 @@ import java.util.Date;
 @Entity
 public class HealthStatus {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @CreationTimestamp
     private Date statusDate;

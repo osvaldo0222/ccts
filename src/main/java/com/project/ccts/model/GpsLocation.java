@@ -1,24 +1,17 @@
 package com.project.ccts.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
+@Embeddable
 public class GpsLocation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
     private Double latitude;
     private Double longitude;
 
-    public Long getId() {
-        return id;
-    }
+    public GpsLocation() { }
 
-    public void setId(Long id) {
-        this.id = id;
+    public GpsLocation(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Double getLatitude() {

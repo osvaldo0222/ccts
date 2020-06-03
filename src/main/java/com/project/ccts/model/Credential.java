@@ -8,7 +8,7 @@ import java.util.Collection;
 @DiscriminatorColumn(name = "credential_type")
 public abstract class Credential {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
     @Column(unique = true)
     protected String username;

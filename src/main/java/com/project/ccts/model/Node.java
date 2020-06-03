@@ -5,11 +5,13 @@ import javax.persistence.*;
 @Entity
 public class Node {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
+    private String uniqueIdentifier;
     @ManyToOne
     private Locality locality;
-    @OneToOne
+    @Embedded
     private GpsLocation gpsLocation;
     @OneToOne
     private NodeCredential nodeCredential;
@@ -20,6 +22,14 @@ public class Node {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUniqueIdentifier() {
+        return uniqueIdentifier;
+    }
+
+    public void setUniqueIdentifier(String uniqueIdentifier) {
+        this.uniqueIdentifier = uniqueIdentifier;
     }
 
     public Locality getLocality() {
