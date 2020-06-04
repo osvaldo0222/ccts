@@ -3,7 +3,6 @@ package com.project.ccts.service;
 import com.project.ccts.model.Node;
 import com.project.ccts.repository.NodeRepository;
 import com.project.ccts.service.common.AbstractCrud;
-import com.project.ccts.service.common.ICrudOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;

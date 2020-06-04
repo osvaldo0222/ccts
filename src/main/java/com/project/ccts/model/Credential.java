@@ -6,7 +6,7 @@ import java.util.Collection;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "credential_type")
-public abstract class Credential {
+public class Credential {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;

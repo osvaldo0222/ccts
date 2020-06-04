@@ -117,10 +117,12 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
 
         Collection<Privilege> nodePrivilege = Arrays.asList(createPrivilegeIfNotFound("NODE_READ_PRIVILEGE"), createPrivilegeIfNotFound("NODE_WRITE_PRIVILEGE"));
 
+        Collection<Privilege> adminPrivilege = Arrays.asList(createPrivilegeIfNotFound("ADMIN_READ_PRIVILEGE"), createPrivilegeIfNotFound("ADMIN_WRITE_PRIVILEGE"));
+
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating application roles...");
 
         createRoleIfNotFound("ROLE_NODE", nodePrivilege);
-        //createRoleIfNotFound("ROLE_ADMIN", Arrays.asList(readPrivilege, writePrivilege));
+        createRoleIfNotFound("ROLE_ADMIN", adminPrivilege);
         //createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
     }
 

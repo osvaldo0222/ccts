@@ -43,7 +43,7 @@ public class SecurityService implements UserDetailsService {
             throw new UsernameNotFoundException("Username not fount!!!");
         }
 
-        System.out.println(username);
+        Logger.getInstance().getLog(getClass()).info(String.format("%s has logged in", username));
 
         return new org.springframework.security.core.userdetails.User(credential.getUsername(), credential.getPassword(), credential.getAuthenticated(), true, true, true, getAuthorities(credential.getRoles()));
     }

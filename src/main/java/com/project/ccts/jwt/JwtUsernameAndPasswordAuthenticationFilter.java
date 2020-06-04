@@ -1,6 +1,8 @@
 package com.project.ccts.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.ccts.model.Credential;
+import com.project.ccts.util.Logger;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,7 +46,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            UsernameAndPasswordAuthenticationRequest authenticationRequest = new ObjectMapper().readValue(request.getInputStream(), UsernameAndPasswordAuthenticationRequest.class);
+            Credential authenticationRequest = new ObjectMapper().readValue(request.getInputStream(), Credential.class);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(),
@@ -56,6 +58,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 
             return authenticate;
         } catch (IOException e) {
+            Logger.getInstance().getLog(getClass()).warn(String.format("Someone from %s try to login without JSON request body - %s", request.getRemoteAddr(), e.getMessage()));
             throw new RuntimeException(e);
         }
     }
