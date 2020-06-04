@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class JwtConfig {
     private String secretKey;
     private String tokenPrefix;
-    private Integer tokenExpirationAfterDays;
+    private Integer tokenExpirationAfterMilliseconds;
 
     public JwtConfig() { }
 
@@ -31,12 +31,12 @@ public class JwtConfig {
         this.tokenPrefix = tokenPrefix;
     }
 
-    public Integer getTokenExpirationAfterDays() {
-        return tokenExpirationAfterDays;
+    public Integer getTokenExpirationAfterMilliseconds() {
+        return tokenExpirationAfterMilliseconds;
     }
 
-    public void setTokenExpirationAfterDays(Integer tokenExpirationAfterDays) {
-        this.tokenExpirationAfterDays = tokenExpirationAfterDays;
+    public void setTokenExpirationAfterMilliseconds(Integer tokenExpirationAfterMilliseconds) {
+        this.tokenExpirationAfterMilliseconds = tokenExpirationAfterMilliseconds;
     }
 
     public String getAuthorizationHeader() {

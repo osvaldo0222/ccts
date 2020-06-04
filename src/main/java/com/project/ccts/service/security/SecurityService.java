@@ -5,6 +5,7 @@ import com.project.ccts.model.Privilege;
 import com.project.ccts.model.Role;
 import com.project.ccts.repository.CredentialRepository;
 import com.project.ccts.util.Logger;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,12 +44,22 @@ public class SecurityService implements UserDetailsService {
             throw new UsernameNotFoundException("Username not fount!!!");
         }
 
-        Logger.getInstance().getLog(getClass()).info(String.format("%s has logged in", username));
-
         return new org.springframework.security.core.userdetails.User(credential.getUsername(), credential.getPassword(), credential.getAuthenticated(), true, true, true, getAuthorities(credential.getRoles()));
     }
 
-    public Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
+    public Collection<? extends GrantedAuthority> getAuthorities(String username) {
+        Credential credential = credentialRepository.findByUsername(username);
+
+        if (credential == null) {
+            String message = String.format("Username %s is no part of the system!!!!!", username);
+            Logger.getInstance().getLog(getClass()).error(message);
+            throw new JwtException(message);
+        }
+
+        return getAuthorities(credential.getRoles());
+    }
+
+    private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
         return getGrantedAuthorities(getPrivileges(roles));
     }
 

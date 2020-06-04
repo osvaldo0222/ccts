@@ -9,13 +9,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 @Component
-@Transactional
 public class DefaultUserDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private CredentialService credentialService;
@@ -112,7 +110,7 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
         }
     }
 
-    public void createDefaultRolesAndPrivilege() {
+    private void createDefaultRolesAndPrivilege() {
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating application privileges...");
 
         Collection<Privilege> nodePrivilege = Arrays.asList(createPrivilegeIfNotFound("NODE_READ_PRIVILEGE"), createPrivilegeIfNotFound("NODE_WRITE_PRIVILEGE"));

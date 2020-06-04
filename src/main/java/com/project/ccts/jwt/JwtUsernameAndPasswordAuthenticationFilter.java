@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ccts.model.Credential;
 import com.project.ccts.util.Logger;
 import io.jsonwebtoken.Jwts;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -36,7 +36,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     }
 
     /**
-     * This is the first part of the JWT implementation, where the user sends the credentials and the server validates
+     * This is the first part of the JWT implementation,
+     * where the user sends the credentials and the server validates
      *
      * @param request
      * @param response
@@ -46,25 +47,35 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
+            //TODO: check if the request have a notificationToken
+            //Mapping the username and password to a Credential object
             Credential authenticationRequest = new ObjectMapper().readValue(request.getInputStream(), Credential.class);
 
+            //Setting authentication parameters
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(),
                     authenticationRequest.getPassword()
             );
 
             //Would make sure that user is in the database and if the password is correct
-            Authentication authenticate = authenticationManager.authenticate(authentication);
+            Authentication authenticate = null;
+            try {
+                authenticate = authenticationManager.authenticate(authentication);
+            } catch (AuthenticationException e) {
+                JwtUtil.getInstance().prepareErrorHandler(response, JwtUtil.getBadCredential(), String.format("Response bad credential to %s", request.getRemoteAddr()), HttpServletResponse.SC_UNAUTHORIZED);
+                throw e;
+            }
 
             return authenticate;
         } catch (IOException e) {
-            Logger.getInstance().getLog(getClass()).warn(String.format("Someone from %s try to login without JSON request body - %s", request.getRemoteAddr(), e.getMessage()));
-            throw new RuntimeException(e);
+            JwtUtil.getInstance().prepareErrorHandler(response, JwtUtil.getCredentialNotFound(), String.format("Someone from %s try to login without JSON request body - %s", request.getRemoteAddr(), e.getMessage()), HttpServletResponse.SC_UNAUTHORIZED);
+            throw new AuthenticationCredentialsNotFoundException(JwtUtil.getCredentialNotFound());
         }
     }
 
     /**
-     * Here the user token is generated after validation and is sent by the header Authorization: Bearer (token)
+     * On a successful authentication, here the user token is generated after validation
+     * and is sent by the header Authorization: Bearer (token)
      *
      * @param request
      * @param response
@@ -75,11 +86,15 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        //Log for the user auth on console
+        Logger.getInstance().getLog(getClass()).info(String.format("%s has logged in", authResult.getName()));
+
+        //Generating the token
         String token = Jwts.builder()
                 .setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationAfterDays())))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getTokenExpirationAfterMilliseconds()))
                 .signWith(secretKey)
                 .compact();
         response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
