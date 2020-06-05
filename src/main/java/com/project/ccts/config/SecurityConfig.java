@@ -1,7 +1,6 @@
 package com.project.ccts.config;
 
 import com.project.ccts.jwt.*;
-import com.project.ccts.service.CredentialService;
 import com.project.ccts.service.security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.crypto.SecretKey;
 
@@ -24,8 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private PasswordEncoder passwordEncoder;
     private SecretKey secretKey;
     private JwtConfig jwtConfig;
-    private CredentialService credentialService;
-    private ExceptionHandlerConfig exceptionHandlerConfig;
+    private JwtAuthenticationEntryPoint errorHandler;
+    private JwtAccessDeniedHandler accessDeniedHandler;
 
     @Autowired
     public void setSecurityService(SecurityService securityService) {
@@ -48,13 +48,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void setCredentialService(CredentialService credentialService) {
-        this.credentialService = credentialService;
+    public void setErrorHandler(JwtAuthenticationEntryPoint errorHandler) {
+        this.errorHandler = errorHandler;
     }
 
     @Autowired
-    public void setExceptionHandlerConfig(ExceptionHandlerConfig exceptionHandlerConfig) {
-        this.exceptionHandlerConfig = exceptionHandlerConfig;
+    public void setAccessDeniedHandler(JwtAccessDeniedHandler accessDeniedHandler) {
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Override
@@ -65,18 +65,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/public/**").permitAll()
+                .cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(errorHandler).accessDeniedHandler(accessDeniedHandler)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests().antMatchers("/public/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(exceptionHandlerConfig.authenticationEntryPoint())
-                .and()
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig, securityService), JwtUsernameAndPasswordAuthenticationFilter.class);
+                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig, securityService), UsernamePasswordAuthenticationFilter.class);
     }
 }

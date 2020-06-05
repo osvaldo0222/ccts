@@ -40,8 +40,9 @@ public class SecurityService implements UserDetailsService {
         Credential credential = credentialRepository.findByUsername(username);
 
         if (credential == null) {
-            Logger.getInstance().getLog(this.getClass()).warn("Username " + username + " not found!!");
-            throw new UsernameNotFoundException("Username not fount!!!");
+            String message = String.format("Username %s not found!!", username);
+            Logger.getInstance().getLog(getClass()).warn(message);
+            throw new UsernameNotFoundException(message);
         }
 
         return new org.springframework.security.core.userdetails.User(credential.getUsername(), credential.getPassword(), credential.getAuthenticated(), true, true, true, getAuthorities(credential.getRoles()));
@@ -51,9 +52,7 @@ public class SecurityService implements UserDetailsService {
         Credential credential = credentialRepository.findByUsername(username);
 
         if (credential == null) {
-            String message = String.format("Username %s is no part of the system!!!!!", username);
-            Logger.getInstance().getLog(getClass()).error(message);
-            throw new JwtException(message);
+            throw new JwtException(String.format("Username %s is no part of the system!!!!!", username));
         }
 
         return getAuthorities(credential.getRoles());

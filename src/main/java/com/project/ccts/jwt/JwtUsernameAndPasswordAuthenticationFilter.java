@@ -47,7 +47,6 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            //TODO: check if the request have a notificationToken
             //Mapping the username and password to a Credential object
             Credential authenticationRequest = new ObjectMapper().readValue(request.getInputStream(), Credential.class);
 
@@ -58,18 +57,13 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             );
 
             //Would make sure that user is in the database and if the password is correct
-            Authentication authenticate = null;
-            try {
-                authenticate = authenticationManager.authenticate(authentication);
-            } catch (AuthenticationException e) {
-                JwtUtil.getInstance().prepareErrorHandler(response, JwtUtil.getBadCredential(), String.format("Response bad credential to %s", request.getRemoteAddr()), HttpServletResponse.SC_UNAUTHORIZED);
-                throw e;
-            }
+            return authenticationManager.authenticate(authentication);
+        } catch (Exception e) {
+            //Logging the exception
+            Logger.getInstance().getLog(getClass()).warn(String.format("User from %s try to login to the system, but failed - Exception message: %s", request.getRemoteAddr(), e.getMessage()));
 
-            return authenticate;
-        } catch (IOException e) {
-            JwtUtil.getInstance().prepareErrorHandler(response, JwtUtil.getCredentialNotFound(), String.format("Someone from %s try to login without JSON request body - %s", request.getRemoteAddr(), e.getMessage()), HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AuthenticationCredentialsNotFoundException(JwtUtil.getCredentialNotFound());
+            //When the object JSON credentials is null or username or password incorrect
+            throw new AuthenticationCredentialsNotFoundException(e.getMessage());
         }
     }
 

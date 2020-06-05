@@ -10,6 +10,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 public class CctsApplication {
 
     public static void main(String[] args) {
+        //TODO: check if the authorization request have a notificationToken
+        //TODO: make a better way to add default roles and privileges
         SpringApplication.run(CctsApplication.class, args);
     }
 

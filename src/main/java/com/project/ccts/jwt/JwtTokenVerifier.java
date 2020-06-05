@@ -2,6 +2,7 @@ package com.project.ccts.jwt;
 
 import com.google.common.base.Strings;
 import com.project.ccts.service.security.SecurityService;
+import com.project.ccts.util.Logger;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -52,9 +53,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
         //Check if the authorization header is there and if it have Bearer
         if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
-            if (!request.getServletPath().startsWith("/public")) {
-                JwtUtil.getInstance().prepareErrorHandler(response, JwtUtil.getNeedAuth(), "Token not specified!!", HttpServletResponse.SC_UNAUTHORIZED);
-            }
+            Logger.getInstance().getLog(getClass()).warn(String.format("Token or authorization header not specified from %s!!", request.getRemoteAddr()));
             filterChain.doFilter(request, response);
             return;
         }
@@ -88,10 +87,13 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             //Setting the new authentication to the context
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (JwtException e) {
-            JwtUtil.getInstance().prepareErrorHandler(response, JwtUtil.getNeedAuth(), String.format("Token %s cannot be trusted!!", token), HttpServletResponse.SC_UNAUTHORIZED);
+            //Logging why the token can't be trusted
+            Logger.getInstance().getLog(getClass()).warn(String.format("Token %s can't be trusted. \nException message: %s", token, e.getMessage()));
         }
 
         //To proceed to the next filter or the api
         filterChain.doFilter(request, response);
     }
+
+
 }
