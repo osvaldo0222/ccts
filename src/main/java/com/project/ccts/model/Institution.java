@@ -1,6 +1,6 @@
 package com.project.ccts.model;
 
-import com.project.ccts.model.enums.InstitutionType;
+import com.project.ccts.util.enums.InstitutionType;
 
 import javax.persistence.*;
 import java.util.Collection;

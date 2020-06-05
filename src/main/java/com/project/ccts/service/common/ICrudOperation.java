@@ -3,11 +3,12 @@ package com.project.ccts.service.common;
 import java.util.Collection;
 
 /**
- *
  * This in a interface with must common CRUD operations.
  * Implements this interface in all services that need a CRUD.
  *
- * */
+ * @param <T> Entity class type
+ * @param <ID> Primary key type
+ */
 public interface ICrudOperation<T, ID> {
     /**
      * Function to create a new instance of an object on the persistence layer.

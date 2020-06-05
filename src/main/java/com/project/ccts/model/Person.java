@@ -1,7 +1,7 @@
 package com.project.ccts.model;
 
-import com.project.ccts.model.enums.CivilStatus;
-import com.project.ccts.model.enums.Gender;
+import com.project.ccts.util.enums.CivilStatus;
+import com.project.ccts.util.enums.Gender;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;

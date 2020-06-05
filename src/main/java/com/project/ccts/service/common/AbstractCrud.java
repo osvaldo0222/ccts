@@ -1,6 +1,6 @@
 package com.project.ccts.service.common;
 
-import com.project.ccts.util.Logger;
+import com.project.ccts.util.logger.Logger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,6 +8,12 @@ import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
+/**
+ * Implementation of the basic CRUD operations.
+ *
+ * @param <T> Entity class type
+ * @param <ID> Primary key type
+ */
 @Transactional
 public abstract class AbstractCrud<T, ID> implements ICrudOperation<T, ID> {
 
@@ -18,7 +24,7 @@ public abstract class AbstractCrud<T, ID> implements ICrudOperation<T, ID> {
         try {
             entity = getDao().save(entity);
         }catch (Exception e){
-            Logger.getInstance().getLog(getClass()).error(String.format("Error creating or updating entity - %s", e.getMessage()));
+            Logger.getInstance().getLog(getClass()).error(String.format("Error creating or updating entity - Exception message: %s", e.getMessage()));
         }
         return entity;
     }
@@ -54,6 +60,12 @@ public abstract class AbstractCrud<T, ID> implements ICrudOperation<T, ID> {
         return getDao().findById(id).orElse(null);
     }
 
+    /**
+     * Function that returns the field annotated as the entity ID.
+     *
+     * @param entity
+     * @return Field as object if it has a @Id or Null if not
+     */
     private Object getCampValue(T entity){
         if(entity == null){
             return null;

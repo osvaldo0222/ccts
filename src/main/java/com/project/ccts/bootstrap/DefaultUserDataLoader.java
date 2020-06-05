@@ -1,9 +1,9 @@
 package com.project.ccts.bootstrap;
 
 import com.project.ccts.model.*;
-import com.project.ccts.model.enums.NodeStatus;
+import com.project.ccts.util.enums.NodeStatus;
 import com.project.ccts.service.*;
-import com.project.ccts.util.Logger;
+import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;

@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *  Configuration of the project password encoder.
  *
  */
-
 @Configuration
 public class PasswordConfig {
 

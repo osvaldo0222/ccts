@@ -1,6 +1,6 @@
 package com.project.ccts.model;
 
-import com.project.ccts.model.enums.NodeStatus;
+import com.project.ccts.util.enums.NodeStatus;
 
 import javax.persistence.*;
 

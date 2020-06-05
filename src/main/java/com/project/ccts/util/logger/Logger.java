@@ -1,4 +1,4 @@
-package com.project.ccts.util;
+package com.project.ccts.util.logger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -2,7 +2,7 @@ package com.project.ccts.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ccts.model.Credential;
-import com.project.ccts.util.Logger;
+import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;

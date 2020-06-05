@@ -2,7 +2,7 @@ package com.project.ccts.jwt;
 
 import com.google.common.base.Strings;
 import com.project.ccts.service.security.SecurityService;
-import com.project.ccts.util.Logger;
+import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -53,7 +53,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
         //Check if the authorization header is there and if it have Bearer
         if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
-            Logger.getInstance().getLog(getClass()).warn(String.format("Token or authorization header not specified from %s!!", request.getRemoteAddr()));
+            //This logs all requests that come without header authorization, including when trying to access a public resource.
+            Logger.getInstance().getLog(getClass()).info(String.format("Token or authorization header not specified from %s to the path %s!!", request.getRemoteAddr(), request.getServletPath()));
             filterChain.doFilter(request, response);
             return;
         }

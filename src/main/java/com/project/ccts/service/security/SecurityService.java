@@ -4,7 +4,7 @@ import com.project.ccts.model.Credential;
 import com.project.ccts.model.Privilege;
 import com.project.ccts.model.Role;
 import com.project.ccts.repository.CredentialRepository;
-import com.project.ccts.util.Logger;
+import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
