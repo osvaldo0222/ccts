@@ -9,11 +9,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "application.jwt")
 public class JwtConfig {
+    private String issuer;
     private String secretKey;
     private String tokenPrefix;
     private Integer tokenExpirationAfterMilliseconds;
 
     public JwtConfig() { }
+
+    public String getIssuer() {
+        return issuer;
+    }
+
+    public void setIssuer(String issuer) {
+        this.issuer = issuer;
+    }
 
     public String getSecretKey() {
         return secretKey;

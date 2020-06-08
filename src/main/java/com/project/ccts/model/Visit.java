@@ -12,8 +12,9 @@ public class Visit {
     private Long id;
     @ManyToOne
     private Tag tag;
-    @CreationTimestamp
     private Date accessDate;
+    @CreationTimestamp
+    private Date creationDate;
     @ManyToOne
     private Locality locality;
 
@@ -39,6 +40,14 @@ public class Visit {
 
     public void setAccessDate(Date accessDate) {
         this.accessDate = accessDate;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Locality getLocality() {

@@ -30,6 +30,16 @@ public abstract class AbstractCrud<T, ID> implements ICrudOperation<T, ID> {
     }
 
     @Override
+    public Collection<T> createAll(Collection<T> entities) {
+        try {
+            entities = getDao().saveAll(entities);
+        } catch (Exception e) {
+            Logger.getInstance().getLog(getClass()).error(String.format("Error creating or updating entity - Exception message: %s", e.getMessage()));
+        }
+        return entities;
+    }
+
+    @Override
     public void deleteById(ID id) {
         try {
             T entity = findById(id);

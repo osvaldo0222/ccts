@@ -32,6 +32,7 @@ public class Person {
     private UserCredential userCredential;
     @OneToOne
     private Tag tag;
+    @CreationTimestamp
     private Date tagGivenOn;
     @CreationTimestamp
     private Date createDate;

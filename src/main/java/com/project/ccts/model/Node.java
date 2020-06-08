@@ -8,7 +8,7 @@ public class Node {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
-    private String uniqueIdentifier;
+    private String nodeIdentifier;
     @ManyToOne
     private Locality locality;
     @Embedded
@@ -24,12 +24,12 @@ public class Node {
         this.id = id;
     }
 
-    public String getUniqueIdentifier() {
-        return uniqueIdentifier;
+    public String getNodeIdentifier() {
+        return nodeIdentifier;
     }
 
-    public void setUniqueIdentifier(String uniqueIdentifier) {
-        this.uniqueIdentifier = uniqueIdentifier;
+    public void setNodeIdentifier(String uniqueIdentifier) {
+        this.nodeIdentifier = uniqueIdentifier;
     }
 
     public Locality getLocality() {

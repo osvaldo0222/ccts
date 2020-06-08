@@ -1,6 +1,7 @@
 package com.project.ccts.config;
 
 import com.project.ccts.jwt.*;
+import com.project.ccts.service.CredentialService;
 import com.project.ccts.service.security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtConfig jwtConfig;
     private JwtAuthenticationEntryPoint errorHandler;
     private JwtAccessDeniedHandler accessDeniedHandler;
+    private CredentialService credentialService;
 
     @Autowired
     public void setSecurityService(SecurityService securityService) {
@@ -57,6 +59,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.accessDeniedHandler = accessDeniedHandler;
     }
 
+    @Autowired
+    public void setCredentialService(CredentialService credentialService) {
+        this.credentialService = credentialService;
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(securityService).passwordEncoder(passwordEncoder);
@@ -73,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/public/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey, credentialService))
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig, securityService), UsernamePasswordAuthenticationFilter.class);
     }
 }

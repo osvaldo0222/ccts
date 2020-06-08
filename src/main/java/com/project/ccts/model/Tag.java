@@ -21,6 +21,14 @@ public class Tag {
     @CreationTimestamp
     private Date creationDate;
 
+    public Tag() {
+    }
+
+    public Tag(String tagId, String data) {
+        this.tagId = tagId;
+        this.data = data;
+    }
+
     public Long getId() {
         return id;
     }
@@ -51,6 +59,14 @@ public class Tag {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public Collection<Visit> getVisits() {
+        return visits;
+    }
+
+    public void setVisits(Collection<Visit> visits) {
+        this.visits = visits;
     }
 
     public Date getCreationDate() {

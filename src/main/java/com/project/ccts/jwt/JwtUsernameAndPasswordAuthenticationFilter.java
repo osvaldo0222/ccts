@@ -2,6 +2,10 @@ package com.project.ccts.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ccts.model.Credential;
+import com.project.ccts.model.NodeCredential;
+import com.project.ccts.model.UserCredential;
+import com.project.ccts.service.CredentialService;
+import com.project.ccts.util.enums.NodeStatus;
 import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -28,11 +32,13 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     private final AuthenticationManager authenticationManager;
     private final JwtConfig jwtConfig;
     private final SecretKey secretKey;
+    private final CredentialService credentialService;
 
-    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey) {
+    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey, CredentialService credentialService) {
         this.authenticationManager = authenticationManager;
         this.jwtConfig = jwtConfig;
         this.secretKey = secretKey;
+        this.credentialService = credentialService;
     }
 
     /**
@@ -83,14 +89,32 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         //Log for the user auth on console
         Logger.getInstance().getLog(getClass()).info(String.format("%s has logged in", authResult.getName()));
 
+        //Updating the user if is from mobile or it's a node
+        Credential user = credentialService.findByUsername(authResult.getName());
+
+        if (user instanceof UserCredential) {
+            String notificationToken = request.getParameter("notificationToken");
+
+            if (notificationToken != null && !notificationToken.equalsIgnoreCase("")) {
+                ((UserCredential) user).setNotificationToken(notificationToken);
+            }
+        } else if (user instanceof NodeCredential) {
+            ((NodeCredential) user).setStatus(NodeStatus.ACTIVE);
+        }
+
+        credentialService.createOrUpdate(user);
+
         //Generating the token
         String token = Jwts.builder()
+                .setIssuer(jwtConfig.getIssuer())
                 .setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getTokenExpirationAfterMilliseconds()))
                 .signWith(secretKey)
                 .compact();
-        response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
+
+        //Adding token to the response
+        JwtHandlerUtil.prepareResponse(response, HttpServletResponse.SC_OK, jwtConfig.getTokenPrefix() + token);
     }
 }

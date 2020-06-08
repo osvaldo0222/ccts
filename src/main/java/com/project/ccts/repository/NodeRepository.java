@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NodeRepository extends JpaRepository<Node, Long> {
 
-    Node findByUniqueIdentifier(String uniqueIdentifier);
+    Node findByNodeIdentifier(String uniqueIdentifier);
 
 }

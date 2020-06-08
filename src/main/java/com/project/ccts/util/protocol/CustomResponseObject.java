@@ -1,20 +1,20 @@
-package com.project.ccts.jwt;
+package com.project.ccts.util.protocol;
 
 import java.time.LocalDateTime;
 
 /**
- * Object to make a custom response when error occurred during authentication and authorization
+ * Object to make a custom response when something occurred
  *
  */
-public class JwtCustomObjectErrorResponse {
+public class CustomResponseObject {
     private final String timestamp;
     private final Integer httpStatus;
-    private final String message;
+    private final String result;
 
-    public JwtCustomObjectErrorResponse(Integer httpStatus, String message) {
+    public CustomResponseObject(Integer httpStatus, String result) {
         this.timestamp = LocalDateTime.now().toString();
         this.httpStatus = httpStatus;
-        this.message = message;
+        this.result = result;
     }
 
     public String getTimestamp() {
@@ -26,6 +26,6 @@ public class JwtCustomObjectErrorResponse {
     }
 
     public String getMessage() {
-        return message;
+        return result;
     }
 }

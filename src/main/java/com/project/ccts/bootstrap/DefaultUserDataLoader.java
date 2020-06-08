@@ -35,7 +35,7 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        Logger.getInstance().getLog(this.getClass()).info("User data bootstrap [...]");
+        Logger.getInstance().getLog(this.getClass()).info("Default user data bootstrap [...]");
 
         //Creating default Roles and Privileges
         createDefaultRolesAndPrivilege();
@@ -46,7 +46,7 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
         //Creating prototype nodes
         createPrototypesNodes();
 
-        Logger.getInstance().getLog(this.getClass()).info("Ending user bootstrap [...]");
+        Logger.getInstance().getLog(this.getClass()).info("Ending default user bootstrap [...]");
     }
 
     private void createPrototypesNodes() {
@@ -79,12 +79,12 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
         }
 
         //Check if the node exists
-        Node node = nodeService.findByUniqueIdentifier("NODE-PROTOTYPE");
+        Node node = nodeService.findByNodeIdentifier("node-prototype");
         if (node == null) {
             node = new Node();
-            node.setUniqueIdentifier("NODE-PROTOTYPE");
-            node.setLocality(locality);
             node.setNodeCredential((NodeCredential) credential);
+            node.setNodeIdentifier("node-" + node.getNodeCredential().getUsername());
+            node.setLocality(locality);
             node.setGpsLocation(new GpsLocation(19.479519D, -70.717491D));
             nodeService.createOrUpdate(node);
         }
@@ -119,9 +119,9 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
 
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating application roles...");
 
-        createRoleIfNotFound("ROLE_NODE", nodePrivilege);
         createRoleIfNotFound("ROLE_ADMIN", adminPrivilege);
-        //createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
+        createRoleIfNotFound("ROLE_NODE", nodePrivilege);
+        createRoleIfNotFound("ROLE_USER", null);
     }
 
     private void createRoleIfNotFound(String role_user, Collection<Privilege> privileges) {

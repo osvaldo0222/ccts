@@ -1,6 +1,7 @@
 package com.project.ccts.jwt;
 
 import com.google.gson.Gson;
+import com.project.ccts.util.protocol.CustomResponseObject;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class JwtHandlerUtil {
         response.setStatus(statusCode);
         response.setContentType(CONTENT_TYPE);
         response.setCharacterEncoding(CHARACTER_ENCODING);
-        out.print(new Gson().toJson(new JwtCustomObjectErrorResponse(
+        out.print(new Gson().toJson(new CustomResponseObject(
                 statusCode,
                 message
         )));

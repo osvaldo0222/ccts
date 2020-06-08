@@ -19,6 +19,14 @@ public interface ICrudOperation<T, ID> {
     T createOrUpdate(T entity);
 
     /**
+     * Function to create multiples object of the same entity
+     *
+     * @param entities
+     * @return Collection of the entity type
+     */
+    Collection<T> createAll(Collection<T> entities);
+
+    /**
      * Function to delete a instance of an object on the persistence layer.
      *
      * @param id entity id that going to be deleted
