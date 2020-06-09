@@ -8,6 +8,7 @@ import com.project.ccts.service.CredentialService;
 import com.project.ccts.util.enums.NodeStatus;
 import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.Jwts;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -115,6 +116,6 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .compact();
 
         //Adding token to the response
-        JwtHandlerUtil.prepareResponse(response, HttpServletResponse.SC_OK, jwtConfig.getTokenPrefix() + token);
+        JwtAuthResponseUtil.prepareAuthResponse(response, HttpStatus.OK, jwtConfig.getTokenPrefix() + token);
     }
 }

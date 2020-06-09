@@ -1,8 +1,8 @@
-package com.project.ccts.util.protocol;
+package com.project.ccts.dto;
 
 import java.util.Date;
 
-public class TagTemplate {
+public class NodeSubmitTagDTO {
     private String tagId;
     private String data;
     private Date accessDate;

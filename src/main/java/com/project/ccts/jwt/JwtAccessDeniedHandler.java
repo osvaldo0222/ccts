@@ -1,5 +1,6 @@
 package com.project.ccts.jwt;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
-        JwtHandlerUtil.prepareResponse(response, HttpServletResponse.SC_FORBIDDEN, JwtHandlerUtil.getFORBIDDEN());
+        JwtAuthResponseUtil.prepareAuthResponse(response, HttpStatus.FORBIDDEN, "You don't have permissions");
     }
 }

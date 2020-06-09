@@ -1,5 +1,6 @@
 package com.project.ccts.jwt;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
-        JwtHandlerUtil.prepareResponse(response, HttpServletResponse.SC_UNAUTHORIZED, JwtHandlerUtil.getBadCredential());
+        JwtAuthResponseUtil.prepareAuthResponse(response, HttpStatus.UNAUTHORIZED, "Bad credentials");
     }
 }

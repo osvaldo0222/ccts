@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
  * Singleton class for logs.
  */
 public class Logger {
-    private static Logger logger;
+    private static Logger logger = new Logger();
     private Log log;
 
     private Logger() { }
@@ -17,9 +17,6 @@ public class Logger {
      * @return Logger - the instance of the singleton
      */
     public static Logger getInstance() {
-        if (logger == null) {
-            logger = new Logger();
-        }
         return logger;
     }
 

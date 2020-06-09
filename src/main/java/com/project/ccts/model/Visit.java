@@ -18,6 +18,15 @@ public class Visit {
     @ManyToOne
     private Locality locality;
 
+    public Visit() {
+    }
+
+    public Visit(Tag tag, Date accessDate, Locality locality) {
+        this.tag = tag;
+        this.accessDate = accessDate;
+        this.locality = locality;
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,11 +1,12 @@
 package com.project.ccts.service;
 
 import com.project.ccts.model.Node;
+import com.project.ccts.model.Tag;
 import com.project.ccts.model.Visit;
 import com.project.ccts.repository.VisitRepository;
 import com.project.ccts.service.common.AbstractCrud;
-import com.project.ccts.util.protocol.TagTemplate;
-import com.project.ccts.util.protocol.VisitTemplate;
+import com.project.ccts.dto.NodeSubmitVisitDTO;
+import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional
@@ -43,19 +43,36 @@ public class VisitService extends AbstractCrud<Visit, Long> {
         return visitRepository;
     }
 
-    public void addVisits(VisitTemplate body) {
-        List<Visit> visits = new ArrayList<>();
+    /**
+     * Create and add the visits of the tags that comes from a node.
+     *
+     * @param visits - Data transfer object of the visits
+     * @throws Exception if the node identifier can't be found
+     */
+    public void addVisits(NodeSubmitVisitDTO visits) throws Exception {
+        //Collection of bussiness logic visit entity
+        List<Visit> visitsEntity = new ArrayList<>();
 
-        Node node = nodeService.findByNodeIdentifier(body.getNodeIdentifier());
+        //Getting the node from the visits came
+        Node node = nodeService.findByNodeIdentifier(visits.getNodeIdentifier());
 
-        for (TagTemplate tag : body.getTagTemplates()) {
-            Visit visit = new Visit();
-            visit.setLocality(node.getLocality());
-            visit.setTag(tagService.findByTagId(tag.getTagId()));
-            visit.setAccessDate(tag.getAccessDate());
-            visits.add(visit);
+        if (node == null) {
+            throw new Exception(String.format("Node with identifer %s not found", visits.getNodeIdentifier()));
         }
 
-        createAll(visits);
+        //Looping the tags dto and creating the new visit
+        visits.getTags().forEach(tagDTO -> {
+            //Finding the real tag
+            Tag tag = tagService.findByTagId(tagDTO.getTagId());
+
+            if (tag != null) {
+                visitsEntity.add(new Visit(tag, tagDTO.getAccessDate(), node.getLocality()));
+            } else {
+                Logger.getInstance().getLog(getClass()).warn(String.format("Tag with identifier %s not found", tagDTO.getTagId()));
+            }
+        });
+
+        //Create all the visits
+        createAll(visitsEntity);
     }
 }
