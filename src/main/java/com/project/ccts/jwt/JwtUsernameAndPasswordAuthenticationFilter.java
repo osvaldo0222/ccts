@@ -116,6 +116,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .compact();
 
         //Adding token to the response
+
         JwtAuthResponseUtil.prepareAuthResponse(response, HttpStatus.OK, jwtConfig.getTokenPrefix() + token);
     }
 }
