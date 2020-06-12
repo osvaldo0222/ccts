@@ -6,6 +6,7 @@ import com.project.ccts.model.Visit;
 import com.project.ccts.repository.VisitRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import com.project.ccts.dto.NodeSubmitVisitDTO;
+import com.project.ccts.util.enums.NodeStatus;
 import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -74,5 +75,9 @@ public class VisitService extends AbstractCrud<Visit, Long> {
 
         //Create all the visits
         createAll(visitsEntity);
+
+        node.getNodeCredential().setStatus(NodeStatus.ACTIVE);
+
+        nodeService.createOrUpdate(node);
     }
 }
