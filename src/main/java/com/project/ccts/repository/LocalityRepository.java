@@ -4,9 +4,12 @@ import com.project.ccts.model.Locality;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+
 @Repository
 public interface LocalityRepository extends JpaRepository<Locality, Long> {
 
     Locality findByName(String name);
+    Collection<Locality> findByNameContaining(String name);
 
 }

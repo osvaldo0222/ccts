@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+
 @Service
 @Transactional
 public class LocalityService extends AbstractCrud<Locality, Long> {
@@ -26,5 +28,9 @@ public class LocalityService extends AbstractCrud<Locality, Long> {
 
     public Locality findByName(String name) {
         return localityRepository.findByName(name);
+    }
+
+    public Collection<Locality> findByNameContaining(String name){
+        return localityRepository.findByNameContaining(name);
     }
 }

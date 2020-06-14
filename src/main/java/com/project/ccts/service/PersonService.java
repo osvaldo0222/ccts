@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 public class PersonService extends AbstractCrud<Person, Long> {
@@ -22,5 +24,10 @@ public class PersonService extends AbstractCrud<Person, Long> {
     @Override
     public JpaRepository<Person, Long> getDao() {
         return personRepository;
+    }
+
+    public Person findPersonByPersonalIdentifier(String personalIdentifier){
+        Optional<Person> person = Optional.ofNullable(personRepository.findByPersonalIdentifier(personalIdentifier));
+        return person.orElse(null);
     }
 }

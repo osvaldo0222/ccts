@@ -5,14 +5,24 @@ import com.project.ccts.model.Address;
 public class LocalityDTO {
     private Long id;
     private String name;
-    private Address address;
+    private String province;
     private Integer visits;
+    private Integer nodes;
 
-    public LocalityDTO(Long id, String name, Address address, Integer visits) {
+    public LocalityDTO(Long id, String name, String province, Integer visits, Integer nodes) {
         this.id = id;
         this.name = name;
-        this.address = address;
+        this.province = province;
         this.visits = visits;
+        this.nodes = nodes;
+    }
+
+    public Integer getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(Integer nodes) {
+        this.nodes = nodes;
     }
 
     public Long getId() {
@@ -31,12 +41,12 @@ public class LocalityDTO {
         this.name = name;
     }
 
-    public Address getAddress() {
-        return address;
+    public String getProvince() {
+        return province;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public Integer getVisits() {

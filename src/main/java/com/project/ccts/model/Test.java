@@ -16,6 +16,11 @@ public class Test {
     @OneToOne(mappedBy = "test" , fetch = FetchType.LAZY)
     private HealthStatus healthStatus;
 
+    public  Test(){}
+    public Test(boolean status) {
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }

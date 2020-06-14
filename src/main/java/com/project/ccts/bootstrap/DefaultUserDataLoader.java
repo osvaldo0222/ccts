@@ -53,14 +53,24 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating prototypes nodes...");
 
         //Prototype locality
-        Locality locality = localityService.findByName("Osvaldo Home");
+        Locality locality = localityService.findByName("Osvaldo's Home");
         if (locality == null) {
             locality = new Locality();
-            locality.setName("Osvaldo Home");
+            locality.setName("Osvaldo's Home");
             locality.setEmail("osvaldof22@hotmail.com");
-            locality.setAddress(new Address("Calle 80 #98 Los pepines", "51000", "Santiago", "Domincan Republic"));
+            locality.setAddress(new Address("Calle 80 #98 Los pepines", "51000", "Santiago", "Dominican Republic"));
             locality.setCellPhone("809-999-9999");
             localityService.createOrUpdate(locality);
+        }
+        //Prototype locality
+        Locality locality_2 = localityService.findByName("Edgar's Home");
+        if (locality_2 == null) {
+            locality_2 = new Locality();
+            locality_2.setName("Edgar's Home");
+            locality_2.setEmail("edgargarco@hotmail.com");
+            locality_2.setAddress(new Address("Carretera Prof Juan Bosch KM 7.5 entrada el sumbio", "41000", "La Vega", "Dominican Republic"));
+            locality_2.setCellPhone("809-888-8888");
+            localityService.createOrUpdate(locality_2);
         }
 
         //Find role for a node

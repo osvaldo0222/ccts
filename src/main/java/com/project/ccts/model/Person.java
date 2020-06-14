@@ -5,6 +5,8 @@ import com.project.ccts.util.enums.Gender;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -20,7 +22,7 @@ public class Person {
     @Column(unique = true)
     private String email;
     private String cellPhone;
-    private Date birthDate;
+    private LocalDate birthDate;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     @Enumerated(EnumType.STRING)
@@ -36,12 +38,12 @@ public class Person {
     private Date tagGivenOn;
     @CreationTimestamp
     private Date createDate;
-    @OneToMany(mappedBy = "person")
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
     private Collection<HealthStatus> status;
 
     public Person() { }
 
-    public Person(String personalIdentifier, String firstName, String lastName, String email, String cellPhone, Date birthDate, Gender gender, CivilStatus civilStatus, String occupation, Address address, UserCredential userCredential, Tag tag) {
+    public Person(String personalIdentifier, String firstName, String lastName, String email, String cellPhone, LocalDate birthDate, Gender gender, CivilStatus civilStatus, String occupation, Address address, UserCredential userCredential, Tag tag) {
         this.personalIdentifier = personalIdentifier;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -104,11 +106,11 @@ public class Person {
         this.cellPhone = cellPhone;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -182,5 +184,11 @@ public class Person {
 
     public void setStatus(Collection<HealthStatus> status) {
         this.status = status;
+    }
+    public void addHealthStatus(HealthStatus healthStatus){
+        if (getStatus() == null){
+            this.status = new ArrayList<>();
+        }
+        getStatus().add(healthStatus);
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -37,7 +38,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 "Fernandez",
                 "osvaldof22@hotmail.com",
                 "849-253-6511",
-                calendar.getTime(),
+                LocalDate.of(1999,Calendar.FEBRUARY,22),
                 Gender.MALE,
                 CivilStatus.SINGLE,
                 "Estudiante",

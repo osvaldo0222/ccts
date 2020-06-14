@@ -1,21 +1,8 @@
-package com.project.ccts.model;
+package com.project.ccts.dto;
 
-import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
-import java.util.Date;
-
-@Entity
-public class HealthStatus {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @CreationTimestamp
-    private Date statusDate;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Test test;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Person person;
+public class PersonHealthStatusUpdateDTO {
+    private String id;
+    private boolean status;
     private boolean fever;
     private boolean cough;
     private boolean breathDifficulty;
@@ -23,9 +10,9 @@ public class HealthStatus {
     private boolean smellLoss;
     private boolean tasteLoss;
 
-    public HealthStatus() {
-    }
-    public HealthStatus(boolean fever,boolean cough, boolean breathDifficulty, boolean soreThroat, boolean smellLoss, boolean tasteLoss) {
+    public PersonHealthStatusUpdateDTO(String id, boolean status, boolean fever, boolean cough, boolean breathDifficulty, boolean soreThroat, boolean smellLoss, boolean tasteLoss) {
+        this.id = id;
+        this.status = status;
         this.fever = fever;
         this.cough = cough;
         this.breathDifficulty = breathDifficulty;
@@ -34,37 +21,20 @@ public class HealthStatus {
         this.tasteLoss = tasteLoss;
     }
 
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Date getStatusDate() {
-        return statusDate;
+    public boolean isStatus() {
+        return status;
     }
 
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
-    }
-
-    public Test getTest() {
-        return test;
-    }
-
-    public void setTest(Test test) {
-        this.test = test;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public boolean isFever() {
@@ -113,5 +83,19 @@ public class HealthStatus {
 
     public void setTasteLoss(boolean tasteLoss) {
         this.tasteLoss = tasteLoss;
+    }
+
+    @Override
+    public String toString() {
+        return "PersonHealthStatusUpdateDTO{" +
+                "id='" + id + '\'' +
+                ", status=" + status +
+                ", fever=" + fever +
+                ", cough=" + cough +
+                ", breathDifficulty=" + breathDifficulty +
+                ", soreThroat=" + soreThroat +
+                ", smellLoss=" + smellLoss +
+                ", tasteLoss=" + tasteLoss +
+                '}';
     }
 }

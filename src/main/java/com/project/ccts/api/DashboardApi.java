@@ -1,33 +1,106 @@
 package com.project.ccts.api;
 
-import com.project.ccts.dto.LocalityDTO;
-import com.project.ccts.model.Locality;
+import com.project.ccts.dto.*;
+import com.project.ccts.model.*;
 import com.project.ccts.service.LocalityService;
+import com.project.ccts.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import static com.project.ccts.dto.CustomResponseObjectUtil.createResponse;
 
 @RestController
 @RequestMapping("api/dashboard")
 public class DashboardApi {
     private LocalityService localityService;
+    private PersonService personService;
+    @Autowired
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
+    }
+
     @Autowired
     public void setLocalityService(LocalityService localityService) {
         this.localityService = localityService;
     }
-    @GetMapping(path = "node_distribution", produces = "application/json")
-    public ResponseEntity<Collection<LocalityDTO>> nodeDistributionByLocation(){
+
+    @GetMapping(path = "node-distribution", produces = "application/json")
+    public ResponseEntity<Collection<LocalityDTO>> nodeDistributionByLocation() {
         Collection<Locality> locality = localityService.findAll();
+
+        return new ResponseEntity<>(createLocalityDTO(locality), HttpStatus.OK);
+    }
+    @GetMapping(path = "locality/{id}", produces = "application/json")
+    public ResponseEntity<LocalityDetailsDTO> localityInfo(@PathVariable Long id) throws Exception {
+        Locality locality = localityService.findById(id);
+        Collection<NodeDetailsDTO> nodeDetailsDTOS = new ArrayList<>();
+
+        locality.getNodes().stream().forEach(node ->
+                nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(),node.getNodeIdentifier(),node.getGpsLocation(),node.getNodeCredential().getStatus())));
+
+        LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(locality.getId(),locality.getName(),locality.getAddress(),
+                locality.getEmail(),locality.getCellPhone(),nodeDetailsDTOS);
+        return new ResponseEntity<>(localityDetailsDTO, HttpStatus.OK);
+    }
+    @GetMapping(path = "node-distribution/containing/{keyword}", produces = "application/json")
+    public ResponseEntity<Collection<LocalityDTO>> findNodeDistributionByNameContaining(@PathVariable String keyword){
+        Collection<Locality> locality = localityService.findByNameContaining(keyword);
+        return new ResponseEntity<>(createLocalityDTO(locality), HttpStatus.OK);
+    }
+    @GetMapping(path = "covid-test/findPatientById/{id}", produces = "application/json")
+    public ResponseEntity<PersonDTO> getPatientDetailsByPersonalIdentifier(@PathVariable String id){
+        boolean status;
+        Person person = personService.findPersonByPersonalIdentifier(id);
+        PersonDTO personDTO = new PersonDTO();
+        if (person != null){
+            Long listLength = person.getStatus().stream().count();
+            if (listLength <=0){
+                status = false;
+            }else {
+                HealthStatus healthStatus = person.getStatus().stream().skip(listLength-1).findFirst().get();
+                if (healthStatus == null){
+                    status = false;
+                }else {
+                    status = healthStatus.getTest().getStatus();
+                }
+            }
+             personDTO = new PersonDTO(person.getFirstName(),person.getLastName(),person.getAddress()
+                    ,person.getOccupation(),Period.between(person.getBirthDate(),LocalDate.now()).getYears(),status);
+        }
+
+        return new ResponseEntity<>(personDTO, HttpStatus.OK);
+    }
+    @PutMapping(path = "covid-test/set-patient-status",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> updatePatientStatus(@RequestBody PersonHealthStatusUpdateDTO statusUpdateDTO){
+         Person person = personService.findPersonByPersonalIdentifier(statusUpdateDTO.getId());
+        if (person != null){
+            HealthStatus healthStatus = new HealthStatus(statusUpdateDTO.isFever(),statusUpdateDTO.isCough(),
+                    statusUpdateDTO.isBreathDifficulty(),statusUpdateDTO.isSoreThroat(),statusUpdateDTO.isSmellLoss(),
+                    statusUpdateDTO.isTasteLoss());
+            healthStatus.setTest(new Test(statusUpdateDTO.isStatus()));
+            person.addHealthStatus(healthStatus);
+            personService.createOrUpdate(person);
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,"Su solicitud ha sido satisfactoria, Perfil del paciente Actualizado"),HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(createResponse(HttpStatus.NOT_FOUND,"Revise los datos ingresados en el formulario"),HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+
+    public Collection<LocalityDTO> createLocalityDTO(Collection<Locality> locality){
         Collection<LocalityDTO> localityDTOS = new ArrayList<>();
-        locality.stream().forEach((aux_locality)-> {
-            localityDTOS.add(new LocalityDTO(aux_locality.getId(),aux_locality.getName(),aux_locality.getAddress(),aux_locality.getVisits().size()));
+        locality.stream().forEach((aux_locality) -> {
+            localityDTOS.add(new LocalityDTO(aux_locality.getId(), aux_locality.getName(), aux_locality.getAddress().getCity(),
+                    aux_locality.getVisits().size(), aux_locality.getNodes().size()));
         });
-        return new ResponseEntity<>(localityDTOS, HttpStatus.OK);
+        return localityDTOS;
     }
 }

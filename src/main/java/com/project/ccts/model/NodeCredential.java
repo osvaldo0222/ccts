@@ -1,5 +1,7 @@
 package com.project.ccts.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.ccts.util.enums.NodeStatus;
 
 import javax.persistence.*;
@@ -9,6 +11,7 @@ public class NodeCredential extends Credential {
     @Enumerated(EnumType.STRING)
     private NodeStatus status;
     @OneToOne(mappedBy = "nodeCredential")
+    @JsonIgnore
     private Node node;
 
     public NodeStatus getStatus() {
