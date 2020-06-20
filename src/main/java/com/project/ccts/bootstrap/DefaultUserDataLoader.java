@@ -22,6 +22,7 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
     private NodeService nodeService;
     private LocalityService localityService;
     private PasswordEncoder passwordEncoder;
+    private PersonService personService;
 
     @Autowired
     public DefaultUserDataLoader(CredentialService credentialService, PrivilegeService privilegeService, RoleService roleService, NodeService nodeService, PasswordEncoder passwordEncoder, LocalityService localityService) {
@@ -31,6 +32,10 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
         this.nodeService = nodeService;
         this.passwordEncoder = passwordEncoder;
         this.localityService = localityService;
+    }
+    @Autowired
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
     }
 
     @Override
@@ -84,6 +89,7 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
             credential.setPassword(passwordEncoder.encode("prototype"));
             credential.setRoles(Arrays.asList(nodeRole));
             credential.setAuthenticated(true);
+
             ((NodeCredential) credential).setStatus(NodeStatus.DOWN);
             credentialService.createOrUpdate(credential);
         }

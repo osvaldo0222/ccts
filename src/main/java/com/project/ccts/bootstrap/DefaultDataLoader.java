@@ -33,7 +33,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         Calendar calendar = Calendar.getInstance();
         calendar.set(1999, Calendar.FEBRUARY, 22);
         Person person = new Person(
-                "402-1484209-4",
+                "40214842094",
                 "Osvaldo",
                 "Fernandez",
                 "osvaldof22@hotmail.com",

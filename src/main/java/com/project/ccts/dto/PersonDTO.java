@@ -3,21 +3,53 @@ package com.project.ccts.dto;
 import com.project.ccts.model.Address;
 
 public class PersonDTO {
+    private String personalIdentifier;
     private String firstName;
     private String lastName;
     private Address  address;
     private String occupation;
     private Integer age;
     private boolean status;
+    private String email;
+
 
     public PersonDTO(){}
-    public PersonDTO(String firstName, String lastName, Address address, String occupation, Integer age, boolean status) {
+
+    public PersonDTO(String personalIdentifier, String firstName, String lastName, Address address, String occupation, Integer age, boolean status, String email) {
+        this.personalIdentifier = personalIdentifier;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.occupation = occupation;
         this.age = age;
         this.status = status;
+        this.email = email;
+    }
+    public PersonDTO(  String firstName, String lastName, Address address, String occupation, Integer age, boolean status, String email) {
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.occupation = occupation;
+        this.age = age;
+        this.status = status;
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPersonalIdentifier() {
+        return personalIdentifier;
+    }
+
+    public void setPersonalIdentifier(String personalIdentifier) {
+        this.personalIdentifier = personalIdentifier;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFirstName() {

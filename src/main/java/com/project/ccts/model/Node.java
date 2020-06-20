@@ -12,6 +12,7 @@ public class Node {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
+    //node-username
     private String nodeIdentifier;
     @ManyToOne
     private Locality locality;
