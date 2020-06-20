@@ -63,8 +63,8 @@ public class DashboardApi {
     public ResponseEntity<LocalityDetailsDTO> localityInfo(@PathVariable Long id) throws Exception {
         Locality locality = localityService.findById(id);
         Collection<NodeDetailsDTO> nodeDetailsDTOS = new ArrayList<>();
-        locality.getNodes().stream().forEach(node ->
-                nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(), node.getNodeIdentifier(), node.getGpsLocation(), node.getNodeCredential().getStatus())));
+        locality.getBeacons().stream().forEach(node ->
+                nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(), node.getInstance(), node.getGpsLocation(), node.getBeaconCredential().getStatus())));
 
         LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(locality.getId(), locality.getName(), locality.getAddress(),
                 locality.getEmail(), locality.getCellPhone(), nodeDetailsDTOS);
@@ -141,7 +141,7 @@ public class DashboardApi {
         Collection<LocalityDTO> localityDTOS = new ArrayList<>();
         locality.stream().forEach((aux_locality) -> {
             localityDTOS.add(new LocalityDTO(aux_locality.getId(), aux_locality.getName(), aux_locality.getAddress().getCity(),
-                    aux_locality.getVisits().size(), aux_locality.getNodes().size()));
+                    aux_locality.getVisits().size(), aux_locality.getBeacons().size()));
         });
         return localityDTOS;
     }

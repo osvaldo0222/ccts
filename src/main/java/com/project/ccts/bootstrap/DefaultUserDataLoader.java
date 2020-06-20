@@ -1,7 +1,6 @@
 package com.project.ccts.bootstrap;
 
 import com.project.ccts.model.*;
-import com.project.ccts.util.enums.NodeStatus;
 import com.project.ccts.service.*;
 import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +18,18 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
     private CredentialService credentialService;
     private PrivilegeService privilegeService;
     private RoleService roleService;
-    private NodeService nodeService;
+    private BeaconService beaconService;
     private LocalityService localityService;
     private PasswordEncoder passwordEncoder;
-    private PersonService personService;
 
     @Autowired
-    public DefaultUserDataLoader(CredentialService credentialService, PrivilegeService privilegeService, RoleService roleService, NodeService nodeService, PasswordEncoder passwordEncoder, LocalityService localityService) {
+    public DefaultUserDataLoader(CredentialService credentialService, PrivilegeService privilegeService, RoleService roleService, BeaconService beaconService, PasswordEncoder passwordEncoder, LocalityService localityService) {
         this.credentialService = credentialService;
         this.privilegeService = privilegeService;
         this.roleService = roleService;
-        this.nodeService = nodeService;
+        this.beaconService = beaconService;
         this.passwordEncoder = passwordEncoder;
         this.localityService = localityService;
-    }
-    @Autowired
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
     }
 
     @Override
@@ -48,62 +42,7 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
         //Creating default superusers
         createDefaultSuperusers();
 
-        //Creating prototype nodes
-        createPrototypesNodes();
-
         Logger.getInstance().getLog(this.getClass()).info("Ending default user bootstrap [...]");
-    }
-
-    private void createPrototypesNodes() {
-        Logger.getInstance().getLog(this.getClass()).info("Creating and updating prototypes nodes...");
-
-        //Prototype locality
-        Locality locality = localityService.findByName("Osvaldo's Home");
-        if (locality == null) {
-            locality = new Locality();
-            locality.setName("Osvaldo's Home");
-            locality.setEmail("osvaldof22@hotmail.com");
-            locality.setAddress(new Address("Calle 80 #98 Los pepines", "51000", "Santiago", "Dominican Republic"));
-            locality.setCellPhone("809-999-9999");
-            localityService.createOrUpdate(locality);
-        }
-        //Prototype locality
-        Locality locality_2 = localityService.findByName("Edgar's Home");
-        if (locality_2 == null) {
-            locality_2 = new Locality();
-            locality_2.setName("Edgar's Home");
-            locality_2.setEmail("edgargarco@hotmail.com");
-            locality_2.setAddress(new Address("Carretera Prof Juan Bosch KM 7.5 entrada el sumbio", "41000", "La Vega", "Dominican Republic"));
-            locality_2.setCellPhone("809-888-8888");
-            localityService.createOrUpdate(locality_2);
-        }
-
-        //Find role for a node
-        Role nodeRole = roleService.findByName("ROLE_NODE");
-
-        //Check if the nodes prototype credentials exists
-        Credential credential = credentialService.findByUsername("prototype");
-        if (credential == null) {
-            credential = new NodeCredential();
-            credential.setUsername("prototype");
-            credential.setPassword(passwordEncoder.encode("prototype"));
-            credential.setRoles(Arrays.asList(nodeRole));
-            credential.setAuthenticated(true);
-
-            ((NodeCredential) credential).setStatus(NodeStatus.DOWN);
-            credentialService.createOrUpdate(credential);
-        }
-
-        //Check if the node exists
-        Node node = nodeService.findByNodeIdentifier("node-prototype");
-        if (node == null) {
-            node = new Node();
-            node.setNodeCredential((NodeCredential) credential);
-            node.setNodeIdentifier("node-" + node.getNodeCredential().getUsername());
-            node.setLocality(locality);
-            node.setGpsLocation(new GpsLocation(19.479519D, -70.717491D));
-            nodeService.createOrUpdate(node);
-        }
     }
 
     private void createDefaultSuperusers() {
@@ -129,14 +68,14 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
     private void createDefaultRolesAndPrivilege() {
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating application privileges...");
 
-        Collection<Privilege> nodePrivilege = Arrays.asList(createPrivilegeIfNotFound("NODE_READ_PRIVILEGE"), createPrivilegeIfNotFound("NODE_WRITE_PRIVILEGE"));
+        Collection<Privilege> beaconPrivilege = Arrays.asList(createPrivilegeIfNotFound("BEACON_READ_PRIVILEGE"), createPrivilegeIfNotFound("BEACON_WRITE_PRIVILEGE"));
 
         Collection<Privilege> adminPrivilege = Arrays.asList(createPrivilegeIfNotFound("ADMIN_READ_PRIVILEGE"), createPrivilegeIfNotFound("ADMIN_WRITE_PRIVILEGE"));
 
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating application roles...");
 
         createRoleIfNotFound("ROLE_ADMIN", adminPrivilege);
-        createRoleIfNotFound("ROLE_NODE", nodePrivilege);
+        createRoleIfNotFound("ROLE_BEACON", beaconPrivilege);
         createRoleIfNotFound("ROLE_USER", null);
     }
 

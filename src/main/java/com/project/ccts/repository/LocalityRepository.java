@@ -10,6 +10,7 @@ import java.util.Collection;
 public interface LocalityRepository extends JpaRepository<Locality, Long> {
 
     Locality findByName(String name);
+
     Collection<Locality> findByNameContaining(String name);
 
 }

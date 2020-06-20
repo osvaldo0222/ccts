@@ -32,10 +32,6 @@ public class Person {
     private Address address;
     @OneToOne
     private UserCredential userCredential;
-    @OneToOne
-    private Tag tag;
-    @CreationTimestamp
-    private Date tagGivenOn;
     @CreationTimestamp
     private Date createDate;
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
@@ -43,7 +39,7 @@ public class Person {
 
     public Person() { }
 
-    public Person(String personalIdentifier, String firstName, String lastName, String email, String cellPhone, LocalDate birthDate, Gender gender, CivilStatus civilStatus, String occupation, Address address, UserCredential userCredential, Tag tag) {
+    public Person(String personalIdentifier, String firstName, String lastName, String email, String cellPhone, LocalDate birthDate, Gender gender, CivilStatus civilStatus, String occupation, Address address, UserCredential userCredential) {
         this.personalIdentifier = personalIdentifier;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -55,8 +51,8 @@ public class Person {
         this.occupation = occupation;
         this.address = address;
         this.userCredential = userCredential;
-        this.tag = tag;
     }
+
     public Person(String personalIdentifier, String firstName, String lastName, String email, String occupation, Address address, UserCredential userCredential) {
         this.personalIdentifier = personalIdentifier;
         this.firstName = firstName;
@@ -65,7 +61,6 @@ public class Person {
         this.occupation = occupation;
         this.address = address;
         this.userCredential = userCredential;
-
     }
 
     public Long getId() {
@@ -164,22 +159,6 @@ public class Person {
         this.userCredential = userCredential;
     }
 
-    public Tag getTag() {
-        return tag;
-    }
-
-    public void setTag(Tag tag) {
-        this.tag = tag;
-    }
-
-    public Date getTagGivenOn() {
-        return tagGivenOn;
-    }
-
-    public void setTagGivenOn(Date tagGivenOn) {
-        this.tagGivenOn = tagGivenOn;
-    }
-
     public Date getCreateDate() {
         return createDate;
     }
@@ -195,6 +174,7 @@ public class Person {
     public void setStatus(Collection<HealthStatus> status) {
         this.status = status;
     }
+
     public void addHealthStatus(HealthStatus healthStatus){
         if (getStatus() == null){
             this.status = new ArrayList<>();

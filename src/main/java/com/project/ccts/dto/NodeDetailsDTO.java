@@ -1,20 +1,15 @@
 package com.project.ccts.dto;
 
 import com.project.ccts.model.GpsLocation;
-import com.project.ccts.model.Locality;
-import com.project.ccts.util.enums.NodeStatus;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.ManyToOne;
+import com.project.ccts.util.enums.BeaconStatus;
 
 public class NodeDetailsDTO {
     private Long id;
     private String nodeIdentifier;
     private GpsLocation gpsLocation;
-    private NodeStatus status;
+    private BeaconStatus status;
 
-    public NodeDetailsDTO(Long id, String nodeIdentifier, GpsLocation gpsLocation, NodeStatus status) {
+    public NodeDetailsDTO(Long id, String nodeIdentifier, GpsLocation gpsLocation, BeaconStatus status) {
         this.id = id;
         this.nodeIdentifier = nodeIdentifier;
         this.gpsLocation = gpsLocation;
@@ -45,11 +40,11 @@ public class NodeDetailsDTO {
         this.gpsLocation = gpsLocation;
     }
 
-    public NodeStatus getStatus() {
+    public BeaconStatus getStatus() {
         return status;
     }
 
-    public void setStatus(NodeStatus status) {
+    public void setStatus(BeaconStatus status) {
         this.status = status;
     }
 }

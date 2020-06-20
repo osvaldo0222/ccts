@@ -16,7 +16,7 @@ public class ExampleApi {
     }
 
     @GetMapping("/node")
-    @PreAuthorize("hasAnyAuthority('NODE_READ_PRIVILEGE')")
+    @PreAuthorize("hasAnyAuthority('BEACON_READ_PRIVILEGE')")
     public String helloNode() {
         return "Hello World Node";
     }

@@ -8,6 +8,7 @@ import javax.persistence.Persistence;
 
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
+
     Person findByPersonalIdentifier(String personalIdentifier);
 
 }

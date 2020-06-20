@@ -1,10 +1,7 @@
 package com.project.ccts.dto;
 
 import com.project.ccts.model.Address;
-import com.project.ccts.model.Node;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
 import java.util.Collection;
 
 public class LocalityDetailsDTO {

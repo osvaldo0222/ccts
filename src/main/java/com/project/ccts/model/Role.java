@@ -3,7 +3,6 @@ package com.project.ccts.model;
 import javax.persistence.*;
 import java.util.Collection;
 
-
 @Entity
 public class Role {
     @Id

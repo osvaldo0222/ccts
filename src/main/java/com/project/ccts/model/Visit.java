@@ -1,10 +1,9 @@
 package com.project.ccts.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -13,20 +12,17 @@ public class Visit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    private Tag tag;
-    private Date accessDate;
+    private Locality locality;
+    @OneToMany
+    private Collection<Beacon> beacons;
+    private Date timeArrived;
+    private Date timeLeft;
+    @OneToOne
+    private UserCredential user;
     @CreationTimestamp
     private Date creationDate;
-    @ManyToOne
-    private Locality locality;
 
     public Visit() {
-    }
-
-    public Visit(Tag tag, Date accessDate, Locality locality) {
-        this.tag = tag;
-        this.accessDate = accessDate;
-        this.locality = locality;
     }
 
     public Long getId() {
@@ -37,20 +33,44 @@ public class Visit {
         this.id = id;
     }
 
-    public Tag getTag() {
-        return tag;
+    public Locality getLocality() {
+        return locality;
     }
 
-    public void setTag(Tag tag) {
-        this.tag = tag;
+    public void setLocality(Locality locality) {
+        this.locality = locality;
     }
 
-    public Date getAccessDate() {
-        return accessDate;
+    public Collection<Beacon> getBeacons() {
+        return beacons;
     }
 
-    public void setAccessDate(Date accessDate) {
-        this.accessDate = accessDate;
+    public void setBeacons(Collection<Beacon> beacons) {
+        this.beacons = beacons;
+    }
+
+    public Date getTimeArrived() {
+        return timeArrived;
+    }
+
+    public void setTimeArrived(Date timeArrived) {
+        this.timeArrived = timeArrived;
+    }
+
+    public Date getTimeLeft() {
+        return timeLeft;
+    }
+
+    public void setTimeLeft(Date timeLeft) {
+        this.timeLeft = timeLeft;
+    }
+
+    public UserCredential getUser() {
+        return user;
+    }
+
+    public void setUser(UserCredential user) {
+        this.user = user;
     }
 
     public Date getCreationDate() {
@@ -59,13 +79,5 @@ public class Visit {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
-    }
-
-    public Locality getLocality() {
-        return locality;
-    }
-
-    public void setLocality(Locality locality) {
-        this.locality = locality;
     }
 }

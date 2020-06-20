@@ -2,10 +2,10 @@ package com.project.ccts.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ccts.model.Credential;
-import com.project.ccts.model.NodeCredential;
+import com.project.ccts.model.BeaconCredential;
 import com.project.ccts.model.UserCredential;
 import com.project.ccts.service.CredentialService;
-import com.project.ccts.util.enums.NodeStatus;
+import com.project.ccts.util.enums.BeaconStatus;
 import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpStatus;
@@ -99,8 +99,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             if (notificationToken != null && !notificationToken.equalsIgnoreCase("")) {
                 ((UserCredential) user).setNotificationToken(notificationToken);
             }
-        } else if (user instanceof NodeCredential) {
-            ((NodeCredential) user).setStatus(NodeStatus.ACTIVE);
+        } else if (user instanceof BeaconCredential) {
+            ((BeaconCredential) user).setStatus(BeaconStatus.ACTIVE);
         }
 
         credentialService.createOrUpdate(user);
