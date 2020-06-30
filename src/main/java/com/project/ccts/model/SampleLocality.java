@@ -14,6 +14,17 @@ public abstract class SampleLocality {
     protected String email;
     protected String cellPhone;
 
+    public SampleLocality(String name, Address address, String email, String cellPhone) {
+        this.name = name;
+        this.address = address;
+        this.email = email;
+        this.cellPhone = cellPhone;
+    }
+
+    public SampleLocality() {
+
+    }
+
     public Long getId() {
         return id;
     }

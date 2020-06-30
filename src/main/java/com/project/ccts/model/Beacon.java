@@ -10,10 +10,26 @@ public class Beacon {
     private String instance;
     @ManyToOne
     private Locality locality;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private BeaconCredential beaconCredential;
     private Float batteryLevel;
     private Integer packetSend;
+
+    public Beacon(String instance, Locality locality, BeaconCredential beaconCredential, Float batteryLevel, Integer packetSend) {
+        this.instance = instance;
+        this.locality = locality;
+        this.beaconCredential = beaconCredential;
+        this.batteryLevel = batteryLevel;
+        this.packetSend = packetSend;
+    }
+    public Beacon(String instance,  BeaconCredential beaconCredential, Float batteryLevel, Integer packetSend) {
+        this.instance = instance;
+
+        this.beaconCredential = beaconCredential;
+        this.batteryLevel = batteryLevel;
+        this.packetSend = packetSend;
+    }
+    public Beacon(){}
 
     public Long getId() {
         return id;

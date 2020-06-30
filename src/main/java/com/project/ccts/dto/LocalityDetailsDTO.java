@@ -10,10 +10,10 @@ public class LocalityDetailsDTO {
     private Address address;
     private String email;
     private String cellPhone;
-    private Collection<NodeDetailsDTO> nodes;
+    private Collection<BeaconDetailsDTO> nodes;
 
 
-    public LocalityDetailsDTO(Long id, String name, Address address, String email, String cellPhone, Collection<NodeDetailsDTO> nodes) {
+    public LocalityDetailsDTO(Long id, String name, Address address, String email, String cellPhone, Collection<BeaconDetailsDTO> nodes) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -62,11 +62,11 @@ public class LocalityDetailsDTO {
         this.cellPhone = cellPhone;
     }
 
-    public Collection<NodeDetailsDTO> getNodes() {
+    public Collection<BeaconDetailsDTO> getNodes() {
         return nodes;
     }
 
-    public void setNodes(Collection<NodeDetailsDTO> nodes) {
+    public void setNodes(Collection<BeaconDetailsDTO> nodes) {
         this.nodes = nodes;
     }
 }

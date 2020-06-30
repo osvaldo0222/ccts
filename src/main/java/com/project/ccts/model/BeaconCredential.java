@@ -11,6 +11,14 @@ public class BeaconCredential extends Credential {
     @OneToOne(mappedBy = "beaconCredential")
     private Beacon beacon;
 
+    public BeaconCredential(String username, String password, Boolean authenticated,BeaconStatus beaconStatus) {
+        super(username, password, authenticated);
+        this.status = beaconStatus;
+    }
+
+    public BeaconCredential() {
+    }
+
     public BeaconStatus getStatus() {
         return status;
     }

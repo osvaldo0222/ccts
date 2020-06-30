@@ -5,6 +5,7 @@ import com.project.ccts.model.*;
 import com.project.ccts.service.CredentialService;
 import com.project.ccts.service.LocalityService;
 import com.project.ccts.service.PersonService;
+import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,9 +41,14 @@ public class DashboardApi {
     }
 
     @GetMapping(path = "node-distribution", produces = "application/json")
-    public ResponseEntity<Collection<LocalityDTO>> nodeDistributionByLocation() {
+    public ResponseEntity<CustomResponseObjectDTO> nodeDistributionByLocation() {
         Collection<Locality> locality = localityService.findAll();
-        return new ResponseEntity<>(createLocalityDTO(locality), HttpStatus.OK);
+        if (locality != null){
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,createLocalityDTO(locality)), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(createResponse(HttpStatus.BAD_REQUEST,"No existen localidades Registradas"), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @GetMapping(path = "listLocations", produces = "application/json")
@@ -60,21 +66,27 @@ public class DashboardApi {
     }
 
     @GetMapping(path = "locality/{id}", produces = "application/json")
-    public ResponseEntity<LocalityDetailsDTO> localityInfo(@PathVariable Long id) throws Exception {
+    public ResponseEntity<CustomResponseObjectDTO> localityInfo(@PathVariable Long id) throws Exception {
         Locality locality = localityService.findById(id);
-        Collection<NodeDetailsDTO> nodeDetailsDTOS = new ArrayList<>();
-        locality.getBeacons().stream().forEach(node ->
-                nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(), node.getInstance(), node.getGpsLocation(), node.getBeaconCredential().getStatus())));
-
+        Collection<BeaconDetailsDTO> beaconDetailsDTOS = new ArrayList<>();
+        locality.getBeacons().stream().forEach(beacon ->
+                beaconDetailsDTOS.add(new BeaconDetailsDTO(beacon.getId(), beacon.getInstance(), beacon.getBeaconCredential().getStatus())));
+        beaconDetailsDTOS.stream().forEach(beaconDetailsDTO -> System.out.println(beaconDetailsDTO.toString()));
         LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(locality.getId(), locality.getName(), locality.getAddress(),
-                locality.getEmail(), locality.getCellPhone(), nodeDetailsDTOS);
-        return new ResponseEntity<>(localityDetailsDTO, HttpStatus.OK);
+                locality.getEmail(), locality.getCellPhone(), beaconDetailsDTOS);
+        return new ResponseEntity<>(createResponse(HttpStatus.OK,localityDetailsDTO), HttpStatus.OK);
     }
 
     @GetMapping(path = "node-distribution/containing/{keyword}", produces = "application/json")
-    public ResponseEntity<Collection<LocalityDTO>> findNodeDistributionByNameContaining(@PathVariable String keyword) {
+    public ResponseEntity<CustomResponseObjectDTO> findNodeDistributionByNameContaining(@PathVariable String keyword) {
         Collection<Locality> locality = localityService.findByNameContaining(keyword);
-        return new ResponseEntity<>(createLocalityDTO(locality), HttpStatus.OK);
+        if(locality != null){
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,createLocalityDTO(locality)), HttpStatus.OK);
+
+        }else {
+            return new ResponseEntity<>(createResponse(HttpStatus.BAD_REQUEST,"No existen usuarios "), HttpStatus.BAD_REQUEST);
+
+        }
     }
 
     @GetMapping(path = "covid-test/findPatientById/{id}", produces = "application/json")
