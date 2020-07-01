@@ -1,6 +1,6 @@
 package com.project.ccts.service;
 
-import com.project.ccts.model.Visit;
+import com.project.ccts.model.entities.Visit;
 import com.project.ccts.repository.VisitRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.beans.factory.annotation.Autowired;

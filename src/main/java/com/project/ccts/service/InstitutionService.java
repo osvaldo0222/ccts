@@ -1,6 +1,6 @@
 package com.project.ccts.service;
 
-import com.project.ccts.model.Institution;
+import com.project.ccts.model.entities.Institution;
 import com.project.ccts.repository.InstitutionRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.beans.factory.annotation.Autowired;

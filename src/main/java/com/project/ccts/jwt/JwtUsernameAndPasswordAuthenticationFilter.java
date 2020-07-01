@@ -1,11 +1,12 @@
 package com.project.ccts.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.ccts.model.Credential;
-import com.project.ccts.model.BeaconCredential;
-import com.project.ccts.model.UserCredential;
+import com.project.ccts.model.entities.Credential;
+import com.project.ccts.model.entities.BeaconCredential;
+import com.project.ccts.model.entities.NotificationToken;
+import com.project.ccts.model.entities.UserCredential;
 import com.project.ccts.service.CredentialService;
-import com.project.ccts.util.enums.BeaconStatus;
+import com.project.ccts.model.enums.BeaconStatus;
 import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * This is the filter for the first authentication step with JWT.
@@ -59,7 +61,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 
             //Setting authentication parameters
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getUsername(),
+                    authenticationRequest.getUsername().trim(),
                     authenticationRequest.getPassword()
             );
 
@@ -94,10 +96,10 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         Credential user = credentialService.findByUsername(authResult.getName());
 
         if (user instanceof UserCredential) {
-            String notificationToken = request.getParameter("notificationToken");
+            String notificationToken = request.getHeader("NotificationToken");
 
             if (notificationToken != null && !notificationToken.equalsIgnoreCase("")) {
-                ((UserCredential) user).setNotificationToken(notificationToken);
+                //TODO: NOTIFICATIONS TOKEN
             }
         } else if (user instanceof BeaconCredential) {
             ((BeaconCredential) user).setStatus(BeaconStatus.ACTIVE);

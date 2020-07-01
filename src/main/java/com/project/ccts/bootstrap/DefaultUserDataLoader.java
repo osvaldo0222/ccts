@@ -1,6 +1,9 @@
 package com.project.ccts.bootstrap;
 
-import com.project.ccts.model.*;
+import com.project.ccts.model.entities.Credential;
+import com.project.ccts.model.entities.Privilege;
+import com.project.ccts.model.entities.Role;
+import com.project.ccts.model.entities.UserCredential;
 import com.project.ccts.service.*;
 import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +62,6 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
             admin.setPassword(passwordEncoder.encode("admin"));
             admin.setRoles(superuserRoles);
             admin.setAuthenticated(true);
-            ((UserCredential) admin).setNotificationToken("123456789");
-            ((UserCredential) admin).setValidationCode("123456789");
             credentialService.createOrUpdate(admin);
         }
     }

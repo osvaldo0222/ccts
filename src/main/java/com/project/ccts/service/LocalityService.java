@@ -1,6 +1,6 @@
 package com.project.ccts.service;
 
-import com.project.ccts.model.Locality;
+import com.project.ccts.model.entities.Locality;
 import com.project.ccts.repository.LocalityRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.beans.factory.annotation.Autowired;

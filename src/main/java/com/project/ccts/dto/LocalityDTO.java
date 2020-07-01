@@ -1,7 +1,5 @@
 package com.project.ccts.dto;
 
-import com.project.ccts.model.Address;
-
 public class LocalityDTO {
     private Long id;
     private String name;

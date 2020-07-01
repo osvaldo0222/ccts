@@ -1,6 +1,6 @@
 package com.project.ccts.repository;
 
-import com.project.ccts.model.Institution;
+import com.project.ccts.model.entities.Institution;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,6 @@
 package com.project.ccts.dto;
 
-import com.project.ccts.model.GpsLocation;
-import com.project.ccts.util.enums.BeaconStatus;
+import com.project.ccts.model.enums.BeaconStatus;
 
 public class BeaconDetailsDTO {
     private Long id;

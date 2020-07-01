@@ -1,11 +1,10 @@
 package com.project.ccts.api;
 
 import com.project.ccts.dto.*;
-import com.project.ccts.model.*;
+import com.project.ccts.model.entities.*;
 import com.project.ccts.service.CredentialService;
 import com.project.ccts.service.LocalityService;
 import com.project.ccts.service.PersonService;
-import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

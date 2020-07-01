@@ -1,6 +1,6 @@
 package com.project.ccts.dto;
 
-import com.project.ccts.model.Address;
+import com.project.ccts.model.entities.Address;
 
 public class PersonDTO {
     private String personalIdentifier;

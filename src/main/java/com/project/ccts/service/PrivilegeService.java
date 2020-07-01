@@ -1,6 +1,6 @@
 package com.project.ccts.service;
 
-import com.project.ccts.model.Privilege;
+import com.project.ccts.model.entities.Privilege;
 import com.project.ccts.repository.PrivilegeRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.beans.factory.annotation.Autowired;

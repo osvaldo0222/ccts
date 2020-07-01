@@ -1,9 +1,10 @@
 package com.project.ccts.service.security;
 
-import com.project.ccts.model.Credential;
-import com.project.ccts.model.Privilege;
-import com.project.ccts.model.Role;
+import com.project.ccts.model.entities.Credential;
+import com.project.ccts.model.entities.Privilege;
+import com.project.ccts.model.entities.Role;
 import com.project.ccts.repository.CredentialRepository;
+import com.project.ccts.repository.PersonRepository;
 import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,16 @@ import java.util.stream.Collectors;
 public class SecurityService implements UserDetailsService {
 
     private CredentialRepository credentialRepository;
+    private PersonRepository personRepository;
 
     @Autowired
     public void setCredentialRepository(CredentialRepository credentialRepository) {
         this.credentialRepository = credentialRepository;
+    }
+
+    @Autowired
+    public void setPersonRepository(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
 
     /**
@@ -43,8 +50,11 @@ public class SecurityService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //Finding the user based on the username
+        //Finding the user based on the username and email
         Credential credential = credentialRepository.findByUsername(username);
+        credential = credential == null ? personRepository.findByEmail(username).getUserCredential() : credential;
+
+
 
         //Validating the user
         if (credential == null) {

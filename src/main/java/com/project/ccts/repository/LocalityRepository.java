@@ -1,6 +1,6 @@
 package com.project.ccts.repository;
 
-import com.project.ccts.model.Locality;
+import com.project.ccts.model.entities.Locality;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

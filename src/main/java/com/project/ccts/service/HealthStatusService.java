@@ -1,6 +1,6 @@
 package com.project.ccts.service;
 
-import com.project.ccts.model.HealthStatus;
+import com.project.ccts.model.entities.HealthStatus;
 import com.project.ccts.repository.HealthStatusRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.beans.factory.annotation.Autowired;

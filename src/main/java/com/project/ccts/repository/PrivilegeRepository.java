@@ -1,6 +1,6 @@
 package com.project.ccts.repository;
 
-import com.project.ccts.model.Privilege;
+import com.project.ccts.model.entities.Privilege;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

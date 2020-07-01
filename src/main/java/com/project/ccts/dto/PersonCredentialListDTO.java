@@ -1,9 +1,5 @@
 package com.project.ccts.dto;
 
-import com.project.ccts.model.Privilege;
-import com.project.ccts.model.Role;
-
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class PersonCredentialListDTO {
