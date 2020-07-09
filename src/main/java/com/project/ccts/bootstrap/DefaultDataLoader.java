@@ -51,8 +51,8 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         Collection<Person> personCollection = List.of(
                 new Person(
                         "11111111111",
-                        "Osvaldo Salvador",
-                        "Fernandez Valdez",
+                        "Osvaldo",
+                        "Fernandez",
                         null,
                         "849-253-6511",
                         LocalDate.of(1999, Calendar.FEBRUARY + 1,22),
@@ -65,7 +65,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 new Person(
                         "22222222222",
                         "Edgar",
-                        "Garcia Coronado",
+                        "Garcia",
                         null,
                         "829-200-6511",
                         LocalDate.of(1999, Calendar.JUNE + 1,10),
@@ -77,8 +77,8 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 ),
                 new Person(
                         "33333333333",
-                        "Armando Antonio",
-                        "Roman Gonzales",
+                        "Armando",
+                        "Roman",
                         null,
                         "809-253-6610",
                         LocalDate.of(1999, Calendar.DECEMBER + 1,30),
@@ -91,7 +91,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 new Person(
                         "44444444444",
                         "Daniel",
-                        "Peña Moronta",
+                        "Peña",
                         null,
                         "809-203-6001",
                         LocalDate.of(1999, Calendar.JANUARY + 1,24),

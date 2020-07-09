@@ -54,8 +54,6 @@ public class SecurityService implements UserDetailsService {
         Credential credential = credentialRepository.findByUsername(username);
         credential = credential == null ? personRepository.findByEmail(username).getUserCredential() : credential;
 
-
-
         //Validating the user
         if (credential == null) {
             String message = String.format("Username %s not found!!", username);

@@ -23,13 +23,15 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
     private CredentialRepository credentialRepository;
     private PersonService personService;
     private RoleService roleService;
+    private NotificationTokenService notificationTokenService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CredentialService(CredentialRepository credentialRepository, PersonService personService, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public CredentialService(CredentialRepository credentialRepository, PersonService personService, RoleService roleService, NotificationTokenService notificationTokenService, PasswordEncoder passwordEncoder) {
         this.credentialRepository = credentialRepository;
         this.personService = personService;
         this.roleService = roleService;
+        this.notificationTokenService = notificationTokenService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -51,22 +53,24 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
         checkUsername(username);
 
         //Finishing the entire process
-        UserCredential credential = new UserCredential();
-        credential.setPerson(person);
-        credential.setUsername(username);
-        credential.setPassword(passwordEncoder.encode(password));
-        credential.setAuthenticated(true);
-        credential.setRoles(List.of(roleService.findByName("ROLE_USER")));
+        UserCredential credential = new UserCredential(
+                username,
+                passwordEncoder.encode(password),
+                true,
+                person,
+                List.of(roleService.findByName("ROLE_USER"))
+        );
         credential = (UserCredential) createOrUpdate(credential);
         person.setUserCredential(credential);
         person.setEmail(email);
         personService.createOrUpdate(person);
-        Logger.getInstance().getLog(getClass()).info(String.format("%s se ha registrado en CCTS", credential.getUsername()));
+
+        Logger.getInstance().getLog(getClass()).info(String.format("%s signup to CCTS", credential.getUsername()));
     }
 
     public Person checkPersonalIdentifier(String personalIdentifier) throws CustomApiException {
         Person person = personService.findPersonByPersonalIdentifier(personalIdentifier);
-        if (person == null || person.getUserCredential() != null) {
+        if (!personalIdentifier.matches("[0-9]+") || personalIdentifier.length() != 11 || person == null || person.getUserCredential() != null) {
             throw new CustomApiException("Personal identifier is invalid. Try again.", 600);
         } else {
             return person;
@@ -76,20 +80,35 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
     public void checkEmail(String email) throws CustomApiException {
         Person emailPerson = personService.findByEmail(email);
         if (emailPerson != null) {
-            throw new CustomApiException("Email in use. Try with other!", 601);
+            throw new CustomApiException("Email is invalid. Try with other!", 601);
         }
     }
 
     public void checkEmail(String email, Person person) throws CustomApiException {
         Person emailPerson = personService.findByEmail(email);
         if (emailPerson != null && !person.equals(emailPerson)) {
-            throw new CustomApiException("Email in use. Try with other!", 601);
+            throw new CustomApiException("Email is invalid. Try with other!", 601);
         }
     }
 
     public void checkUsername(String username) throws CustomApiException {
-        if (findByUsername(username) != null) {
-            throw new CustomApiException("Username in use. Try with other!", 602);
+        if (username.length() <= 0 || !username.matches("^[a-zA-Z0-9]*$") || findByUsername(username) != null) {
+            throw new CustomApiException("Username is invalid. Try with other!", 602);
         }
+    }
+
+    public void signout(String username, String notificationToken) throws CustomApiException {
+        NotificationToken token = notificationTokenService.findByToken(notificationToken);
+        if (token != null && token.getUserCredential().getUsername().equals(username)) {
+            notificationTokenService.delete(token);
+        } else {
+            throw new CustomApiException("Invalid notification token", 603);
+        }
+        Logger.getInstance().getLog(getClass()).info(String.format("%s logout", username));
+    }
+
+    public void addNotificationToken(Credential username, String notificationToken) {
+        NotificationToken token = new NotificationToken(notificationToken, (UserCredential) username);
+        notificationTokenService.createOrUpdate(token);
     }
 }

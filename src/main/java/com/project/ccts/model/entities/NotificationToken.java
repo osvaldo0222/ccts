@@ -9,7 +9,8 @@ import java.time.LocalDate;
 public class NotificationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+    @Column(unique = true)
     private String token;
     @ManyToOne(fetch = FetchType.LAZY)
     private UserCredential userCredential;
@@ -24,11 +25,11 @@ public class NotificationToken {
         this.userCredential = userCredential;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

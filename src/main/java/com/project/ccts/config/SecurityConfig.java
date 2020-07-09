@@ -86,7 +86,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers("/public/**").permitAll()
                     .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                    .antMatchers("/api/beacon/ws").hasAnyAuthority("BEACON_READ_PRIVILEGE", "BEACON_WRITE_PRIVILEGE")
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey, credentialService))

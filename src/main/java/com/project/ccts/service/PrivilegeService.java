@@ -25,5 +25,14 @@ public class PrivilegeService extends AbstractCrud<Privilege, Long> {
     }
 
     public Privilege findByName(String name) { return privilegeRepository.findByName(name); }
+
+    public Privilege createPrivilegeIfNotFound(String name) {
+        Privilege privilege = findByName(name);
+        if (privilege == null) {
+            privilege = new Privilege(name);
+            privilege = createOrUpdate(privilege);
+        }
+        return privilege;
+    }
 }
 

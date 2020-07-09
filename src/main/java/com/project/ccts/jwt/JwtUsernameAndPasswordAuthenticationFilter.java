@@ -99,7 +99,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             String notificationToken = request.getHeader("NotificationToken");
 
             if (notificationToken != null && !notificationToken.equalsIgnoreCase("")) {
-                //TODO: NOTIFICATIONS TOKEN
+                credentialService.addNotificationToken(user, notificationToken);
+                Logger.getInstance().getLog(getClass()).info(String.format("%s has a notification token %s", authResult.getName(), notificationToken));
             }
         } else if (user instanceof BeaconCredential) {
             ((BeaconCredential) user).setStatus(BeaconStatus.ACTIVE);
@@ -111,6 +112,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         String token = Jwts.builder()
                 .setIssuer(jwtConfig.getIssuer())
                 .setSubject(authResult.getName())
+                .claim("name", ((UserCredential) user).getPerson().getFirstName() + " " + ((UserCredential) user).getPerson().getLastName())
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getTokenExpirationAfterMilliseconds()))

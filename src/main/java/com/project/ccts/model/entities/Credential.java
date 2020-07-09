@@ -17,12 +17,13 @@ public class Credential {
     @ManyToMany
     protected Collection<Role> roles;
 
+    public Credential() { }
+
     public Credential(String username, String password, Boolean authenticated) {
         this.username = username;
         this.password = password;
         this.authenticated = authenticated;
     }
-    public Credential(){}
 
     public Long getId() {
         return id;

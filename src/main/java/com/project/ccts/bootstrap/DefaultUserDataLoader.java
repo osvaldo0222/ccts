@@ -1,9 +1,8 @@
 package com.project.ccts.bootstrap;
 
-import com.project.ccts.model.entities.Credential;
-import com.project.ccts.model.entities.Privilege;
-import com.project.ccts.model.entities.Role;
-import com.project.ccts.model.entities.UserCredential;
+import com.project.ccts.model.entities.*;
+import com.project.ccts.model.enums.CivilStatus;
+import com.project.ccts.model.enums.Gender;
 import com.project.ccts.service.*;
 import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,9 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 
 @Component
@@ -21,18 +22,16 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
     private CredentialService credentialService;
     private PrivilegeService privilegeService;
     private RoleService roleService;
-    private BeaconService beaconService;
-    private LocalityService localityService;
+    private PersonService personService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DefaultUserDataLoader(CredentialService credentialService, PrivilegeService privilegeService, RoleService roleService, BeaconService beaconService, PasswordEncoder passwordEncoder, LocalityService localityService) {
+    public DefaultUserDataLoader(CredentialService credentialService, PrivilegeService privilegeService, RoleService roleService, PersonService personService, PasswordEncoder passwordEncoder) {
         this.credentialService = credentialService;
         this.privilegeService = privilegeService;
         this.roleService = roleService;
-        this.beaconService = beaconService;
+        this.personService = personService;
         this.passwordEncoder = passwordEncoder;
-        this.localityService = localityService;
     }
 
     @Override
@@ -62,39 +61,46 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
             admin.setPassword(passwordEncoder.encode("admin"));
             admin.setRoles(superuserRoles);
             admin.setAuthenticated(true);
-            credentialService.createOrUpdate(admin);
+            admin = credentialService.createOrUpdate(admin);
         }
+
+        Person person = new Person(
+                "00000000000",
+                "Administrador",
+                "",
+                "admin@ccts",
+                "849-253-6511",
+                LocalDate.of(1999, Calendar.FEBRUARY + 1,22),
+                Gender.MALE,
+                CivilStatus.SINGLE,
+                "Ingeniero",
+                new Address("Calle 80 #5 Los tocones", "51000", "Santiago", "Republica Dominicana"),
+                (UserCredential) admin
+        );
+
+        personService.createOrUpdate(person);
     }
 
     private void createDefaultRolesAndPrivilege() {
-        Logger.getInstance().getLog(this.getClass()).info("Creating and updating application privileges...");
+        Logger.getInstance().getLog(this.getClass()).info("Creating and updating application default privileges...");
 
-        Collection<Privilege> beaconPrivilege = Arrays.asList(createPrivilegeIfNotFound("BEACON_READ_PRIVILEGE"), createPrivilegeIfNotFound("BEACON_WRITE_PRIVILEGE"));
+        Collection<Privilege> beaconPrivilege = Arrays.asList(
+                privilegeService.createPrivilegeIfNotFound("BEACON_READ_PRIVILEGE"),
+                privilegeService.createPrivilegeIfNotFound("BEACON_WRITE_PRIVILEGE")
+        );
+        Collection<Privilege> adminPrivilege = Arrays.asList(
+                privilegeService.createPrivilegeIfNotFound("ADMIN_READ_PRIVILEGE"),
+                privilegeService.createPrivilegeIfNotFound("ADMIN_WRITE_PRIVILEGE")
+        );
+        Collection<Privilege> userPrivilege = Arrays.asList(
+                privilegeService.createPrivilegeIfNotFound("USER_READ_PRIVILEGE"),
+                privilegeService.createPrivilegeIfNotFound("USER_WRITE_PRIVILEGE")
+        );
 
-        Collection<Privilege> adminPrivilege = Arrays.asList(createPrivilegeIfNotFound("ADMIN_READ_PRIVILEGE"), createPrivilegeIfNotFound("ADMIN_WRITE_PRIVILEGE"));
+        Logger.getInstance().getLog(this.getClass()).info("Creating and updating application default roles...");
 
-        Logger.getInstance().getLog(this.getClass()).info("Creating and updating application roles...");
-
-        createRoleIfNotFound("ROLE_ADMIN", adminPrivilege);
-        createRoleIfNotFound("ROLE_BEACON", beaconPrivilege);
-        createRoleIfNotFound("ROLE_USER", null);
-    }
-
-    private void createRoleIfNotFound(String role_user, Collection<Privilege> privileges) {
-        Role role = roleService.findByName(role_user);
-        if (role == null) {
-            role = new Role(role_user);
-            role.setPrivileges(privileges);
-            roleService.createOrUpdate(role);
-        }
-    }
-
-    private Privilege createPrivilegeIfNotFound(String name) {
-        Privilege privilege = privilegeService.findByName(name);
-        if (privilege == null) {
-            privilege = new Privilege(name);
-            privilegeService.createOrUpdate(privilege);
-        }
-        return privilege;
+        roleService.createRoleIfNotFound("ROLE_ADMIN", adminPrivilege);
+        roleService.createRoleIfNotFound("ROLE_BEACON", beaconPrivilege);
+        roleService.createRoleIfNotFound("ROLE_USER", userPrivilege);
     }
 }
