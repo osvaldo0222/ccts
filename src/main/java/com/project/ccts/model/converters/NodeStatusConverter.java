@@ -1,29 +1,29 @@
 package com.project.ccts.model.converters;
 
-import com.project.ccts.model.enums.BeaconStatus;
+import com.project.ccts.model.enums.NodeStatus;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.stream.Stream;
 
 @Converter(autoApply = true)
-public class BeaconStatusConverter implements AttributeConverter<BeaconStatus, Integer> {
+public class NodeStatusConverter implements AttributeConverter<NodeStatus, Integer> {
 
     @Override
-    public Integer convertToDatabaseColumn(BeaconStatus beaconStatus) {
-        if (beaconStatus == null) {
+    public Integer convertToDatabaseColumn(NodeStatus nodeStatus) {
+        if (nodeStatus == null) {
             return null;
         }
-        return beaconStatus.getId();
+        return nodeStatus.getId();
     }
 
     @Override
-    public BeaconStatus convertToEntityAttribute(Integer id) {
+    public NodeStatus convertToEntityAttribute(Integer id) {
         if (id == null) {
             return null;
         }
 
-        return Stream.of(BeaconStatus.values())
+        return Stream.of(NodeStatus.values())
                 .filter(c -> c.getId().equals(id))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);

@@ -1,10 +1,10 @@
 package com.project.ccts.bootstrap;
 
 import com.project.ccts.model.entities.*;
-import com.project.ccts.service.BeaconService;
+import com.project.ccts.service.NodeService;
 import com.project.ccts.service.LocalityService;
 import com.project.ccts.service.PersonService;
-import com.project.ccts.model.enums.BeaconStatus;
+import com.project.ccts.model.enums.NodeStatus;
 import com.project.ccts.model.enums.CivilStatus;
 import com.project.ccts.model.enums.Gender;
 import com.project.ccts.util.logger.Logger;
@@ -23,13 +23,13 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
 
     private PersonService personService;
     private LocalityService localityService;
-    private BeaconService beaconService;
+    private NodeService nodeService;
 
     @Autowired
-    public DefaultDataLoader(PersonService personService, LocalityService localityService, BeaconService beaconService) {
+    public DefaultDataLoader(PersonService personService, LocalityService localityService, NodeService nodeService) {
         this.personService = personService;
         this.localityService = localityService;
-        this.beaconService = beaconService;
+        this.nodeService = nodeService;
     }
 
     @Override
@@ -110,7 +110,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 "beacon-123");
 
         localityService.createOrUpdate(locality);
-        beaconService.createOrUpdate(new Beacon("123",locality,new BeaconCredential("beacon-123",
-                "123",false,BeaconStatus.ACTIVE), (float) 87.3,550));
+        nodeService.createOrUpdate(new Node("123",locality,new NodeCredential("beacon-123",
+                "123",false, NodeStatus.ACTIVE), (float) 87.3,550));
     }
 }

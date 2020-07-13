@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.project.ccts.dto.CustomResponseObjectUtil.createResponse;
 
@@ -32,6 +29,15 @@ public class UserApi {
             return new ResponseEntity<>(createResponse(HttpStatus.OK, "You logout is OK!"), HttpStatus.OK);
         } catch (CustomApiException e) {
             return new ResponseEntity<>(createResponse(e.getCode(), "Invalid notification token", "The notification token you provided is invalid"), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/getNotifications")
+    public ResponseEntity<CustomResponseObjectDTO> getNotifications(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "25") Integer size) {
+        try {
+            return new ResponseEntity<>(createResponse(HttpStatus.OK, credentialService.getNotification(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), page, size)), HttpStatus.OK);
+        } catch (CustomApiException e) {
+            return new ResponseEntity<>(createResponse(e.getCode(), "Username not found", "The username is not in the DB."), HttpStatus.CONFLICT);
         }
     }
 }

@@ -1,13 +1,13 @@
 package com.project.ccts.dto;
 
-import com.project.ccts.model.enums.BeaconStatus;
+import com.project.ccts.model.enums.NodeStatus;
 
-public class BeaconDetailsDTO {
+public class NodeDetailsDTO {
     private Long id;
     private String beaconIdentifier;
-    private BeaconStatus status;
+    private NodeStatus status;
 
-    public BeaconDetailsDTO(Long id, String beaconIdentifier, BeaconStatus status) {
+    public NodeDetailsDTO(Long id, String beaconIdentifier, NodeStatus status) {
         this.id = id;
         this.beaconIdentifier = beaconIdentifier;
 
@@ -30,11 +30,11 @@ public class BeaconDetailsDTO {
         this.beaconIdentifier = nodeIdentifier;
     }
 
-    public BeaconStatus getStatus() {
+    public NodeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(BeaconStatus status) {
+    public void setStatus(NodeStatus status) {
         this.status = status;
     }
 

@@ -10,41 +10,24 @@ import java.util.Collection;
 @Entity
 public class Locality extends SampleLocality {
     @OneToMany(mappedBy = "locality",cascade = CascadeType.ALL)
-    private Collection<Beacon> beacons;
-    @OneToMany(mappedBy = "locality")
-    private Collection<Visit> visits;
+    private Collection<Node> nodes;
     @Embedded
     private GpsLocation gpsLocation;
-    private String beaconsNamespace;
 
-    public Locality(String name, Address address, String email, String cellPhone,String beaconsNamespace) {
+    public Locality(String name, Address address, String email, String cellPhone) {
         super(name, address, email, cellPhone);
-        this.beaconsNamespace = beaconsNamespace;
     }
-    public void addBeacon(Beacon beacon){
-        if (getBeacons() == null){
-            this.beacons = new ArrayList<>();
-        }
-        this.beacons.add(beacon);
-    }
+
     public Locality(){
         super();
     }
 
-    public Collection<Beacon> getBeacons() {
-        return beacons;
+    public Collection<Node> getNodes() {
+        return nodes;
     }
 
-    public void setBeacons(Collection<Beacon> beacons) {
-        this.beacons = beacons;
-    }
-
-    public Collection<Visit> getVisits() {
-        return visits;
-    }
-
-    public void setVisits(Collection<Visit> visits) {
-        this.visits = visits;
+    public void setNodes(Collection<Node> nodes) {
+        this.nodes = nodes;
     }
 
     public GpsLocation getGpsLocation() {
@@ -53,13 +36,5 @@ public class Locality extends SampleLocality {
 
     public void setGpsLocation(GpsLocation gpsLocation) {
         this.gpsLocation = gpsLocation;
-    }
-
-    public String getBeaconsNamespace() {
-        return beaconsNamespace;
-    }
-
-    public void setBeaconsNamespace(String beaconsNamespace) {
-        this.beaconsNamespace = beaconsNamespace;
     }
 }

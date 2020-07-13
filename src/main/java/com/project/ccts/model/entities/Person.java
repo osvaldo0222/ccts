@@ -15,7 +15,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String personalIdentifier;
     private String firstName;
     private String lastName;
@@ -30,6 +30,8 @@ public class Person {
     private Address address;
     @OneToOne
     private UserCredential userCredential;
+    @OneToMany(mappedBy = "person")
+    private Collection<Visit> visits;
     @CreationTimestamp
     private Date createDate;
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
@@ -171,6 +173,14 @@ public class Person {
 
     public void setStatus(Collection<HealthStatus> status) {
         this.status = status;
+    }
+
+    public Collection<Visit> getVisits() {
+        return visits;
+    }
+
+    public void setVisits(Collection<Visit> visits) {
+        this.visits = visits;
     }
 
     public void addHealthStatus(HealthStatus healthStatus){

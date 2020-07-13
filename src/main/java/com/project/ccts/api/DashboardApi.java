@@ -67,12 +67,12 @@ public class DashboardApi {
     @GetMapping(path = "locality/{id}", produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> localityInfo(@PathVariable Long id) throws Exception {
         Locality locality = localityService.findById(id);
-        Collection<BeaconDetailsDTO> beaconDetailsDTOS = new ArrayList<>();
-        locality.getBeacons().stream().forEach(beacon ->
-                beaconDetailsDTOS.add(new BeaconDetailsDTO(beacon.getId(), beacon.getInstance(), beacon.getBeaconCredential().getStatus())));
-        beaconDetailsDTOS.stream().forEach(beaconDetailsDTO -> System.out.println(beaconDetailsDTO.toString()));
+        Collection<NodeDetailsDTO> nodeDetailsDTOS = new ArrayList<>();
+        locality.getNodes().stream().forEach(beacon ->
+                nodeDetailsDTOS.add(new NodeDetailsDTO(beacon.getId(), beacon.getInstance(), beacon.getNodeCredential().getStatus())));
+        nodeDetailsDTOS.stream().forEach(nodeDetailsDTO -> System.out.println(nodeDetailsDTO.toString()));
         LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(locality.getId(), locality.getName(), locality.getAddress(),
-                locality.getEmail(), locality.getCellPhone(), beaconDetailsDTOS);
+                locality.getEmail(), locality.getCellPhone(), nodeDetailsDTOS);
         return new ResponseEntity<>(createResponse(HttpStatus.OK,localityDetailsDTO), HttpStatus.OK);
     }
 
@@ -151,8 +151,8 @@ public class DashboardApi {
     public Collection<LocalityDTO> createLocalityDTO(Collection<Locality> locality) {
         Collection<LocalityDTO> localityDTOS = new ArrayList<>();
         locality.stream().forEach((aux_locality) -> {
-            localityDTOS.add(new LocalityDTO(aux_locality.getId(), aux_locality.getName(), aux_locality.getAddress().getCity(),
-                    aux_locality.getVisits().size(), aux_locality.getBeacons().size()));
+           localityDTOS.add(new LocalityDTO(aux_locality.getId(), aux_locality.getName(), aux_locality.getAddress().getCity(),
+                    aux_locality.getVisits().size(), aux_locality.getNodes().size()));
         });
         return localityDTOS;
     }

@@ -24,14 +24,16 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
     private RoleService roleService;
     private PersonService personService;
     private PasswordEncoder passwordEncoder;
+    private NotificationService notificationService;
 
     @Autowired
-    public DefaultUserDataLoader(CredentialService credentialService, PrivilegeService privilegeService, RoleService roleService, PersonService personService, PasswordEncoder passwordEncoder) {
+    public DefaultUserDataLoader(CredentialService credentialService, PrivilegeService privilegeService, RoleService roleService, PersonService personService, PasswordEncoder passwordEncoder, NotificationService notificationService) {
         this.credentialService = credentialService;
         this.privilegeService = privilegeService;
         this.roleService = roleService;
         this.personService = personService;
         this.passwordEncoder = passwordEncoder;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -64,6 +66,10 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
             admin = credentialService.createOrUpdate(admin);
         }
 
+        Notification notification = new Notification("Precaucion", "Mi primera notificacion", null, (UserCredential) admin);
+
+        notificationService.createOrUpdate(notification);
+
         Person person = new Person(
                 "00000000000",
                 "Administrador",
@@ -85,8 +91,8 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating application default privileges...");
 
         Collection<Privilege> beaconPrivilege = Arrays.asList(
-                privilegeService.createPrivilegeIfNotFound("BEACON_READ_PRIVILEGE"),
-                privilegeService.createPrivilegeIfNotFound("BEACON_WRITE_PRIVILEGE")
+                privilegeService.createPrivilegeIfNotFound("NODE_READ_PRIVILEGE"),
+                privilegeService.createPrivilegeIfNotFound("NODE_WRITE_PRIVILEGE")
         );
         Collection<Privilege> adminPrivilege = Arrays.asList(
                 privilegeService.createPrivilegeIfNotFound("ADMIN_READ_PRIVILEGE"),
@@ -100,7 +106,7 @@ public class DefaultUserDataLoader implements ApplicationListener<ContextRefresh
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating application default roles...");
 
         roleService.createRoleIfNotFound("ROLE_ADMIN", adminPrivilege);
-        roleService.createRoleIfNotFound("ROLE_BEACON", beaconPrivilege);
+        roleService.createRoleIfNotFound("ROLE_NODE", beaconPrivilege);
         roleService.createRoleIfNotFound("ROLE_USER", userPrivilege);
     }
 }

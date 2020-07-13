@@ -2,11 +2,10 @@ package com.project.ccts.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ccts.model.entities.Credential;
-import com.project.ccts.model.entities.BeaconCredential;
-import com.project.ccts.model.entities.NotificationToken;
+import com.project.ccts.model.entities.NodeCredential;
 import com.project.ccts.model.entities.UserCredential;
 import com.project.ccts.service.CredentialService;
-import com.project.ccts.model.enums.BeaconStatus;
+import com.project.ccts.model.enums.NodeStatus;
 import com.project.ccts.util.logger.Logger;
 import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * This is the filter for the first authentication step with JWT.
@@ -95,15 +93,17 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         //Updating the user if is from mobile or it's a node
         Credential user = credentialService.findByUsername(authResult.getName());
 
+        String name = authResult.getName();
+
         if (user instanceof UserCredential) {
+            response.addHeader("uuid", ((UserCredential) user).getUuid().toString());
             String notificationToken = request.getHeader("NotificationToken");
+            name = ((UserCredential) user).getPerson().getFirstName() + " " + ((UserCredential) user).getPerson().getLastName();
 
             if (notificationToken != null && !notificationToken.equalsIgnoreCase("")) {
                 credentialService.addNotificationToken(user, notificationToken);
                 Logger.getInstance().getLog(getClass()).info(String.format("%s has a notification token %s", authResult.getName(), notificationToken));
             }
-        } else if (user instanceof BeaconCredential) {
-            ((BeaconCredential) user).setStatus(BeaconStatus.ACTIVE);
         }
 
         credentialService.createOrUpdate(user);
@@ -112,7 +112,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         String token = Jwts.builder()
                 .setIssuer(jwtConfig.getIssuer())
                 .setSubject(authResult.getName())
-                .claim("name", ((UserCredential) user).getPerson().getFirstName() + " " + ((UserCredential) user).getPerson().getLastName())
+                .claim("name", name)
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getTokenExpirationAfterMilliseconds()))

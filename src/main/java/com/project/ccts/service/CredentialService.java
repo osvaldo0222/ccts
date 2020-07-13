@@ -1,19 +1,18 @@
 package com.project.ccts.service;
 
-import com.project.ccts.model.entities.Credential;
-import com.project.ccts.model.entities.NotificationToken;
-import com.project.ccts.model.entities.Person;
-import com.project.ccts.model.entities.UserCredential;
+import com.project.ccts.model.entities.*;
 import com.project.ccts.repository.CredentialRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import com.project.ccts.util.exception.CustomApiException;
 import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -24,14 +23,16 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
     private PersonService personService;
     private RoleService roleService;
     private NotificationTokenService notificationTokenService;
+    private NotificationService notificationService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CredentialService(CredentialRepository credentialRepository, PersonService personService, RoleService roleService, NotificationTokenService notificationTokenService, PasswordEncoder passwordEncoder) {
+    public CredentialService(CredentialRepository credentialRepository, PersonService personService, RoleService roleService, NotificationTokenService notificationTokenService, NotificationService notificationService, PasswordEncoder passwordEncoder) {
         this.credentialRepository = credentialRepository;
         this.personService = personService;
         this.roleService = roleService;
         this.notificationTokenService = notificationTokenService;
+        this.notificationService = notificationService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -108,7 +109,19 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
     }
 
     public void addNotificationToken(Credential username, String notificationToken) {
-        NotificationToken token = new NotificationToken(notificationToken, (UserCredential) username);
-        notificationTokenService.createOrUpdate(token);
+        NotificationToken token = notificationTokenService.findByToken(notificationToken);
+        if (token == null) {
+            token = new NotificationToken(notificationToken, (UserCredential) username);
+            notificationTokenService.createOrUpdate(token);
+        }
+    }
+
+    public Collection<Notification> getNotification(String username, Integer page, Integer size) throws CustomApiException {
+        Credential credential = findByUsername(username);
+        if (credential != null) {
+            return notificationService.findByUserCredentialAndOrderBySendDateDataDesc(((UserCredential) credential), PageRequest.of(page, size));
+        } else {
+            throw new CustomApiException("User not found", 604);
+        }
     }
 }
