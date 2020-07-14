@@ -22,6 +22,8 @@ public class Locality extends SampleLocality {
         super();
     }
 
+
+
     public Collection<Node> getNodes() {
         return nodes;
     }
@@ -36,5 +38,12 @@ public class Locality extends SampleLocality {
 
     public void setGpsLocation(GpsLocation gpsLocation) {
         this.gpsLocation = gpsLocation;
+    }
+
+    public void addNode(Node node){
+        if (nodes == null){
+            nodes = new ArrayList<>();
+        }
+        nodes.add(node);
     }
 }

@@ -25,6 +25,10 @@ public class UserCredential extends Credential {
         this.person = person;
         this.roles = roles;
     }
+    public UserCredential(String username, String password, Boolean authenticated) {
+        super(username, password, authenticated);
+
+    }
 
     @PrePersist
     public void autofill() {

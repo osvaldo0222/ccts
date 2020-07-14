@@ -21,6 +21,13 @@ public class Node {
 
     public Node(){}
 
+    public Node(String nodeIdentifier, String description, Float batteryLevel) {
+        this.nodeIdentifier = nodeIdentifier;
+        this.description = description;
+        this.batteryLevel = batteryLevel;
+
+    }
+
     public Long getId() {
         return id;
     }

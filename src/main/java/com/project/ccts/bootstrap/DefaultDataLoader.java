@@ -106,11 +106,12 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
     }
     public void loadLocality(){
         Locality locality = new Locality("Osvaldo's Home",new Address("Calle 80 #5 Los tocones"
-                ,"51000","Santiago","Republica Dominicana"),"sample@spring.com","8097776766",
-                "beacon-123");
+                ,"51000","Santiago","Republica Dominicana"),"sample@spring.com","8097776766");
 
         localityService.createOrUpdate(locality);
-        nodeService.createOrUpdate(new Node("123",locality,new NodeCredential("beacon-123",
-                "123",false, NodeStatus.ACTIVE), (float) 87.3,550));
+        Node node = new Node("N-1000","This is demo",(float)98.3);
+        node.setLocality(locality);
+        nodeService.createOrUpdate(node);
+
     }
 }

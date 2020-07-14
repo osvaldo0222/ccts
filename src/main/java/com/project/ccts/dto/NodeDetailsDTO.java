@@ -5,13 +5,17 @@ import com.project.ccts.model.enums.NodeStatus;
 public class NodeDetailsDTO {
     private Long id;
     private String beaconIdentifier;
-    private NodeStatus status;
+    private Float batteryLevel;
+    private Integer visits;
+    private NodeStatus nodeStatus;
 
-    public NodeDetailsDTO(Long id, String beaconIdentifier, NodeStatus status) {
+
+    public NodeDetailsDTO(Long id, String beaconIdentifier, Float batteryLevel, Integer visits,NodeStatus nodeStatus) {
         this.id = id;
         this.beaconIdentifier = beaconIdentifier;
-
-        this.status = status;
+        this.batteryLevel = batteryLevel;
+        this.visits = visits;
+        this.nodeStatus = nodeStatus;
     }
 
     public Long getId() {
@@ -30,12 +34,28 @@ public class NodeDetailsDTO {
         this.beaconIdentifier = nodeIdentifier;
     }
 
-    public NodeStatus getStatus() {
-        return status;
+    public Float getBatteryLevel() {
+        return batteryLevel;
     }
 
-    public void setStatus(NodeStatus status) {
-        this.status = status;
+    public void setBatteryLevel(Float batteryLevel) {
+        this.batteryLevel = batteryLevel;
+    }
+
+    public Integer getVisits() {
+        return visits;
+    }
+
+    public void setVisits(Integer visits) {
+        this.visits = visits;
+    }
+
+    public NodeStatus getNodeStatus() {
+        return nodeStatus;
+    }
+
+    public void setNodeStatus(NodeStatus nodeStatus) {
+        this.nodeStatus = nodeStatus;
     }
 
     @Override
@@ -43,7 +63,7 @@ public class NodeDetailsDTO {
         return "BeaconDetailsDTO{" +
                 "id=" + id +
                 ", beaconIdentifier='" + beaconIdentifier + '\'' +
-                ", status=" + status +
+               
                 '}';
     }
 }

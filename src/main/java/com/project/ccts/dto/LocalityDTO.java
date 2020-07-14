@@ -4,14 +4,12 @@ public class LocalityDTO {
     private Long id;
     private String name;
     private String province;
-    private Integer visits;
     private Integer nodes;
 
-    public LocalityDTO(Long id, String name, String province, Integer visits, Integer nodes) {
+    public LocalityDTO(Long id, String name, String province, Integer nodes) {
         this.id = id;
         this.name = name;
         this.province = province;
-        this.visits = visits;
         this.nodes = nodes;
     }
 
@@ -47,11 +45,5 @@ public class LocalityDTO {
         this.province = province;
     }
 
-    public Integer getVisits() {
-        return visits;
-    }
-
-    public void setVisits(Integer visits) {
-        this.visits = visits;
-    }
+    
 }

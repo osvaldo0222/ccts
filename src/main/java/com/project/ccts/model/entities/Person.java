@@ -62,6 +62,15 @@ public class Person {
         this.address = address;
         this.userCredential = userCredential;
     }
+    public Person(String personalIdentifier, String firstName, String lastName, String email, String occupation, Address address) {
+        this.personalIdentifier = personalIdentifier;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.occupation = occupation;
+        this.address = address;
+
+    }
 
     public Long getId() {
         return id;
