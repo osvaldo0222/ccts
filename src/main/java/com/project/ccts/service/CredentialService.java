@@ -43,6 +43,16 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
 
     public Credential findByUsername(String username) { return credentialRepository.findByUsername(username); }
 
+    public Person findPersonByUsername(String username) throws CustomApiException {
+        Credential credential = findByUsername(username);
+
+        if (credential != null && credential instanceof UserCredential) {
+            return ((UserCredential) credential).getPerson();
+        } else {
+            throw new CustomApiException("This user is not a person!", 605);
+        }
+    }
+
     public void signup(String personalIdentifier, String email, String username, String password) throws CustomApiException {
         //Validating the person
         Person person = checkPersonalIdentifier(personalIdentifier);

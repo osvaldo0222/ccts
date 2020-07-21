@@ -2,6 +2,7 @@ package com.project.ccts.api;
 
 import com.project.ccts.dto.CustomResponseObjectDTO;
 import com.project.ccts.service.CredentialService;
+import com.project.ccts.service.VisitService;
 import com.project.ccts.util.exception.CustomApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,16 @@ import static com.project.ccts.dto.CustomResponseObjectUtil.createResponse;
 public class UserApi {
 
     private CredentialService credentialService;
+    private VisitService visitService;
 
     @Autowired
     public void setCredentialService(CredentialService credentialService) {
         this.credentialService = credentialService;
+    }
+
+    @Autowired
+    public void setVisitService(VisitService visitService) {
+        this.visitService = visitService;
     }
 
     @PutMapping("/signout")
@@ -38,6 +45,15 @@ public class UserApi {
             return new ResponseEntity<>(createResponse(HttpStatus.OK, credentialService.getNotification(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), page, size)), HttpStatus.OK);
         } catch (CustomApiException e) {
             return new ResponseEntity<>(createResponse(e.getCode(), "Username not found", "The username is not in the DB."), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/getVisits")
+    public ResponseEntity<CustomResponseObjectDTO> getVisits(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "25") Integer size, @RequestParam(defaultValue = "") String search) {
+        try {
+            return new ResponseEntity<>(createResponse(HttpStatus.OK, visitService.getVisits(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), page, size, search)), HttpStatus.OK);
+        } catch (CustomApiException e) {
+            return new ResponseEntity<>(createResponse(e.getCode(), e.getMessage(), "The username is not a person!"), HttpStatus.CONFLICT);
         }
     }
 }

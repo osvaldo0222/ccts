@@ -3,24 +3,36 @@ package com.project.ccts.model.entities;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Entity
 public class Visit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private Node node;
+    @OneToOne
+    private Locality locality;
+    @ManyToMany
+    private Collection<Node> nodes;
     @ManyToOne
     private Person person;
-    private Date timeArrived;
-    private Date timeLeft;
+    private LocalDateTime timeArrived;
+    private LocalDateTime timeLeft;
     private Float minimunDistance;
     @CreationTimestamp
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
     public Visit() {
+    }
+
+    public Visit(Collection<Node> nodes, Locality locality, Person person, LocalDateTime timeArrived, LocalDateTime timeLeft, Float minimunDistance) {
+        this.locality = locality;
+        this.nodes = nodes;
+        this.person = person;
+        this.timeArrived = timeArrived;
+        this.timeLeft = timeLeft;
+        this.minimunDistance = minimunDistance;
     }
 
     public Long getId() {
@@ -31,36 +43,44 @@ public class Visit {
         this.id = id;
     }
 
-    public Date getTimeArrived() {
+    public Locality getLocality() {
+        return locality;
+    }
+
+    public void setLocality(Locality locality) {
+        this.locality = locality;
+    }
+
+    public LocalDateTime getTimeArrived() {
         return timeArrived;
     }
 
-    public void setTimeArrived(Date timeArrived) {
+    public void setTimeArrived(LocalDateTime timeArrived) {
         this.timeArrived = timeArrived;
     }
 
-    public Date getTimeLeft() {
+    public LocalDateTime getTimeLeft() {
         return timeLeft;
     }
 
-    public void setTimeLeft(Date timeLeft) {
+    public void setTimeLeft(LocalDateTime timeLeft) {
         this.timeLeft = timeLeft;
     }
 
-    public Date getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Node getNode() {
-        return node;
+    public Collection<Node> getNodes() {
+        return nodes;
     }
 
-    public void setNode(Node node) {
-        this.node = node;
+    public void setNode(Collection<Node> nodes) {
+        this.nodes = nodes;
     }
 
     public Person getPerson() {

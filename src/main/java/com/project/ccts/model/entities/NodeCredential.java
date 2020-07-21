@@ -7,11 +7,11 @@ public class NodeCredential extends Credential {
     @OneToOne(mappedBy = "nodeCredential")
     private Node node;
 
-    public NodeCredential(String username, String password, Boolean authenticated) {
-        super(username, password, authenticated);
+    public NodeCredential() {
     }
 
-    public NodeCredential() {
+    public NodeCredential(String username, String password, Boolean authenticated) {
+        super(username, password, authenticated);
     }
 
     public Node getNode() {

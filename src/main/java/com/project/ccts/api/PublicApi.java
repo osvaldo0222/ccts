@@ -2,7 +2,11 @@ package com.project.ccts.api;
 
 import com.project.ccts.dto.CustomResponseObjectDTO;
 import com.project.ccts.dto.SignUpDTO;
+import com.project.ccts.model.entities.Notification;
+import com.project.ccts.model.entities.NotificationData;
+import com.project.ccts.model.entities.UserCredential;
 import com.project.ccts.service.CredentialService;
+import com.project.ccts.service.NotificationService;
 import com.project.ccts.util.exception.CustomApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +16,16 @@ import org.springframework.web.bind.annotation.*;
 import static com.project.ccts.dto.CustomResponseObjectUtil.createResponse;
 
 @RestController
-@RequestMapping("/public")
+@RequestMapping("/api/public")
 public class PublicApi {
 
     private CredentialService credentialService;
+    private NotificationService notificationService;
+
+    @Autowired
+    public PublicApi(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     @Autowired
     public void setCredentialService(CredentialService credentialService) {
@@ -60,5 +70,10 @@ public class PublicApi {
         } catch (CustomApiException e) {
             return new ResponseEntity<>(createResponse(e.getCode(), "Email not available for accounts", e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    @GetMapping("/send")
+    public void sendNoti() {
+        notificationService.sendNotificationToUser(new Notification("Hola Mundo", "", "Este es el cuerpo", new NotificationData("Home"), (UserCredential) credentialService.findByUsername("admin")));
     }
 }

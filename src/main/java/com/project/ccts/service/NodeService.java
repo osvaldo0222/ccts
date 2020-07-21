@@ -24,4 +24,8 @@ public class NodeService extends AbstractCrud<Node, Long> {
         return nodeRepository;
     }
 
+    public Node findByNodeIdentifier(String nodeIdentifier) {
+        return nodeRepository.findByNodeIdentifier(nodeIdentifier);
+    }
+
 }

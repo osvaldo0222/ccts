@@ -8,24 +8,29 @@ public class Node {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nodeIdentifier;
     private String description;
     @ManyToOne
     private Locality locality;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private NodeCredential nodeCredential;
     private Float batteryLevel;
-    @OneToMany(mappedBy = "node")
+    @ManyToMany(mappedBy = "nodes")
     private Collection<Visit> visits;
 
-    public Node(){}
+    public Node() {}
 
-    public Node(String nodeIdentifier, String description, Float batteryLevel) {
-        this.nodeIdentifier = nodeIdentifier;
+    public Node(String description, Locality locality, NodeCredential nodeCredential, Float batteryLevel) {
         this.description = description;
+        this.locality = locality;
+        this.nodeCredential = nodeCredential;
         this.batteryLevel = batteryLevel;
+    }
 
+    @PostPersist
+    public void generateNodeIdentifier() {
+        setNodeIdentifier(nodeCredential.getUsername() + "-" + id);
     }
 
     public Long getId() {

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 public class Notification {
@@ -12,10 +12,13 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @JsonIgnore
+    private String subtitle;
     private String messageBody;
-    private String data;
+    @Embedded
+    private NotificationData data;
     @CreationTimestamp
-    private Date sendDate;
+    private LocalDateTime sendDate;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private UserCredential userCredential;
@@ -23,8 +26,9 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(String title, String messageBody, String data, UserCredential userCredential) {
+    public Notification(String title, String subtitle, String messageBody, NotificationData data, UserCredential userCredential) {
         this.title = title;
+        this.subtitle = subtitle;
         this.messageBody = messageBody;
         this.data = data;
         this.userCredential = userCredential;
@@ -46,6 +50,14 @@ public class Notification {
         this.title = title;
     }
 
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
+
     public String getMessageBody() {
         return messageBody;
     }
@@ -54,19 +66,19 @@ public class Notification {
         this.messageBody = messageBody;
     }
 
-    public String getData() {
+    public NotificationData getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(NotificationData data) {
         this.data = data;
     }
 
-    public Date getSendDate() {
+    public LocalDateTime getSendDate() {
         return sendDate;
     }
 
-    public void setSendDate(Date sendDate) {
+    public void setSendDate(LocalDateTime sendDate) {
         this.sendDate = sendDate;
     }
 
