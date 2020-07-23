@@ -35,6 +35,9 @@ public class LocalityService extends AbstractCrud<Locality, Long> {
     public Collection<Locality> findByNameContaining(String name){
         return localityRepository.findByNameContaining(name);
     }
+    public Locality findByCellPhone(String cellPhone){
+        return localityRepository.findByCellPhone(cellPhone);
+    }
     public Collection<LocalityDTO> parseToLocalityDTO(Collection<Locality> locality) {
         Collection<LocalityDTO> localityDTOS = new ArrayList<>();
         locality.stream().forEach((aux_locality) -> {

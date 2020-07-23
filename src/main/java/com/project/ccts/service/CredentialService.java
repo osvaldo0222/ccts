@@ -1,5 +1,6 @@
 package com.project.ccts.service;
 
+import com.project.ccts.dto.AdminListDTO;
 import com.project.ccts.model.entities.*;
 import com.project.ccts.repository.CredentialRepository;
 import com.project.ccts.service.common.AbstractCrud;
@@ -8,12 +9,18 @@ import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static com.project.ccts.dto.CustomResponseObjectUtil.createResponse;
 
 @Service
 @Transactional
@@ -39,6 +46,34 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
     @Override
     public JpaRepository<Credential, Long> getDao() {
         return credentialRepository;
+    }
+
+    public Collection<AdminListDTO> createAdminDTO(Collection<UserCredential> userCredentials){
+        Collection<AdminListDTO> adminList = new ArrayList<>();
+        if (userCredentials != null){
+            userCredentials.stream().forEach(userCredential -> {
+                Collection<String> privilege = new ArrayList<>();
+                userCredential.getRoles().stream().forEach(role -> {
+                    role.getPrivileges().stream().forEach(privilege1 -> {
+                        privilege.add(privilege1.getName());
+                    });
+                });
+                adminList.add(new AdminListDTO(userCredential.getPerson().getEmail(),
+                        userCredential.getUsername(),privilege,userCredential.getAuthenticated()));
+            });
+        }
+        return adminList;
+    }
+
+    public Collection<UserCredential> findUsersCredentialType(){
+        Collection<Credential> credentials = credentialRepository.findAll();
+        Collection<UserCredential> auxCredentials = new ArrayList<>();
+        credentials.stream().forEach(credential -> {
+            if (credential instanceof  UserCredential){
+                auxCredentials.add((UserCredential) credential);
+            }
+        });
+        return auxCredentials;
     }
 
     public Credential findByUsername(String username) { return credentialRepository.findByUsername(username); }

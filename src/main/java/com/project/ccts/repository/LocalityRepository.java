@@ -13,4 +13,6 @@ public interface LocalityRepository extends JpaRepository<Locality, Long> {
 
     Collection<Locality> findByNameContaining(String name);
 
+    Locality findByCellPhone(String cellphone);
+
 }
