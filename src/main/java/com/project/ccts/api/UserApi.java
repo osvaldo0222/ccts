@@ -7,6 +7,7 @@ import com.project.ccts.util.exception.CustomApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class UserApi {
     }
 
     @PutMapping("/signout")
+    @PreAuthorize("hasAnyAuthority('USER_WRITE_PRIVILEGE')")
     public ResponseEntity<CustomResponseObjectDTO> signout(@RequestHeader(name = "NotificationToken") String notificationToken) {
         try {
             credentialService.signout(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), notificationToken);
@@ -40,6 +42,7 @@ public class UserApi {
     }
 
     @GetMapping("/getNotifications")
+    @PreAuthorize("hasAnyAuthority('USER_READ_PRIVILEGE')")
     public ResponseEntity<CustomResponseObjectDTO> getNotifications(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "25") Integer size) {
         try {
             return new ResponseEntity<>(createResponse(HttpStatus.OK, credentialService.getNotification(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), page, size)), HttpStatus.OK);
@@ -49,6 +52,7 @@ public class UserApi {
     }
 
     @GetMapping("/getVisits")
+    @PreAuthorize("hasAnyAuthority('USER_READ_PRIVILEGE')")
     public ResponseEntity<CustomResponseObjectDTO> getVisits(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "25") Integer size, @RequestParam(defaultValue = "") String search) {
         try {
             return new ResponseEntity<>(createResponse(HttpStatus.OK, visitService.getVisits(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), page, size, search)), HttpStatus.OK);

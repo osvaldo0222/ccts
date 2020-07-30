@@ -1,5 +1,7 @@
 package com.project.ccts.model.entities;
 
+import com.project.ccts.model.enums.NodeStatus;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -16,21 +18,23 @@ public class Node {
     @OneToOne
     private NodeCredential nodeCredential;
     private Float batteryLevel;
+    private NodeStatus status;
     @ManyToMany(mappedBy = "nodes")
     private Collection<Visit> visits;
 
     public Node() {}
 
-    public Node(String description, Locality locality, NodeCredential nodeCredential, Float batteryLevel) {
+    public Node(String description, Locality locality, NodeCredential nodeCredential, Float batteryLevel, NodeStatus status) {
         this.description = description;
         this.locality = locality;
         this.nodeCredential = nodeCredential;
         this.batteryLevel = batteryLevel;
+        this.status = status;
     }
 
     @PostPersist
     public void generateNodeIdentifier() {
-        setNodeIdentifier(nodeCredential.getUsername() + "-" + id);
+        setNodeIdentifier("NODE-" + id);
     }
 
     public Long getId() {
@@ -79,6 +83,14 @@ public class Node {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public NodeStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(NodeStatus status) {
+        this.status = status;
     }
 
     public Collection<Visit> getVisits() {

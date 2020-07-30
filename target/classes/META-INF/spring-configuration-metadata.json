@@ -4,6 +4,11 @@
       "name": "application.jwt",
       "type": "com.project.ccts.jwt.JwtConfig",
       "sourceType": "com.project.ccts.jwt.JwtConfig"
+    },
+    {
+      "name": "application.mqtt.broker",
+      "type": "com.project.ccts.mqtt.MqttConfig",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
     }
   ],
   "properties": [
@@ -26,6 +31,56 @@
       "name": "application.jwt.token-prefix",
       "type": "java.lang.String",
       "sourceType": "com.project.ccts.jwt.JwtConfig"
+    },
+    {
+      "name": "application.mqtt.broker.automatic-reconnect",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.client-id",
+      "type": "java.lang.String",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.completion-timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.config-topic",
+      "type": "java.lang.String",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.nodes-topic",
+      "type": "java.lang.String",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.password",
+      "type": "java.lang.String",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.qos",
+      "type": "java.lang.Integer",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.undefined-topic",
+      "type": "java.lang.String",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.url",
+      "type": "java.lang.String",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.username",
+      "type": "java.lang.String",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
     }
   ],
   "hints": []

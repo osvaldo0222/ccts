@@ -2,6 +2,7 @@ package com.project.ccts.bootstrap;
 
 import com.project.ccts.model.entities.*;
 import com.project.ccts.model.enums.InstitutionType;
+import com.project.ccts.model.enums.NodeStatus;
 import com.project.ccts.service.*;
 import com.project.ccts.model.enums.CivilStatus;
 import com.project.ccts.model.enums.Gender;
@@ -71,7 +72,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         createDefaultLocalities();
 
         //Create default visits
-        createDefaultVisits();
+        //createDefaultVisits();
 
         try {
             loadGlobalStatistics();
@@ -267,16 +268,16 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         prototype1 = (NodeCredential) credentialService.createOrUpdate(prototype1);
         prototype2 = (NodeCredential) credentialService.createOrUpdate(prototype2);
 
-        Node node1 = new Node("Lab. Telematica", locality, prototype1, 98.3F);
+        Node node1 = new Node("Lab. Telematica", locality, prototype1, 98.3F, NodeStatus.DOWN);
         nodeService.createOrUpdate(node1);
 
-        Node node2 = new Node("Lab. Microprocesadores", locality, prototype2, 80.2F);
+        Node node2 = new Node("Lab. Microprocesadores", locality, prototype2, 80.2F, NodeStatus.DOWN);
         nodeService.createOrUpdate(node2);
     }
 
     private void createDefaultVisits() {
-        Node telematica = nodeService.findByNodeIdentifier("prototype1-1");
-        Node micro = nodeService.findByNodeIdentifier("prototype2-2");
+        Node telematica = nodeService.findByNodeIdentifier("NODE-1");
+        Node micro = nodeService.findByNodeIdentifier("NODE-2");
 
         try {
             Person person = credentialService.findPersonByUsername("admin");

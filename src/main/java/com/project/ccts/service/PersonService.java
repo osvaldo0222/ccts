@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @Transactional
 public class PersonService extends AbstractCrud<Person, Long> {
@@ -32,6 +34,8 @@ public class PersonService extends AbstractCrud<Person, Long> {
     public Person findByEmail(String email) {
         return personRepository.findByEmail(email);
     }
+
+    public Person findByUuid(UUID uuid) { return personRepository.findByUserCredentialUuid(uuid); }
 
     public Boolean getPersonTestStatus(Person person) {
         boolean status;

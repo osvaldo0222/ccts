@@ -98,4 +98,13 @@ public class Visit {
     public void setMinimunDistance(Float minimunDistance) {
         this.minimunDistance = minimunDistance;
     }
+
+    public void addNode(Node node) {
+        for (Node aux : nodes) {
+            if (aux.getNodeIdentifier().equals(node.getNodeIdentifier())) {
+                return;
+            }
+        }
+        nodes.add(node);
+    }
 }
