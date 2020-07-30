@@ -52,17 +52,17 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
         Collection<AdminListDTO> adminList = new ArrayList<>();
         if (userCredentials != null){
             userCredentials.stream().forEach(userCredential -> {
-                Collection<String> privilege = new ArrayList<>();
-                userCredential.getRoles().stream().forEach(role -> {
-                    role.getPrivileges().stream().forEach(privilege1 -> {
-                        privilege.add(privilege1.getName());
-                    });
-                });
+                Collection<String> roles  = createRoleList(userCredential.getRoles());
                 adminList.add(new AdminListDTO(userCredential.getPerson().getEmail(),
-                        userCredential.getUsername(),privilege,userCredential.getAuthenticated()));
+                        userCredential.getUsername(),roles,userCredential.getAuthenticated()));
             });
         }
         return adminList;
+    }
+    public Collection<String> createRoleList(Collection<Role> role){
+        Collection<String> roles = new ArrayList<>();
+        role.stream().forEach(role1 -> roles.add(role1.getName()));
+        return roles;
     }
 
     public Collection<UserCredential> findUsersCredentialType(){
@@ -169,4 +169,17 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
             throw new CustomApiException("User not found", 604);
         }
     }
+    public Collection<UserCredential> getExistingUserCredentials(Collection<String> usernames){
+        Collection<UserCredential> userCredentials = new ArrayList<>();
+        if (usernames != null){
+            usernames.stream().forEach(s -> {
+                UserCredential userCredential = (UserCredential) findByUsername(s);
+                if (userCredential != null){
+                    userCredentials.add(userCredential);
+                }
+            });
+        }
+        return userCredentials;
+    }
+
 }

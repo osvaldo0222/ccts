@@ -11,6 +11,18 @@ public class Institution extends SampleLocality {
     private Collection<UserCredential> userCredentials;
     private InstitutionType type;
 
+    public Institution(){}
+
+    public Institution(String name, Address address, String email, String cellPhone, InstitutionType type) {
+        super(name, address, email, cellPhone);
+        this.type = type;
+    }
+
+
+    public Institution(InstitutionType type) {
+        this.type = type;
+    }
+
     public Collection<UserCredential> getUserCredentials() {
         return userCredentials;
     }
@@ -25,5 +37,16 @@ public class Institution extends SampleLocality {
 
     public void setType(InstitutionType type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Institution{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                ", email='" + email + '\'' +
+                ", cellPhone='" + cellPhone + '\'' +
+                '}';
     }
 }

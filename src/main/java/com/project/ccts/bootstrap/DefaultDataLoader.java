@@ -1,12 +1,15 @@
 package com.project.ccts.bootstrap;
 
 import com.project.ccts.model.entities.*;
+import com.project.ccts.model.enums.InstitutionType;
 import com.project.ccts.service.*;
 import com.project.ccts.model.enums.CivilStatus;
 import com.project.ccts.model.enums.Gender;
 import com.project.ccts.util.exception.CustomApiException;
 import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,10 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -31,9 +31,16 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
     private LocalityService localityService;
     private NodeService nodeService;
     private VisitService visitService;
+    private InstitutionService institutionService;
+    private GlobalStatisticsService globalStatisticsService;
+
 
     @Autowired
-    public DefaultDataLoader(CredentialService credentialService, PrivilegeService privilegeService, RoleService roleService, PersonService personService, PasswordEncoder passwordEncoder, NotificationService notificationService, LocalityService localityService, NodeService nodeService, VisitService visitService) {
+    public DefaultDataLoader(InstitutionService institutionService,CredentialService credentialService,
+                             PrivilegeService privilegeService, RoleService roleService,
+                             PersonService personService, PasswordEncoder passwordEncoder,
+                             NotificationService notificationService, LocalityService localityService,
+                             NodeService nodeService, VisitService visitService,GlobalStatisticsService globalStatisticsService) {
         this.credentialService = credentialService;
         this.privilegeService = privilegeService;
         this.roleService = roleService;
@@ -43,6 +50,8 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         this.localityService = localityService;
         this.nodeService = nodeService;
         this.visitService = visitService;
+        this.institutionService = institutionService;
+        this.globalStatisticsService = globalStatisticsService;
     }
 
     @Override
@@ -64,6 +73,12 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         //Create default visits
         createDefaultVisits();
 
+        try {
+            loadGlobalStatistics();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         Logger.getInstance().getLog(this.getClass()).info("Ending default data bootstrap [...]");
     }
 
@@ -72,6 +87,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
 
         //All roles for the superuser
         Collection<Role> superuserRoles = roleService.findAll();
+
 
         //Check if the superusers exists
         Credential admin = credentialService.findByUsername("admin");
@@ -82,6 +98,16 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
             admin.setRoles(superuserRoles);
             admin.setAuthenticated(true);
             admin = credentialService.createOrUpdate(admin);
+        }
+        Credential admin2 = credentialService.findByUsername("admin2");
+        if (admin2 == null){
+            admin2 = new UserCredential();
+            admin2.setUsername("admin2");
+            admin2.setPassword(passwordEncoder.encode("admin"));
+            admin2.addRole(roleService.findByName("ROLE_USER"));
+            admin2.addRole(roleService.findByName("STAFF_MEDICO"));
+            admin2.setAuthenticated(true);
+            admin2 = credentialService.createOrUpdate(admin2);
         }
 
         Notification notification = new Notification("Bienvenido", "Bienvenido a CCTS", "Bienvenido a CCTS", new NotificationData("Home"), (UserCredential) admin);
@@ -101,8 +127,23 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 new Address("Calle 80 #5 Los tocones", "51000", "Santiago", "Republica Dominicana"),
                 (UserCredential) admin
         );
+        Person person2 = new Person(
+                "10110101010",
+                "Administrador 2",
+                "",
+                "admin2@ccts",
+                "849-381-9028",
+                LocalDate.of(1999, Calendar.JUNE + 1,04),
+                Gender.MALE,
+                CivilStatus.SINGLE,
+                "Ingeniero",
+                new Address("Calle 80 #5 Los tocones", "51000", "Santiago", "Republica Dominicana"),
+                (UserCredential) admin2
+        );
+
 
         personService.createOrUpdate(person);
+        personService.createOrUpdate(person2);
     }
 
     private void createDefaultRolesAndPrivilege() {
@@ -120,12 +161,16 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 privilegeService.createPrivilegeIfNotFound("USER_READ_PRIVILEGE"),
                 privilegeService.createPrivilegeIfNotFound("USER_WRITE_PRIVILEGE")
         );
+        Collection<Privilege> medicalStaffPrivilege = Collections.singletonList(
+                privilegeService.createPrivilegeIfNotFound("ACTUALIZAR_ESTADO_SALUD")
+        );
 
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating application default roles...");
 
         roleService.createRoleIfNotFound("ROLE_ADMIN", adminPrivilege);
         roleService.createRoleIfNotFound("ROLE_NODE", beaconPrivilege);
         roleService.createRoleIfNotFound("ROLE_USER", userPrivilege);
+        roleService.createRoleIfNotFound("STAFF_MEDICO", medicalStaffPrivilege);
     }
 
     public void createDefaultPersons() {
@@ -199,6 +244,17 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         locality.setGpsLocation(new GpsLocation(19.4437142D, -70.68265591D));
         locality = localityService.createOrUpdate(locality);
 
+        Locality locality2 = new Locality(
+                "REFERENCIA",
+                new Address("Autopista Duarte Km 1 1/2","51000","Santiago","Republica Dominicana"),
+                "referencia@spring.com",
+                "8099999999");
+        locality2.setGpsLocation(new GpsLocation(19.4433342D, -70.68232591D));
+        localityService.createOrUpdate(locality2);
+        Institution institution = new Institution(locality2.getName(),locality2.getAddress(),locality2.getEmail(),
+                locality2.getCellPhone(), InstitutionType.HEALTH);
+        institutionService.createOrUpdate(institution);
+
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating default nodes...");
 
         List<Role> roles = List.of(roleService.findByName("ROLE_NODE"));
@@ -231,5 +287,12 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         } catch (CustomApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadGlobalStatistics() throws JSONException {
+        JSONArray jsonArray = globalStatisticsService.prepareRapidApiRequest("https://covid-193.p.rapidapi.com/history?country=Dominican-Republic");
+        Collection<GlobalStatistics> globalStatistics = globalStatisticsService.createGlobalStatisticsHistory(jsonArray);
+        globalStatisticsService.createAll(globalStatistics);
+
     }
 }

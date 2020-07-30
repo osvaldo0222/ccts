@@ -14,6 +14,8 @@ public class CustomResponseObjectDTO {
     //Custom result
     private final Object result;
 
+
+
     public CustomResponseObjectDTO(Integer status, String message, Object result) {
         this.status = status;
         this.message = message;

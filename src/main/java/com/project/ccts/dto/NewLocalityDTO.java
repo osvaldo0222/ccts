@@ -11,7 +11,9 @@ public class NewLocalityDTO {
     private String city;
     private Double latitude;
     private Double longitude;
+    private String type;
 
+    public NewLocalityDTO(){}
     public NewLocalityDTO(String cellPhone, String name, String email, String direction, String postalCode, String city, Double latitude, Double longitude) {
         this.cellPhone = cellPhone;
         this.name = name;
@@ -21,6 +23,18 @@ public class NewLocalityDTO {
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public NewLocalityDTO(String cellPhone, String name, String email, String direction, String postalCode, String city, Double latitude, Double longitude, String type) {
+        this.cellPhone = cellPhone;
+        this.name = name;
+        this.email = email;
+        this.direction = direction;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.type = type;
     }
 
     public String getCellPhone() {
@@ -85,5 +99,13 @@ public class NewLocalityDTO {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

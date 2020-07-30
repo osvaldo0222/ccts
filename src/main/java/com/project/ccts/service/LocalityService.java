@@ -1,5 +1,6 @@
 package com.project.ccts.service;
 
+import com.project.ccts.dto.LocalityByNameIdDTO;
 import com.project.ccts.dto.LocalityDTO;
 import com.project.ccts.model.entities.Locality;
 import com.project.ccts.repository.LocalityRepository;
@@ -46,5 +47,6 @@ public class LocalityService extends AbstractCrud<Locality, Long> {
         });
         return localityDTOS;
     }
+
 
 }

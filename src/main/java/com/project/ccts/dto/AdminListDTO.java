@@ -7,15 +7,20 @@ import java.util.Collection;
 public class AdminListDTO {
     private String email;
     private String username;
-    private Collection<String> privileges;
+    private Collection<String> roles;
     private boolean isAuthenticated;
 
-    public AdminListDTO(String email, String username, Collection<String> privileges, boolean isAuthenticated) {
+    public AdminListDTO(String email, String username, Collection<String> roles, boolean isAuthenticated) {
         this.email = email;
         this.username = username;
-        this.privileges = privileges;
+        this.roles = roles;
         this.isAuthenticated = isAuthenticated;
     }
+    public AdminListDTO(String email, String username, Collection<String> roles) {
+        this.email = email;
+        this.username = username;
+        this.roles = roles;
+     }
 
     public String getEmail() {
         return email;
@@ -34,11 +39,11 @@ public class AdminListDTO {
     }
 
     public Collection<String> getPrivileges() {
-        return privileges;
+        return roles;
     }
 
     public void setPrivileges(Collection<String> privileges) {
-        this.privileges = privileges;
+        this.roles = privileges;
     }
 
     public boolean isAuthenticated() {

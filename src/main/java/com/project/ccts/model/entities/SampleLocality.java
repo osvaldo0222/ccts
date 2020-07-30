@@ -12,6 +12,7 @@ public abstract class SampleLocality {
     protected Address address;
     @Column(unique = true)
     protected String email;
+    @Column(unique = true)
     protected String cellPhone;
 
     public SampleLocality(String name, Address address, String email, String cellPhone) {

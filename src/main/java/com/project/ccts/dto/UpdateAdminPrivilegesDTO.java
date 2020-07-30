@@ -5,12 +5,12 @@ import java.util.Collection;
 public class UpdateAdminPrivilegesDTO {
     private String username;
     private String email;
-    private Collection<String> privileges;
+    private Collection<String> tags;
 
-    public UpdateAdminPrivilegesDTO(String username, String email, Collection<String> privileges) {
+    public UpdateAdminPrivilegesDTO(String username, String email, Collection<String> tags) {
         this.username = username;
         this.email = email;
-        this.privileges = privileges;
+        this.tags = tags;
     }
 
     public String getUsername() {
@@ -29,11 +29,20 @@ public class UpdateAdminPrivilegesDTO {
         this.email = email;
     }
 
-    public Collection<String> getPrivileges() {
-        return privileges;
+    public Collection<String> getTags() {
+        return tags;
     }
 
-    public void setPrivileges(Collection<String> privileges) {
-        this.privileges = privileges;
+    public void setTags(Collection<String> tags) {
+        this.tags = tags;
+    }
+
+    @Override
+    public String toString() {
+        return "UpdateAdminPrivilegesDTO{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + tags +
+                '}';
     }
 }

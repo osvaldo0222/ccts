@@ -1,15 +1,16 @@
 package com.project.ccts.api;
 
 import com.project.ccts.dto.*;
+import com.project.ccts.dto.locality.SetUsersToLocality;
 import com.project.ccts.model.entities.*;
+import com.project.ccts.model.enums.InstitutionType;
 import com.project.ccts.model.enums.NodeStatus;
-import com.project.ccts.service.CredentialService;
-import com.project.ccts.service.HealthStatusService;
-import com.project.ccts.service.LocalityService;
-import com.project.ccts.service.PersonService;
+import com.project.ccts.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -17,6 +18,8 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static com.project.ccts.dto.CustomResponseObjectUtil.createResponse;
 
@@ -27,7 +30,8 @@ public class DashboardApi {
     private PersonService personService;
     private CredentialService credentialService;
     private HealthStatusService healthStatusService;
-
+    private RoleService roleService;
+    private InstitutionService institutionService;
 
     @Autowired
     public void setPersonService(PersonService personService) {
@@ -48,6 +52,14 @@ public class DashboardApi {
     public void setHealthStatusService(HealthStatusService healthStatusService) {
         this.healthStatusService = healthStatusService;
     }
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
+    @Autowired
+    public void setInstitutionService(InstitutionService institutionService) {
+        this.institutionService = institutionService;
+    }
 
     @GetMapping(path = "node-distribution", produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> nodeDistributionByLocation() {
@@ -64,15 +76,40 @@ public class DashboardApi {
     @GetMapping(path = "locations", produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> getAllLocationName() {
         Collection<Locality> localities = localityService.findAll();
-        Collection<LocalityByNameIdDTO> localityByNameIdDTOS = new ArrayList<>();
         if (localities != null) {
-            localities.stream().forEach(locality -> {
-                localityByNameIdDTOS.add(new LocalityByNameIdDTO(locality.getName(), locality.getId()));
-            });
+            Collection<LocalityByNameIdDTO> localityByNameIdDTOS = createLocalityByNameIdDTO(localities);
             return new ResponseEntity<>(createResponse(HttpStatus.OK, localityByNameIdDTOS), HttpStatus.OK);
         }
         return new ResponseEntity<>(createResponse(HttpStatus.NOT_FOUND, "No existen localidades"), HttpStatus.NOT_FOUND);
-
+    }
+    @GetMapping(path = "locations/health",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getAllHealthLocalities(){
+        Collection<Institution> institutions = institutionService.getInstitutionByType(InstitutionType.HEALTH);
+        if (institutions != null){
+            Collection<LocalityByNameIdDTO> localityByNameIdDTOS = createLocalityByNameIdDTO(institutions);
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,localityByNameIdDTOS),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"No existen localidades de salud registradas"),HttpStatus.ACCEPTED);
+    }
+    @GetMapping(path = "locations/health/{name}",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getHealthLocality(@PathVariable String name){
+        Institution institution = institutionService.findByTypeAndNameAndId(InstitutionType.HEALTH,name);
+        if (institution != null){
+            LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(institution.getId(),institution.getName(),
+                    institution.getAddress(),institution.getEmail(),institution.getCellPhone(),null);
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,localityDetailsDTO),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"No existen localidades de salud registradas"),HttpStatus.ACCEPTED);
+    }
+    @GetMapping(path = "admins/health/unregistered",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getUnregisteredAdmins(){
+        Collection<Credential> userCredential = credentialService.findAll();
+        if (userCredential != null){
+            Collection<String> usernames = new ArrayList<>();
+            userCredential.stream().forEach(credential -> usernames.add(credential.getUsername()));
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,usernames),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"No existen usuarios registrados"),HttpStatus.ACCEPTED);
     }
     @GetMapping(path = "admins", produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> getAdmins(){
@@ -82,6 +119,48 @@ public class DashboardApi {
             return new ResponseEntity<>(createResponse(HttpStatus.OK,listDTO),HttpStatus.OK);
         }
         return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,""),HttpStatus.ACCEPTED);
+    }
+    @GetMapping(path = "admins/{username}",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getAdminByUsername(@PathVariable String username){
+        UserCredential credential = (UserCredential) credentialService.findByUsername(username);
+        if (credential != null){
+            AdminListDTO listDTO = new AdminListDTO(credential.getPerson().getEmail(),credential.getUsername(),
+                    credentialService.createRoleList(credential.getRoles()));
+            Collection<AdminListDTO> adminListDTOS = new ArrayList<>();
+            adminListDTOS.add(listDTO);
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,adminListDTOS),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,String.format("No existen entidades con el nombre de usuario %s",username)),HttpStatus.ACCEPTED);
+
+    }
+    @GetMapping(path = "roles",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getAllRoles(){
+        Collection<Role> roles = roleService.findAll();
+        if (roles != null){
+            Collection<String> rolesNames = new ArrayList<>();
+            roles.stream().forEach(role -> {
+                rolesNames.add(role.getName());
+            });
+
+            return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,rolesNames),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"No existen roles"),HttpStatus.OK);
+    }
+    @GetMapping(path = "roles/privileges",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getAllRolesPrivileges(){
+        Collection<Role> roles = roleService.findAll();
+        if (roles != null){
+            Collection<RolesAndPrivilegesDTO> rolesAndPrivilegesDTOS = new ArrayList<>();
+            roles.stream().forEach(role -> {
+                Collection<String> privileges = new ArrayList<>();
+                role.getPrivileges().stream().forEach(privilege -> {
+                    privileges.add(privilege.getName());
+                });
+                rolesAndPrivilegesDTOS.add(new RolesAndPrivilegesDTO(role.getName(),privileges));
+            });
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,rolesAndPrivilegesDTOS),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"No existen roles"),HttpStatus.ACCEPTED);
     }
 
     @GetMapping(path = "locations/{id}", produces = "application/json")
@@ -124,23 +203,19 @@ public class DashboardApi {
 
 
     }
-
-
-//    @GetMapping(path = "users", produces = "application/json")
-//    public ResponseEntity<CustomResponseObjectDTO> getAllUsers() {
-//        Collection<Credential> credentials = credentialService.findAll();
-//        if (credentials != null) {
-//            Collection<PersonCredentialListDTO> personCredentialListDTOS = new ArrayList<>();
-//            credentials.stream().forEach(credential -> {
-//                personCredentialListDTOS
-//                        .add(new PersonCredentialListDTO(credential.getId(), credential.getUsername(),
-//                                credential.getAuthenticated(), getRoles(credential.getRoles())
-//                        ));
-//            });
-//            return new ResponseEntity<>(createResponse(HttpStatus.OK, personCredentialListDTOS), HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>(createResponse(HttpStatus.NOT_FOUND, "No existen usuarios en esta lista"), HttpStatus.NOT_FOUND);
-//    }
+    @PutMapping(value="locality/users",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> setUsersToLocalities(@RequestBody SetUsersToLocality setUsersToLocality){
+            Institution institution = institutionService.findByNameEmailType(setUsersToLocality.getName(),setUsersToLocality.getEmail(),InstitutionType.HEALTH);
+            if (institution != null) {
+                Collection<UserCredential> userCredentials = credentialService.getExistingUserCredentials(setUsersToLocality.getTag());
+                if (userCredentials != null){
+                    institution.setUserCredentials(userCredentials);
+                    institutionService.createOrUpdate(institution);
+                    return new ResponseEntity<>(createResponse(HttpStatus.OK,"Usuarios Anadidos Existosamente"),HttpStatus.OK);
+                }
+            }
+            return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"Datos Incorrectos, Revise nuevamente"),HttpStatus.ACCEPTED);
+    }
 
     @PutMapping(path = "covid-test/set-patient-status", produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> updatePatientStatus(@RequestBody PersonHealthStatusUpdateDTO statusUpdateDTO) {
@@ -160,7 +235,7 @@ public class DashboardApi {
         }
     }
 
-    @PutMapping(path = "new/user", produces = "application/json")
+    @PostMapping(path = "new/user", produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> createNewUser(@RequestBody Map<String, Object> payload) {
          Person person = personService.findPersonByPersonalIdentifier((String) payload.get("id"));
         if (person == null) {
@@ -172,18 +247,19 @@ public class DashboardApi {
         }
         return new ResponseEntity<>(createResponse(HttpStatus.BAD_REQUEST, "Datos incorrectos, revisar datos"), HttpStatus.BAD_REQUEST);
     }
-    @PutMapping(path = "admin/privileges/update",produces = "application/json")
+    @PutMapping(path = "admin/roles",produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> updateAdminPrivileges(@RequestBody UpdateAdminPrivilegesDTO privilegesDTO){
         UserCredential userCredential = (UserCredential)credentialService.findByUsername(privilegesDTO.getUsername());
-        if (userCredential.getPerson().getEmail().equals(privilegesDTO.getEmail())){
-            userCredential.getRoles().stream().forEach(role -> {
-                if (role.getName().equals("ROLE_USER")){
-
-                }
-            });
+         if (userCredential != null && userCredential.getPerson().getEmail().equals(privilegesDTO.getEmail())
+        && privilegesDTO.getTags() != null){
+            userCredential.setRoles(roleService.rolesToUpdate(userCredential,privilegesDTO));
+            credentialService.createOrUpdate(userCredential);
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,"Roles de usuario Actualizados"),HttpStatus.OK);
         }
-        return new ResponseEntity<>(createResponse(HttpStatus.OK,""),HttpStatus.OK);
+        return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"Revise los datos nuevamente"),HttpStatus.ACCEPTED);
+
     }
+
     @PostMapping(path = "location",produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> createNewLocation(@RequestBody NewLocalityDTO newLocalityDTO){
         Locality locality = localityService.findByCellPhone(newLocalityDTO.getCellPhone());
@@ -192,21 +268,28 @@ public class DashboardApi {
                     newLocalityDTO.getPostalCode(),newLocalityDTO.getCity(),"Republica Dominicana"),newLocalityDTO.getEmail(),
                     newLocalityDTO.getCellPhone());
             localityAux.setGpsLocation(new GpsLocation(newLocalityDTO.getLatitude(),newLocalityDTO.getLongitude()));
-            localityService.createOrUpdate(localityAux);
+
+
+            Institution institution = new Institution(newLocalityDTO.getName(),new Address(newLocalityDTO.getDirection(),
+                    newLocalityDTO.getPostalCode(),newLocalityDTO.getCity(),"Republica Dominicana"),newLocalityDTO.getEmail(),
+                    newLocalityDTO.getCellPhone(), InstitutionType.valueOf(newLocalityDTO.getType()));
+             localityService.createOrUpdate(localityAux);
+            institutionService.createOrUpdate(institution);
             return new ResponseEntity<>(createResponse(HttpStatus.OK,"La localidad ha sido creada correctamente"),HttpStatus.OK);
         }
         return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,newLocalityDTO),HttpStatus.ACCEPTED);
     }
-
-
-    public Collection<String> getRoles(Collection<Role> roles) {
-        Collection<String> aux_roles = new ArrayList<>();
-        if (roles.size() > 0) {
-            roles.stream().forEach(role -> {
-                aux_roles.add(role.getName());
+    public <T> Collection<LocalityByNameIdDTO> createLocalityByNameIdDTO(Collection<T> collection){
+        Collection<LocalityByNameIdDTO> localityByNameIdDTOS = new ArrayList<>();
+        if (collection != null){
+            collection.stream().forEach(institution -> {
+                if (institution instanceof Locality || institution instanceof Institution){
+                    localityByNameIdDTOS.add(new LocalityByNameIdDTO(((SampleLocality) institution).getName(),
+                            ((SampleLocality) institution).getId()));
+                }
             });
-        }
-        return aux_roles;
+         }
+        return localityByNameIdDTOS;
     }
 
 
