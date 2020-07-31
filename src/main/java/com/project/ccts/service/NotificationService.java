@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -46,7 +47,11 @@ public class NotificationService extends AbstractCrud<Notification, Long> {
         //Push notification
         PushClient pushClient = new PushClient();
         List<ExpoPushMessage> messages = new ArrayList<>();
-        for (NotificationToken token : notification.getUserCredential().getNotificationToken()) {
+        Set<NotificationToken> notificationTokens = notification.getUserCredential().getNotificationToken();
+        if (notificationTokens == null) {
+            return;
+        }
+        for (NotificationToken token : notificationTokens) {
             ExpoPushMessage epm = new ExpoPushMessage(token.getToken());
             epm.channelId = "default";
             epm.sound = new ExpoMessageSound("default");

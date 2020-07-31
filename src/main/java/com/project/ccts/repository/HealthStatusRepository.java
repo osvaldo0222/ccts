@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface HealthStatusRepository extends JpaRepository<HealthStatus, Long> {
 
     Page<HealthStatus> findByPersonOrderByStatusDateDesc(Person person, Pageable pageable);
+
 }

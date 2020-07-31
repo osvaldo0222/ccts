@@ -93,8 +93,8 @@ public class VisitService extends AbstractCrud<Visit, Long> {
                 if (person == null) {
                     continue;
                 }
-                LocalDateTime timeArrived = Instant.ofEpochMilli(visitTemplateDTO.getTimeArrived()).atZone(ZoneId.of("UTC")).toLocalDateTime();
-                LocalDateTime timeLeft = Instant.ofEpochMilli(visitTemplateDTO.getTimeLeft()).atZone(ZoneId.of("UTC")).toLocalDateTime();
+                LocalDateTime timeArrived = Instant.ofEpochMilli(visitTemplateDTO.getTimeArrived()).atZone(ZoneId.of("UTC-4")).toLocalDateTime();
+                LocalDateTime timeLeft = Instant.ofEpochMilli(visitTemplateDTO.getTimeLeft()).atZone(ZoneId.of("UTC-4")).toLocalDateTime();
                 Visit visit = checkIfVisitContinue(person, node, timeArrived, timeLeft);
                 if (visit == null) {
                     visit = new Visit(

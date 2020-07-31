@@ -67,9 +67,9 @@ public class MqttControllerConfig {
             case 705:
                 //Visits
                 visitService.addVisits(mqttDTO);
-                System.out.println(mqttDTO);
                 break;
             default:
+                Logger.getInstance().getLog(getClass()).info(String.format("Unhandled MQTT CCTS code dispatch. Code: %s.", mqttDTO.getCode().toString()));
                 break;
         }
     }

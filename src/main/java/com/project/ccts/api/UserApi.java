@@ -1,7 +1,9 @@
 package com.project.ccts.api;
 
 import com.project.ccts.dto.CustomResponseObjectDTO;
+import com.project.ccts.dto.HealthStatusMobileAddDTO;
 import com.project.ccts.service.CredentialService;
+import com.project.ccts.service.HealthStatusService;
 import com.project.ccts.service.VisitService;
 import com.project.ccts.util.exception.CustomApiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ public class UserApi {
 
     private CredentialService credentialService;
     private VisitService visitService;
+    private HealthStatusService healthStatusService;
 
     @Autowired
     public void setCredentialService(CredentialService credentialService) {
@@ -28,6 +31,11 @@ public class UserApi {
     @Autowired
     public void setVisitService(VisitService visitService) {
         this.visitService = visitService;
+    }
+
+    @Autowired
+    public void setHealthStatusService(HealthStatusService healthStatusService) {
+        this.healthStatusService = healthStatusService;
     }
 
     @PutMapping("/signout")
@@ -56,6 +64,26 @@ public class UserApi {
     public ResponseEntity<CustomResponseObjectDTO> getVisits(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "25") Integer size, @RequestParam(defaultValue = "") String search) {
         try {
             return new ResponseEntity<>(createResponse(HttpStatus.OK, visitService.getVisits(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), page, size, search)), HttpStatus.OK);
+        } catch (CustomApiException e) {
+            return new ResponseEntity<>(createResponse(e.getCode(), e.getMessage(), "The username is not a person!"), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/getHealthStatus")
+    @PreAuthorize("hasAnyAuthority('USER_READ_PRIVILEGE')")
+    public ResponseEntity<CustomResponseObjectDTO> getHealthStatus(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "25") Integer size) {
+        try {
+            return new ResponseEntity<>(createResponse(HttpStatus.OK, healthStatusService.getHealthStatus(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), page, size)), HttpStatus.OK);
+        } catch (CustomApiException e) {
+            return new ResponseEntity<>(createResponse(e.getCode(), e.getMessage(), "The username is not a person!"), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping("/addHealthStatus")
+    @PreAuthorize("hasAnyAuthority('USER_WRITE_PRIVILEGE')")
+    public ResponseEntity<CustomResponseObjectDTO> addHealthStatus(@RequestBody HealthStatusMobileAddDTO healthStatusMobileAddDTO) {
+        try {
+            return new ResponseEntity<>(createResponse(HttpStatus.OK, healthStatusService.addHealthStatusByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), healthStatusMobileAddDTO)), HttpStatus.OK);
         } catch (CustomApiException e) {
             return new ResponseEntity<>(createResponse(e.getCode(), e.getMessage(), "The username is not a person!"), HttpStatus.CONFLICT);
         }

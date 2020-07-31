@@ -23,13 +23,13 @@ public class PublicApi {
     private NotificationService notificationService;
 
     @Autowired
-    public PublicApi(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public void setCredentialService(CredentialService credentialService) {
+        this.credentialService = credentialService;
     }
 
     @Autowired
-    public void setCredentialService(CredentialService credentialService) {
-        this.credentialService = credentialService;
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
     @PostMapping("/signup")
@@ -72,8 +72,10 @@ public class PublicApi {
         }
     }
 
+
+    //TODO: DELETE TEMP ENDPOINT
     @GetMapping("/send")
-    public void sendNoti() {
-        notificationService.sendNotificationToUser(new Notification("Hola Mundo", "", "Este es el cuerpo", new NotificationData("Home"), (UserCredential) credentialService.findByUsername("admin")));
+    public void sendNotification(@RequestParam String username, @RequestParam String title, @RequestParam String message) {
+        notificationService.sendNotificationToUser(new Notification(title, "", message, new NotificationData("Home"), (UserCredential) credentialService.findByUsername(username)));
     }
 }

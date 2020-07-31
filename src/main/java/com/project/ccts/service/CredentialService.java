@@ -6,12 +6,10 @@ import com.project.ccts.repository.CredentialRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import com.project.ccts.util.exception.CustomApiException;
 import com.project.ccts.util.logger.Logger;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static com.project.ccts.dto.CustomResponseObjectUtil.createResponse;
 
 @Service
 @Transactional
@@ -111,6 +107,8 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
         person.setEmail(email);
         personService.createOrUpdate(person);
 
+        notificationService.sendNotificationToUser(new Notification("Bienvenido", "", "Bienvenido a CCTS", new NotificationData("Home"), (UserCredential) credential));
+
         Logger.getInstance().getLog(getClass()).info(String.format("%s signup to CCTS", credential.getUsername()));
     }
 
@@ -124,15 +122,16 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
     }
 
     public void checkEmail(String email) throws CustomApiException {
-        Person emailPerson = personService.findByEmail(email);
-        if (emailPerson != null) {
+        EmailValidator validator = EmailValidator.getInstance();
+        if (!validator.isValid(email) || personService.findByEmail(email) != null) {
             throw new CustomApiException("Email is invalid. Try with other!", 601);
         }
     }
 
     public void checkEmail(String email, Person person) throws CustomApiException {
+        EmailValidator validator = EmailValidator.getInstance();
         Person emailPerson = personService.findByEmail(email);
-        if (emailPerson != null && !person.equals(emailPerson)) {
+        if (!validator.isValid(email) || (emailPerson != null && !person.equals(emailPerson))) {
             throw new CustomApiException("Email is invalid. Try with other!", 601);
         }
     }
