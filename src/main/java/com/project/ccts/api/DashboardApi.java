@@ -1,6 +1,7 @@
 package com.project.ccts.api;
 
 import com.project.ccts.dto.*;
+import com.project.ccts.dto.locality.RealTimeSearch;
 import com.project.ccts.dto.locality.SetUsersToLocality;
 import com.project.ccts.model.entities.*;
 import com.project.ccts.model.enums.InstitutionType;
@@ -9,8 +10,6 @@ import com.project.ccts.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -18,8 +17,6 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import static com.project.ccts.dto.CustomResponseObjectUtil.createResponse;
 
@@ -91,9 +88,9 @@ public class DashboardApi {
         }
         return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"No existen localidades de salud registradas"),HttpStatus.ACCEPTED);
     }
-    @GetMapping(path = "locations/health/{name}",produces = "application/json")
-    public ResponseEntity<CustomResponseObjectDTO> getHealthLocality(@PathVariable String name){
-        Institution institution = institutionService.findByTypeAndNameAndId(InstitutionType.HEALTH,name);
+    @GetMapping(path = "locations/health/{name}/{email}/{id}",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getHealthLocality(@PathVariable String name,@PathVariable String email,@PathVariable Long id){
+        Institution institution = institutionService.findByTypeAndNameAndEmailAndId(InstitutionType.HEALTH,name,email,id);
         if (institution != null){
             LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(institution.getId(),institution.getName(),
                     institution.getAddress(),institution.getEmail(),institution.getCellPhone(),null);
@@ -101,6 +98,14 @@ public class DashboardApi {
         }
         return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"No existen localidades de salud registradas"),HttpStatus.ACCEPTED);
     }
+    @GetMapping(path = "locations/health/containing/{name}",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getHealthLocalityContaining(@PathVariable String name){
+        Collection<Institution> institutions = institutionService.findAllByTypeAndNameContaining(name,InstitutionType.HEALTH);
+        Collection<RealTimeSearch> toLocalities = new ArrayList<>();
+        institutions.stream().forEach(institution -> toLocalities.add(new RealTimeSearch(institution.getName(),institution.getEmail(),institution.getId())));
+        return new ResponseEntity<>(createResponse(HttpStatus.OK,toLocalities),HttpStatus.OK);
+    }
+
     @GetMapping(path = "admins/health/unregistered",produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> getUnregisteredAdmins(){
         Collection<Credential> userCredential = credentialService.findAll();

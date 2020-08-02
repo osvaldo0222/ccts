@@ -33,11 +33,14 @@ public class InstitutionService extends AbstractCrud<Institution, Long> {
         Collection<Institution> institutions = institutionRepository.findByType(type);
         return institutions;
     }
-    public Institution findByTypeAndNameAndId(InstitutionType type,String name){
-        return institutionRepository.findByTypeAndName(type,name);
+    public Institution findByTypeAndNameAndEmailAndId(InstitutionType type,String name,String email,Long id){
+        return institutionRepository.findByTypeAndNameAndEmailAndId(type,name,email,id);
     }
     public Institution findByNameEmailType( String name, String email,InstitutionType type){
         return institutionRepository.findByNameAndEmailAndType(name,email,type);
+    }
+    public Collection<Institution> findAllByTypeAndNameContaining( String name,InstitutionType type){
+        return institutionRepository.findAllByTypeAndNameContainingIgnoreCase(type,name);
     }
 
 }

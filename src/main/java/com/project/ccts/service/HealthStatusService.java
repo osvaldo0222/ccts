@@ -1,6 +1,7 @@
 package com.project.ccts.service;
 
 import com.project.ccts.dto.PersonHealthStatusUpdateDTO;
+import com.project.ccts.dto.mobileStatistics.GenericXYDTO;
 import com.project.ccts.model.entities.HealthStatus;
 import com.project.ccts.model.entities.Person;
 import com.project.ccts.repository.HealthStatusRepository;
@@ -30,6 +31,8 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
     public void setPersonService(PersonService personService) {
         this.personService = personService;
     }
+
+
 
     @Override
     public JpaRepository<HealthStatus, Long> getDao() {

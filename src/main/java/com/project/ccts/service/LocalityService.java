@@ -34,7 +34,7 @@ public class LocalityService extends AbstractCrud<Locality, Long> {
     }
 
     public Collection<Locality> findByNameContaining(String name){
-        return localityRepository.findByNameContaining(name);
+        return localityRepository.findByNameContainingIgnoreCase(name);
     }
     public Locality findByCellPhone(String cellPhone){
         return localityRepository.findByCellPhone(cellPhone);

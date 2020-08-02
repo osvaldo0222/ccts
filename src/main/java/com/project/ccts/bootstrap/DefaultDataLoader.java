@@ -252,9 +252,22 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 "8099999999");
         locality2.setGpsLocation(new GpsLocation(19.4433342D, -70.68232591D));
         localityService.createOrUpdate(locality2);
+
+        Locality locality3 = new Locality(
+                "REFERENCIA LA VEGA",
+                new Address("Avenida Rivas Km 1 1/2","41000","La Vega","Republica Dominicana"),
+                "referencialavega@spring.com",
+                "8091234567");
+        locality3.setGpsLocation(new GpsLocation(19.4433142D, -70.68275591D));
+        locality3 = localityService.createOrUpdate(locality3);
+
+
         Institution institution = new Institution(locality2.getName(),locality2.getAddress(),locality2.getEmail(),
                 locality2.getCellPhone(), InstitutionType.HEALTH);
+        Institution institution2 = new Institution(locality3.getName(),locality3.getAddress(),locality3.getEmail(),
+                locality3.getCellPhone(), InstitutionType.HEALTH);
         institutionService.createOrUpdate(institution);
+        institutionService.createOrUpdate(institution2);
 
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating default nodes...");
 

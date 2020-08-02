@@ -11,6 +11,8 @@ import java.util.Collection;
 @Repository
 public interface InstitutionRepository extends JpaRepository<Institution, Long> {
             Collection<Institution> findByType(InstitutionType type);
-            Institution findByTypeAndName(@Param("type") InstitutionType type,@Param("name") String name);
+            Institution findByTypeAndNameAndEmailAndId(@Param("type") InstitutionType type,@Param("name") String name,
+                                                       @Param("email") String email,@Param("id") Long id);
             Institution findByNameAndEmailAndType(@Param("name") String name,@Param("email") String email,@Param("type")InstitutionType type);
+            Collection<Institution> findAllByTypeAndNameContainingIgnoreCase(@Param("type") InstitutionType type,@Param("name") String name);
 }

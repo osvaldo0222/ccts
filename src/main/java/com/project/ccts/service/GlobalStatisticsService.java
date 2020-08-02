@@ -1,5 +1,6 @@
 package com.project.ccts.service;
 
+import com.project.ccts.dto.mobileStatistics.GenericXYDTO;
 import com.project.ccts.model.entities.GlobalStatistics;
 import com.project.ccts.model.entities.SupplementaryDataStatistics.NewCase;
 import com.project.ccts.model.entities.SupplementaryDataStatistics.NewDeath;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -17,17 +20,16 @@ import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 
 @Service
 @Transactional
 public class GlobalStatisticsService extends AbstractCrud<GlobalStatistics,Long> {
     private GlobalStatisticsRepository globalStatisticsRepository;
+
     @Autowired
     public void setGlobalStatisticsRepository(GlobalStatisticsRepository globalStatisticsRepository) {
         this.globalStatisticsRepository = globalStatisticsRepository;
@@ -40,6 +42,21 @@ public class GlobalStatisticsService extends AbstractCrud<GlobalStatistics,Long>
 
     public GlobalStatistics getGlobalStatisticsByDate(LocalDate date){
         return globalStatisticsRepository.findGlobalStatisticsByDate(date);
+    }
+    public Collection<GenericXYDTO> findAllCasesByDateAndLimit(Pageable pageable){
+        return (Collection<GenericXYDTO>)(Object)globalStatisticsRepository.findAllCasesByDateAndLimit(pageable).getContent();
+    }
+    public Collection<GenericXYDTO> findAllDeathsByDateAndLimit(Pageable pageable){
+        return (Collection<GenericXYDTO>)(Object)globalStatisticsRepository.findAllDeathsByDateAndLimit(pageable).getContent();
+    }
+    public Collection<GenericXYDTO> findAllNewDeathsByDateAndLimit(Pageable pageable){
+        return (Collection<GenericXYDTO>)(Object)globalStatisticsRepository.findAllNewDeathsByDateAndLimit(pageable).getContent();
+    }
+    public Collection<GenericXYDTO> findAllNewCasesByDateAndLimit(Pageable pageable){
+        return (Collection<GenericXYDTO>)(Object)globalStatisticsRepository.findAllNewCasesByDateAndLimit(pageable).getContent();
+    }
+    public Collection<GenericXYDTO> findAllRecoveredByDateAndLimit(Pageable pageable){
+        return (Collection<GenericXYDTO>)(Object)globalStatisticsRepository.findAllRecoveredByDateAndLimit(pageable).getContent();
     }
     public GlobalStatistics createGlobalStatisticsObject(JSONArray jsonArray, String[] date) throws JSONException {
             JSONObject object = jsonArray.getJSONObject(0);
