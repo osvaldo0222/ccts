@@ -12,7 +12,7 @@ public class JwtConfig {
     private String issuer;
     private String secretKey;
     private String tokenPrefix;
-    private Integer tokenExpirationAfterMilliseconds;
+    private Long tokenExpirationAfterMilliseconds;
 
     public JwtConfig() { }
 
@@ -40,11 +40,11 @@ public class JwtConfig {
         this.tokenPrefix = tokenPrefix;
     }
 
-    public Integer getTokenExpirationAfterMilliseconds() {
+    public Long getTokenExpirationAfterMilliseconds() {
         return tokenExpirationAfterMilliseconds;
     }
 
-    public void setTokenExpirationAfterMilliseconds(Integer tokenExpirationAfterMilliseconds) {
+    public void setTokenExpirationAfterMilliseconds(Long tokenExpirationAfterMilliseconds) {
         this.tokenExpirationAfterMilliseconds = tokenExpirationAfterMilliseconds;
     }
 

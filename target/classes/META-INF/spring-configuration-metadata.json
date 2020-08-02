@@ -24,7 +24,7 @@
     },
     {
       "name": "application.jwt.token-expiration-after-milliseconds",
-      "type": "java.lang.Integer",
+      "type": "java.lang.Long",
       "sourceType": "com.project.ccts.jwt.JwtConfig"
     },
     {

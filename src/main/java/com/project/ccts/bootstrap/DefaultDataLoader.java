@@ -307,6 +307,5 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         JSONArray jsonArray = globalStatisticsService.prepareRapidApiRequest("https://covid-193.p.rapidapi.com/history?country=Dominican-Republic");
         Collection<GlobalStatistics> globalStatistics = globalStatisticsService.createGlobalStatisticsHistory(jsonArray);
         globalStatisticsService.createAll(globalStatistics);
-
     }
 }
