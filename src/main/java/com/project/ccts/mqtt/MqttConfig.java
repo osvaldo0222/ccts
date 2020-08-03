@@ -14,6 +14,7 @@ public class MqttConfig {
     private String configTopic;
     private String nodesTopic;
     private String undefinedTopic;
+    private String webServerStatus;
 
     public String getUrl() {
         return url;
@@ -93,5 +94,13 @@ public class MqttConfig {
 
     public void setUndefinedTopic(String undefinedTopic) {
         this.undefinedTopic = undefinedTopic;
+    }
+
+    public String getWebServerStatus() {
+        return webServerStatus;
+    }
+
+    public void setWebServerStatus(String webServerStatus) {
+        this.webServerStatus = webServerStatus;
     }
 }

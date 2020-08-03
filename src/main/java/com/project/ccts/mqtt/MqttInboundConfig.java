@@ -13,8 +13,8 @@ import org.springframework.messaging.MessageChannel;
 @Configuration
 public class MqttInboundConfig {
 
-    private MqttConfig mqttConfig;
-    private MqttPahoClientFactory mqttPahoClientFactory;
+    private final MqttConfig mqttConfig;
+    private final MqttPahoClientFactory mqttPahoClientFactory;
 
     @Autowired
     public MqttInboundConfig(MqttConfig mqttConfig, MqttPahoClientFactory mqttPahoClientFactory) {

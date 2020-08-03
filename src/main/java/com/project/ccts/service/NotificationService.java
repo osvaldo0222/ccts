@@ -25,10 +25,16 @@ import java.util.concurrent.CompletableFuture;
 public class NotificationService extends AbstractCrud<Notification, Long> {
 
     private NotificationRepository notificationRepository;
+    private ProjectStatisticsService projectStatisticsService;
 
     @Autowired
     public void setNotificationRepository(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
+    }
+
+    @Autowired
+    public void setProjectStatisticsService(ProjectStatisticsService projectStatisticsService) {
+        this.projectStatisticsService = projectStatisticsService;
     }
 
     @Override
@@ -43,6 +49,9 @@ public class NotificationService extends AbstractCrud<Notification, Long> {
     public void sendNotificationToUser(Notification notification) {
         //Saving the notification
         createOrUpdate(notification);
+
+        //Statistics
+        projectStatisticsService.addNotificationSent();
 
         //Push notification
         PushClient pushClient = new PushClient();

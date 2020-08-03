@@ -29,6 +29,7 @@ public class DashboardApi {
     private HealthStatusService healthStatusService;
     private RoleService roleService;
     private InstitutionService institutionService;
+    private ProjectStatisticsService projectStatisticsService;
 
     @Autowired
     public void setPersonService(PersonService personService) {
@@ -49,13 +50,20 @@ public class DashboardApi {
     public void setHealthStatusService(HealthStatusService healthStatusService) {
         this.healthStatusService = healthStatusService;
     }
+
     @Autowired
     public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
     }
+
     @Autowired
     public void setInstitutionService(InstitutionService institutionService) {
         this.institutionService = institutionService;
+    }
+
+    @Autowired
+    public void setProjectStatisticsService(ProjectStatisticsService projectStatisticsService) {
+        this.projectStatisticsService = projectStatisticsService;
     }
 
     @GetMapping(path = "node-distribution", produces = "application/json")
@@ -232,6 +240,7 @@ public class DashboardApi {
                     statusUpdateDTO.isTasteLoss());
             healthStatus.setTest(new Test(statusUpdateDTO.isStatus()));
             healthStatus.setPerson(person);
+            projectStatisticsService.addRegisteredTest(healthStatus);
             healthStatusService.createOrUpdate(healthStatus);
 
             return new ResponseEntity<>(createResponse(HttpStatus.OK, "Su solicitud ha sido satisfactoria, Perfil del paciente Actualizado"), HttpStatus.OK);
