@@ -7,13 +7,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 
+import static com.project.ccts.mqtt.MqttUtil.createMqttMessageToNodes;
+
 @Configuration
 public class MqttClientFactoryConfig {
 
-    private MqttConfig mqttConfig;
+    private final MqttConfig mqttConfig;
 
     @Autowired
-    public void setMqttConfig(MqttConfig mqttConfig) {
+    public MqttClientFactoryConfig(MqttConfig mqttConfig) {
         this.mqttConfig = mqttConfig;
     }
 
@@ -25,6 +27,12 @@ public class MqttClientFactoryConfig {
         options.setUserName(mqttConfig.getUsername());
         options.setPassword(mqttConfig.getPassword().toCharArray());
         options.setAutomaticReconnect(mqttConfig.getAutomaticReconnect());
+        options.setWill(
+                mqttConfig.getWebServerStatus(),
+                createMqttMessageToNodes(MqttCctsCodes.WEB_SERVER_DISCONNECT, mqttConfig.getClientId(), null).getBytes(),
+                mqttConfig.getQos(),
+                false
+        );
         factory.setConnectionOptions(options);
         return factory;
     }

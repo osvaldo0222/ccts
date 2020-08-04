@@ -1,10 +1,9 @@
 package com.project.ccts.service;
 
-import com.google.gson.Gson;
-import com.project.ccts.dto.MqttDTO;
 import com.project.ccts.dto.NodeConfigDTO;
 import com.project.ccts.model.entities.Node;
 import com.project.ccts.model.enums.NodeStatus;
+import com.project.ccts.mqtt.MqttCctsCodes;
 import com.project.ccts.mqtt.MqttConfig;
 import com.project.ccts.repository.NodeRepository;
 import com.project.ccts.service.common.AbstractCrud;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.project.ccts.mqtt.MqttUtil.createMqttMessageToNodes;
 
 @Service
 @Transactional
@@ -58,13 +59,14 @@ public class NodeService extends AbstractCrud<Node, Long> {
     public String getConfiguration(String nodeIdentifier) {
         Node node = findByNodeIdentifier(nodeIdentifier);
         if (node == null) {
-            return createMqttMessageToNodes(704, mqttConfig.getClientId(), null);
+            return createMqttMessageToNodes(MqttCctsCodes.NODE_NOT_FOUND, mqttConfig.getClientId(), null);
         }
-        NodeConfigDTO nodeConfigDTO = new NodeConfigDTO(node.getLocality().getName(), node.getLocality().getAddress(), node.getDescription(), node.getLocality().getGpsLocation());
-        return createMqttMessageToNodes(702, mqttConfig.getClientId(), nodeConfigDTO);
-    }
-
-    public String createMqttMessageToNodes(Integer code, String nodeIdentifier, Object data) {
-        return new Gson().toJson(new MqttDTO(code,nodeIdentifier, data));
+        NodeConfigDTO nodeConfigDTO = new NodeConfigDTO(
+                node.getLocality().getName(),
+                node.getLocality().getAddress(),
+                node.getDescription(),
+                node.getLocality().getGpsLocation()
+        );
+        return createMqttMessageToNodes(MqttCctsCodes.WEB_SERVER_SEND_CONFIG, mqttConfig.getClientId(), nodeConfigDTO);
     }
 }

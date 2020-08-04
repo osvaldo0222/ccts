@@ -23,25 +23,26 @@ import java.util.*;
 @Component
 public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
-    private CredentialService credentialService;
-    private PrivilegeService privilegeService;
-    private RoleService roleService;
-    private PersonService personService;
-    private PasswordEncoder passwordEncoder;
-    private NotificationService notificationService;
-    private LocalityService localityService;
-    private NodeService nodeService;
-    private VisitService visitService;
-    private InstitutionService institutionService;
-    private GlobalStatisticsService globalStatisticsService;
+    private final CredentialService credentialService;
+    private final PrivilegeService privilegeService;
+    private final RoleService roleService;
+    private final PersonService personService;
+    private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
+    private final LocalityService localityService;
+    private final NodeService nodeService;
+    private final VisitService visitService;
+    private final InstitutionService institutionService;
+    private final GlobalStatisticsService globalStatisticsService;
+    private final ProjectStatisticsService projectStatisticsService;
 
 
     @Autowired
-    public DefaultDataLoader(InstitutionService institutionService,CredentialService credentialService,
+    public DefaultDataLoader(InstitutionService institutionService, CredentialService credentialService,
                              PrivilegeService privilegeService, RoleService roleService,
                              PersonService personService, PasswordEncoder passwordEncoder,
                              NotificationService notificationService, LocalityService localityService,
-                             NodeService nodeService, VisitService visitService,GlobalStatisticsService globalStatisticsService) {
+                             NodeService nodeService, VisitService visitService, GlobalStatisticsService globalStatisticsService, ProjectStatisticsService projectStatisticsService) {
         this.credentialService = credentialService;
         this.privilegeService = privilegeService;
         this.roleService = roleService;
@@ -53,11 +54,15 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         this.visitService = visitService;
         this.institutionService = institutionService;
         this.globalStatisticsService = globalStatisticsService;
+        this.projectStatisticsService = projectStatisticsService;
     }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         Logger.getInstance().getLog(this.getClass()).info("Default data bootstrap [...]");
+
+        //Load local statistics
+        loadLocalStatistics();
 
         //Creating default Roles and Privileges
         createDefaultRolesAndPrivilege();
@@ -74,6 +79,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         //Create default visits
         //createDefaultVisits();
 
+        //Load global statistics
         try {
             loadGlobalStatistics();
         } catch (JSONException e) {
@@ -307,5 +313,19 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         JSONArray jsonArray = globalStatisticsService.prepareRapidApiRequest("https://covid-193.p.rapidapi.com/history?country=Dominican-Republic");
         Collection<GlobalStatistics> globalStatistics = globalStatisticsService.createGlobalStatisticsHistory(jsonArray);
         globalStatisticsService.createAll(globalStatistics);
+    }
+
+    private void loadLocalStatistics() {
+        Logger.getInstance().getLog(getClass()).info("Init project statistics...");
+
+        Long count = projectStatisticsService.countProjectStatistics();
+
+        if (count == 0) {
+            ProjectStatistics statistics = projectStatisticsService.createOrUpdate(new ProjectStatistics());
+            statistics.setLocalDate(LocalDate.now().minusDays(1));
+            projectStatisticsService.createOrUpdate(statistics);
+        }
+
+        projectStatisticsService.checkTodayStatistics();
     }
 }

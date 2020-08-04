@@ -81,6 +81,11 @@
       "name": "application.mqtt.broker.username",
       "type": "java.lang.String",
       "sourceType": "com.project.ccts.mqtt.MqttConfig"
+    },
+    {
+      "name": "application.mqtt.broker.web-server-status",
+      "type": "java.lang.String",
+      "sourceType": "com.project.ccts.mqtt.MqttConfig"
     }
   ],
   "hints": []
