@@ -2,6 +2,7 @@ package com.project.ccts.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class HealthStatusMobileDTO {
     private Long id;
@@ -13,9 +14,9 @@ public class HealthStatusMobileDTO {
     private Boolean soreThroat;
     private Boolean smellLoss;
     private Boolean tasteLoss;
-    private List<String> recommendations;
+    private Set<String> recommendations;
 
-    public HealthStatusMobileDTO(Long id, LocalDateTime statusDate, Boolean status, Boolean fever, Boolean cough, Boolean breathDifficulty, Boolean soreThroat, Boolean smellLoss, Boolean tasteLoss, List<String> recommendations) {
+    public HealthStatusMobileDTO(Long id, LocalDateTime statusDate, Boolean status, Boolean fever, Boolean cough, Boolean breathDifficulty, Boolean soreThroat, Boolean smellLoss, Boolean tasteLoss, Set<String> recommendations) {
         this.id = id;
         this.statusDate = statusDate;
         this.status = status;
@@ -100,11 +101,11 @@ public class HealthStatusMobileDTO {
         this.tasteLoss = tasteLoss;
     }
 
-    public List<String> getRecommendations() {
+    public Set<String> getRecommendations() {
         return recommendations;
     }
 
-    public void setRecommendations(List<String> recommendations) {
+    public void setRecommendations(Set<String> recommendations) {
         this.recommendations = recommendations;
     }
 }

@@ -1,14 +1,14 @@
 package com.project.ccts.service;
 
-
-import com.project.ccts.dto.PersonHealthStatusUpdateDTO;
-import com.project.ccts.dto.mobileStatistics.GenericXYDTO;
-
+import com.project.ccts.dto.ExpositionDetailDTO;
 import com.project.ccts.dto.HealthStatusMobileAddDTO;
 import com.project.ccts.dto.HealthStatusMobileDTO;
 
+import com.project.ccts.dto.PersonExpositionStatusDTO;
 import com.project.ccts.model.entities.HealthStatus;
 import com.project.ccts.model.entities.Person;
+import com.project.ccts.model.entities.UserCredential;
+import com.project.ccts.model.enums.Recommendations;
 import com.project.ccts.repository.HealthStatusRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import com.project.ccts.util.exception.CustomApiException;
@@ -41,8 +41,6 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
         this.credentialService = credentialService;
     }
 
-
-
     @Override
     public JpaRepository<HealthStatus, Long> getDao() {
         return healthStatusRepository;
@@ -69,7 +67,7 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
                         status.isSoreThroat(),
                         status.isSmellLoss(),
                         status.isTasteLoss(),
-                        List.of("Mantengase en casa"))) //TODO
+                        Recommendations.getRecommendationsByHealthStatus(status)))
                 .collect(Collectors.toList());
     }
 
@@ -105,5 +103,23 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
 
         createOrUpdate(healthStatus);
         return "Health status added!";
+    }
+
+    public List<ExpositionDetailDTO> getExposition(String username, Integer page, Integer size) throws CustomApiException {
+        Person person = credentialService.findPersonByUsername(username);
+
+        //TODO
+
+        return List.of();
+    }
+
+    public PersonExpositionStatusDTO getStatus(String username) throws CustomApiException {
+        Person person = credentialService.findPersonByUsername(username);
+
+        //TODO
+
+        Float temp = Float.parseFloat((Math.random() * 100) + "");
+
+        return new PersonExpositionStatusDTO(temp, temp < 33.33F ? "bajo" : temp < 66.66 ? "medio" : "alto");
     }
 }

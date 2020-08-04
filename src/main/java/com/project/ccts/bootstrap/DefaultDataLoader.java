@@ -80,11 +80,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         //createDefaultVisits();
 
         //Load global statistics
-        try {
-            loadGlobalStatistics();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        loadGlobalStatistics();
 
         Logger.getInstance().getLog(this.getClass()).info("Ending default data bootstrap [...]");
     }
@@ -94,7 +90,6 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
 
         //All roles for the superuser
         Collection<Role> superuserRoles = roleService.findAll();
-
 
         //Check if the superusers exists
         Credential admin = credentialService.findByUsername("admin");
@@ -309,10 +304,14 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         }
     }
 
-    private void loadGlobalStatistics() throws JSONException {
-        JSONArray jsonArray = globalStatisticsService.prepareRapidApiRequest("https://covid-193.p.rapidapi.com/history?country=Dominican-Republic");
-        Collection<GlobalStatistics> globalStatistics = globalStatisticsService.createGlobalStatisticsHistory(jsonArray);
-        globalStatisticsService.createAll(globalStatistics);
+    private void loadGlobalStatistics() {
+        try {
+            JSONArray jsonArray = globalStatisticsService.prepareRapidApiRequest("https://covid-193.p.rapidapi.com/history?country=Dominican-Republic");
+            Collection<GlobalStatistics> globalStatistics = globalStatisticsService.createGlobalStatisticsHistory(jsonArray);
+            globalStatisticsService.createAll(globalStatistics);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadLocalStatistics() {
