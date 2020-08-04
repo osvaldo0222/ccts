@@ -1,6 +1,7 @@
 package com.project.ccts.dto;
 
 import com.project.ccts.model.entities.Address;
+import com.project.ccts.model.entities.GpsLocation;
 
 import java.util.Collection;
 
@@ -11,6 +12,7 @@ public class LocalityDetailsDTO {
     private String email;
     private String cellPhone;
     private Collection<NodeDetailsDTO> nodes;
+    private GpsLocation gpsLocation;
 
 
     public LocalityDetailsDTO(Long id, String name, Address address, String email, String cellPhone, Collection<NodeDetailsDTO> nodes) {
@@ -20,6 +22,16 @@ public class LocalityDetailsDTO {
         this.email = email;
         this.cellPhone = cellPhone;
         this.nodes = nodes;
+    }
+
+    public LocalityDetailsDTO(Long id, String name, Address address, String email, String cellPhone, Collection<NodeDetailsDTO> nodes, GpsLocation gpsLocation) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.email = email;
+        this.cellPhone = cellPhone;
+        this.nodes = nodes;
+        this.gpsLocation = gpsLocation;
     }
 
     public Long getId() {
@@ -68,5 +80,13 @@ public class LocalityDetailsDTO {
 
     public void setNodes(Collection<NodeDetailsDTO> nodes) {
         this.nodes = nodes;
+    }
+
+    public GpsLocation getGpsLocation() {
+        return gpsLocation;
+    }
+
+    public void setGpsLocation(GpsLocation gpsLocation) {
+        this.gpsLocation = gpsLocation;
     }
 }

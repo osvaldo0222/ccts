@@ -176,7 +176,7 @@ public class DashboardApi {
                 nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(), node.getNodeIdentifier(), node.getBatteryLevel(), node.getVisits().size(), NodeStatus.ACTIVE)));
 
         LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(locality.getId(), locality.getName(), locality.getAddress(),
-                locality.getEmail(), locality.getCellPhone(), nodeDetailsDTOS);
+                locality.getEmail(), locality.getCellPhone(), nodeDetailsDTOS,locality.getGpsLocation());
         return new ResponseEntity<>(createResponse(HttpStatus.OK, localityDetailsDTO), HttpStatus.OK);
     }
 

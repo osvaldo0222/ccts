@@ -37,4 +37,14 @@ public class SignUpDTO {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    public String toString() {
+        return "SignUpDTO{" +
+                "personalIdentifier='" + personalIdentifier + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }
