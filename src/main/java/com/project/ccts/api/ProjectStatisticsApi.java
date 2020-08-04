@@ -26,6 +26,7 @@ public class ProjectStatisticsApi {
 
     @GetMapping(path = "all/{time}",produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> getProjectStatistics(@PathVariable(value = "time") Integer time) {
+        System.out.println(time);
         if (time < 2) {
             time = 2;
         }
