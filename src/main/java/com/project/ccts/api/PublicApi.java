@@ -34,7 +34,6 @@ public class PublicApi {
 
     @PostMapping("/signup")
     public ResponseEntity<CustomResponseObjectDTO> signup(@RequestBody SignUpDTO signUpDTO) {
-        System.out.println(signUpDTO.toString());
         try {
             credentialService.signup(signUpDTO.getPersonalIdentifier(), signUpDTO.getEmail(), signUpDTO.getUsername(), signUpDTO.getPassword());
             return new ResponseEntity<>(createResponse(HttpStatus.OK, String.format("%s registrado con existo", signUpDTO.getUsername())), HttpStatus.OK);

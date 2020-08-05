@@ -2,6 +2,7 @@ package com.project.ccts.api;
 
 import com.project.ccts.dto.CustomResponseObjectDTO;
 import com.project.ccts.dto.HealthStatusMobileAddDTO;
+import com.project.ccts.dto.PersonExpositionStatusDTO;
 import com.project.ccts.service.CredentialService;
 import com.project.ccts.service.HealthStatusService;
 import com.project.ccts.service.VisitService;
@@ -84,6 +85,26 @@ public class UserApi {
     public ResponseEntity<CustomResponseObjectDTO> addHealthStatus(@RequestBody HealthStatusMobileAddDTO healthStatusMobileAddDTO) {
         try {
             return new ResponseEntity<>(createResponse(HttpStatus.OK, healthStatusService.addHealthStatusByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), healthStatusMobileAddDTO)), HttpStatus.OK);
+        } catch (CustomApiException e) {
+            return new ResponseEntity<>(createResponse(e.getCode(), e.getMessage(), "The username is not a person!"), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/getExposition")
+    @PreAuthorize("hasAnyAuthority('USER_READ_PRIVILEGE')")
+    public ResponseEntity<CustomResponseObjectDTO> getExposition(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "25") Integer size) {
+        try {
+            return new ResponseEntity<>(createResponse(HttpStatus.OK, healthStatusService.getExposition(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(), page, size)), HttpStatus.OK);
+        } catch (CustomApiException e) {
+            return new ResponseEntity<>(createResponse(e.getCode(), e.getMessage(), "The username is not a person!"), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/getStatus")
+    @PreAuthorize("hasAnyAuthority('USER_READ_PRIVILEGE')")
+    public ResponseEntity<CustomResponseObjectDTO> getExposition() {
+        try {
+            return new ResponseEntity<>(createResponse(HttpStatus.OK, healthStatusService.getStatus(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString())), HttpStatus.OK);
         } catch (CustomApiException e) {
             return new ResponseEntity<>(createResponse(e.getCode(), e.getMessage(), "The username is not a person!"), HttpStatus.CONFLICT);
         }
