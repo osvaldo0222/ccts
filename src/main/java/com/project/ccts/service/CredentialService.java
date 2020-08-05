@@ -44,6 +44,30 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
         return credentialRepository;
     }
 
+    public Collection<UserCredential> getUsersPaginated(Integer page){
+        if(page > 0){
+            Collection<Credential> credentials = credentialRepository.findAll(PageRequest.of(page-1,5)).getContent();
+            return createUserCredentialCollection(credentials);
+        }else{
+            Collection<Credential> credentials = credentialRepository.findAll(PageRequest.of(0 ,5)).getContent();
+            return createUserCredentialCollection(credentials);
+        }
+    }
+    public int countUserCredential(){
+        Collection<Credential> credentials = credentialRepository.findAll();
+        int counter = (int) credentials.stream().filter(credential -> credential instanceof UserCredential).count();
+        return counter;
+    }
+    public Collection<UserCredential> createUserCredentialCollection(Collection<Credential> credentials){
+        Collection<UserCredential> auxCredentials = new ArrayList<>();
+        credentials.stream().forEach(credential -> {
+            if (credential instanceof  UserCredential){
+                auxCredentials.add((UserCredential) credential);
+            }
+        });
+        return auxCredentials;
+    }
+
     public Collection<AdminListDTO> createAdminDTO(Collection<UserCredential> userCredentials){
         Collection<AdminListDTO> adminList = new ArrayList<>();
         if (userCredentials != null){

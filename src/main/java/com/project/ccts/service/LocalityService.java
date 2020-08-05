@@ -6,6 +6,9 @@ import com.project.ccts.model.entities.Locality;
 import com.project.ccts.repository.LocalityRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +39,23 @@ public class LocalityService extends AbstractCrud<Locality, Long> {
     public Collection<Locality> findByNameContaining(String name){
         return localityRepository.findByNameContainingIgnoreCase(name);
     }
+    public Locality findByNameEmailAndId(String name,String email,Long id){
+        return localityRepository.findByNameAndEmailAndId(name,email,id);
+    }
+    public Locality findByNameAndEmail(String name,String email){
+        return localityRepository.findByNameAndEmail(name,email);
+    }
+    public Collection<Locality> findAllPageable(Integer page){
+        if(page > 0){
+            return localityRepository.findAll(PageRequest.of(page-1,5)).getContent();
+        }else{
+            return localityRepository.findAll(PageRequest.of(0 ,5)).getContent();
+
+        }
+     }
+     public Long count(){
+        return localityRepository.count();
+     }
     public Locality findByCellPhone(String cellPhone){
         return localityRepository.findByCellPhone(cellPhone);
     }

@@ -31,6 +31,13 @@ public class Node {
         this.batteryLevel = batteryLevel;
         this.status = status;
     }
+    public Node(String description, Locality locality, Float batteryLevel, NodeStatus status) {
+        this.description = description;
+        this.locality = locality;
+        this.nodeCredential = nodeCredential;
+        this.batteryLevel = batteryLevel;
+        this.status = status;
+    }
 
     @PostPersist
     public void generateNodeIdentifier() {
