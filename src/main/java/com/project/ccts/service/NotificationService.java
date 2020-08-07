@@ -1,8 +1,6 @@
 package com.project.ccts.service;
 
-import com.project.ccts.model.entities.Notification;
-import com.project.ccts.model.entities.NotificationToken;
-import com.project.ccts.model.entities.UserCredential;
+import com.project.ccts.model.entities.*;
 import com.project.ccts.repository.NotificationRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import io.github.jav.exposerversdk.ExpoMessageSound;
@@ -76,6 +74,20 @@ public class NotificationService extends AbstractCrud<Notification, Long> {
 
         for (List<ExpoPushMessage> chunk : chunks) {
             messageRepliesFutures.add(pushClient.sendPushNotificationsAsync(chunk));
+        }
+    }
+
+    public void sendNotificationBasedOnStatus(HealthStatus status) {
+        if (status.getTest() != null && status.getTest().getStatus()) {
+            UserCredential userCredential = status.getPerson().getUserCredential();
+            if (userCredential != null) {
+                sendNotificationToUser(new Notification("CCTS-Resultados", "", "Has dado positivo al virus. Revisa tu ultimo reporte!", new NotificationData("HealthStatus"), userCredential));
+            }
+        } else if (status.getTest() != null && !status.getTest().getStatus()) {
+            UserCredential userCredential = status.getPerson().getUserCredential();
+            if (userCredential != null) {
+                sendNotificationToUser(new Notification("CCTS-Resultados", "", "Has dado negativo al virus. Revisa tu ultimo reporte!", new NotificationData("HealthStatus"), userCredential));
+            }
         }
     }
 }

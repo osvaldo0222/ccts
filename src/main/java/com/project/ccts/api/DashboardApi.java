@@ -32,6 +32,7 @@ public class DashboardApi {
     private InstitutionService institutionService;
     private ProjectStatisticsService projectStatisticsService;
     private NodeService nodeService;
+    private NotificationService notificationService;
 
     @Autowired
     public void setPersonService(PersonService personService) {
@@ -70,6 +71,11 @@ public class DashboardApi {
     @Autowired
     public void setNodeService(NodeService nodeService) {
         this.nodeService = nodeService;
+    }
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
     @GetMapping(path = "node-distribution/count",produces = "application/json")
@@ -231,7 +237,7 @@ public class DashboardApi {
         Locality locality = localityService.findById(id);
         Collection<NodeDetailsDTO> nodeDetailsDTOS = new ArrayList<>();
         locality.getNodes().stream().forEach(node ->
-                nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(), node.getNodeIdentifier(), node.getBatteryLevel(), node.getVisits().size(), NodeStatus.ACTIVE)));
+                nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(), node.getNodeIdentifier(), node.getBatteryLevel(), node.getVisits().size(), node.getStatus())));
 
         LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(locality.getId(), locality.getName(), locality.getAddress(),
                 locality.getEmail(), locality.getCellPhone(), nodeDetailsDTOS,locality.getGpsLocation());
@@ -287,10 +293,10 @@ public class DashboardApi {
     }
     @PutMapping(path = "locality/node",produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> createNewNode(@RequestBody NodeCreationDTO nodeCreationDTO){
-        System.out.println(nodeCreationDTO.toString());
         Locality locality = localityService.findByNameAndEmail(nodeCreationDTO.getName(),nodeCreationDTO.getEmail());
         if (locality != null){
             nodeService.createOrUpdate(new Node(nodeCreationDTO.getNodeDescription(),locality, (float) 100.0,NodeStatus.DOWN));
+            projectStatisticsService.addNodeRegistered();
             return new ResponseEntity<>(createResponse(HttpStatus.OK,"Su requerimiento ha sido completado "),HttpStatus.OK);
         }
         return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED,"Su requerimiento no ha sido completada"),HttpStatus.ACCEPTED);
@@ -306,9 +312,9 @@ public class DashboardApi {
                     statusUpdateDTO.isTasteLoss());
             healthStatus.setTest(new Test(statusUpdateDTO.isStatus()));
             healthStatus.setPerson(person);
+            healthStatus = healthStatusService.createOrUpdate(healthStatus);
             projectStatisticsService.addRegisteredTest(healthStatus);
-            healthStatusService.createOrUpdate(healthStatus);
-
+            notificationService.sendNotificationBasedOnStatus(healthStatus);
             return new ResponseEntity<>(createResponse(HttpStatus.OK, "Su solicitud ha sido satisfactoria, Perfil del paciente Actualizado"), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(createResponse(HttpStatus.NOT_FOUND, "Revise los datos ingresados en el formulario"), HttpStatus.NOT_FOUND);
