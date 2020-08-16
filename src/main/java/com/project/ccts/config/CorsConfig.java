@@ -13,7 +13,7 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("https://b008fc04ebd7.ngrok.io").allowedMethods("*");
+                registry.addMapping("/**").allowedOrigins("https://a5951147ef6d.ngrok.io").allowedMethods("*");
             }
         };
     }
