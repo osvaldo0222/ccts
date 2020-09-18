@@ -57,7 +57,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             //Mapping the username and password to a Credential object
             Credential authenticationRequest = new ObjectMapper().readValue(request.getInputStream(), Credential.class);
 
-            //Setting authentication parameters
+            //Setting authentication parameters q
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername().trim(),
                     authenticationRequest.getPassword()

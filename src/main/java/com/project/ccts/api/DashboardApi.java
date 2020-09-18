@@ -231,7 +231,7 @@ public class DashboardApi {
         Locality locality = localityService.findById(id);
         Collection<NodeDetailsDTO> nodeDetailsDTOS = new ArrayList<>();
         locality.getNodes().stream().forEach(node ->
-                nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(), node.getNodeIdentifier(), node.getBatteryLevel(), node.getVisits().size(), NodeStatus.ACTIVE)));
+                nodeDetailsDTOS.add(new NodeDetailsDTO(node.getId(), node.getNodeIdentifier(), node.getBatteryLevel(), node.getVisits().size(), node.getStatus())));
 
         LocalityDetailsDTO localityDetailsDTO = new LocalityDetailsDTO(locality.getId(), locality.getName(), locality.getAddress(),
                 locality.getEmail(), locality.getCellPhone(), nodeDetailsDTOS,locality.getGpsLocation());
@@ -287,7 +287,6 @@ public class DashboardApi {
     }
     @PutMapping(path = "locality/node",produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> createNewNode(@RequestBody NodeCreationDTO nodeCreationDTO){
-        System.out.println(nodeCreationDTO.toString());
         Locality locality = localityService.findByNameAndEmail(nodeCreationDTO.getName(),nodeCreationDTO.getEmail());
         if (locality != null){
             nodeService.createOrUpdate(new Node(nodeCreationDTO.getNodeDescription(),locality, (float) 100.0,NodeStatus.DOWN));
