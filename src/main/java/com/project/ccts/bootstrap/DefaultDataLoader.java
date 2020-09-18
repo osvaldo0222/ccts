@@ -284,9 +284,11 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
 
         Node node1 = new Node("Lab. Telematica", locality, prototype1, 98.3F, NodeStatus.DOWN);
         nodeService.createOrUpdate(node1);
+        projectStatisticsService.addNodeRegistered();
 
         Node node2 = new Node("Lab. Microprocesadores", locality, prototype2, 80.2F, NodeStatus.DOWN);
         nodeService.createOrUpdate(node2);
+        projectStatisticsService.addNodeRegistered();
     }
 
     private void createDefaultVisits() {
