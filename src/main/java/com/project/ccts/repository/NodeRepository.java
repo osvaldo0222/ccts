@@ -10,5 +10,6 @@ import java.util.Collection;
 public interface NodeRepository extends JpaRepository<Node, Long> {
 
     Node findByNodeIdentifier(String nodeIdentifier);
+    Collection<Node> findByLocality_Id(Long locality);
 
 }

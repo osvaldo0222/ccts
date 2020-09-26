@@ -13,6 +13,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+
 import static com.project.ccts.mqtt.MqttUtil.createMqttMessageToNodes;
 
 @Service
@@ -68,5 +70,8 @@ public class NodeService extends AbstractCrud<Node, Long> {
                 node.getLocality().getGpsLocation()
         );
         return createMqttMessageToNodes(MqttCctsCodes.WEB_SERVER_SEND_CONFIG, mqttConfig.getClientId(), nodeConfigDTO);
+    }
+    public Collection<Node> nodeByLocality(Long locality){
+        return nodeRepository.findByLocality_Id(locality);
     }
 }

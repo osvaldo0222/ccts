@@ -3,12 +3,14 @@ package com.project.ccts.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.project.ccts.dto.*;
+import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
 import com.project.ccts.model.entities.*;
 import com.project.ccts.model.enums.NodeStatus;
 import com.project.ccts.repository.VisitRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import com.project.ccts.util.exception.CustomApiException;
 import com.project.ccts.util.logger.Logger;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +39,59 @@ public class VisitService extends AbstractCrud<Visit, Long> {
         this.credentialService = credentialService;
         this.nodeService = nodeService;
         this.personService = personService;
+    }
+
+
+     /*
+     * Find all visits in a period
+     * */
+    public Collection<Visit> findAllByTimeArrivedAfterAndPerson(LocalDateTime localDateTime,Person person){
+        return visitRepository.findAllByTimeArrivedAfterAndPerson(localDateTime,person);
+    }
+    public Collection<Visit> findAllByTimeArrivedBetweenOrTimeLeftBetween(LocalDateTime timeArrived,LocalDateTime timeLeft){
+        return visitRepository.findAllByTimeArrivedBetweenOrTimeLeftBetween(timeArrived,timeLeft);
+    }
+
+    /**?
+     * Function that extract all visits in relation with time and space related to an infected user
+     * @param person
+     * @param daysBefore
+     * @return
+     */
+    public Collection<VisitAndTimeShared> findAllVisitsCorrelatedTimeAndSpace(Person person, int daysBefore){
+        //This function receives a person because it was identified with corona-virus, to detect the visits of the person in last days
+        Collection<Visit> visits = findAllByTimeArrivedAfterAndPerson(LocalDateTime.now().minusDays(daysBefore),person);
+        Collection<VisitAndTimeShared> visitsRelatedToInfectedUser = new ArrayList<>();
+
+        visits.stream().forEach(visit -> {
+            Collection<Visit> aux = findAllByTimeArrivedBetweenOrTimeLeftBetween(visit.getTimeArrived().minusMinutes(3),visit.getTimeLeft().plusMinutes(3));
+            if(aux != null){
+                aux.stream().forEach(visit1 -> {
+                    visitsRelatedToInfectedUser.add(new VisitAndTimeShared(visit1,0));
+//                    if (visit1.getPerson() != visit.getPerson()){
+//                        System.out.println(durationBetweenDates(visit.getTimeArrived().toEpochSecond(ZoneOffset.of("Z")),
+//                                visit.getTimeLeft().toEpochSecond(ZoneOffset.of("Z")),visit1.getTimeArrived().toEpochSecond(ZoneOffset.of("Z")),
+//                                visit1.getTimeLeft().toEpochSecond(ZoneOffset.of("Z")))/60);
+//                    }
+                });
+            }
+         });
+        return visitsRelatedToInfectedUser;
+    }
+
+    public Long durationBetweenDates(Long timeArriveInfected,Long timeLeftInfected,Long timeArrived,Long timeLeft){
+        System.out.println(timeArriveInfected+"-"+timeLeftInfected+"-"+timeArrived+"-"+timeLeft);
+
+        if (timeArriveInfected < timeArrived  &&  timeLeftInfected < timeLeft){
+            return timeLeftInfected - timeArrived;
+        }else if (timeArriveInfected > timeArrived && timeLeftInfected > timeLeft){
+            return timeLeft - timeArriveInfected;
+        }else if (timeArriveInfected < timeArrived && timeLeftInfected > timeLeft){
+            return timeLeft - timeArrived;
+        }else if(timeArriveInfected > timeArrived && timeLeftInfected < timeLeft){
+            return timeLeftInfected - timeArrived;
+        }
+        return 0L;
     }
 
     @Override

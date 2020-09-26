@@ -3,6 +3,7 @@ package com.project.ccts.bootstrap;
 import com.project.ccts.model.entities.*;
 import com.project.ccts.model.enums.InstitutionType;
 import com.project.ccts.model.enums.NodeStatus;
+import com.project.ccts.model.helpers.InfectionProbability;
 import com.project.ccts.service.*;
 import com.project.ccts.model.enums.CivilStatus;
 import com.project.ccts.model.enums.Gender;
@@ -16,8 +17,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.*;
 
 @Component
@@ -35,6 +35,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
     private final InstitutionService institutionService;
     private final GlobalStatisticsService globalStatisticsService;
     private final ProjectStatisticsService projectStatisticsService;
+    private final InfectionProbabilityService infectionProbabilityService;
 
 
     @Autowired
@@ -42,7 +43,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                              PrivilegeService privilegeService, RoleService roleService,
                              PersonService personService, PasswordEncoder passwordEncoder,
                              NotificationService notificationService, LocalityService localityService,
-                             NodeService nodeService, VisitService visitService, GlobalStatisticsService globalStatisticsService, ProjectStatisticsService projectStatisticsService) {
+                             NodeService nodeService, VisitService visitService, GlobalStatisticsService globalStatisticsService, ProjectStatisticsService projectStatisticsService, InfectionProbabilityService infectionProbabilityService) {
         this.credentialService = credentialService;
         this.privilegeService = privilegeService;
         this.roleService = roleService;
@@ -55,6 +56,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         this.institutionService = institutionService;
         this.globalStatisticsService = globalStatisticsService;
         this.projectStatisticsService = projectStatisticsService;
+        this.infectionProbabilityService = infectionProbabilityService;
     }
 
     @Override
@@ -67,12 +69,6 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         //Creating default Roles and Privileges
         createDefaultRolesAndPrivilege();
 
-        //Creating default superusers
-        createDefaultSuperusers();
-
-        //Create default persons
-        createDefaultPersons();
-
         //Create default localities
         createDefaultLocalities();
 
@@ -82,10 +78,26 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         //Load global statistics
         loadGlobalStatistics();
 
+
+        //Creating default superusers
+
+        try {
+            createDefaultSuperusers();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        //Create default persons
+        createDefaultPersons();
+
+
+        loadTransmisionProbability();
+
         Logger.getInstance().getLog(this.getClass()).info("Ending default data bootstrap [...]");
     }
 
-    private void createDefaultSuperusers() {
+    private void createDefaultSuperusers() throws Exception {
         Logger.getInstance().getLog(this.getClass()).info("Creating and updating superusers...");
 
         //All roles for the superuser
@@ -129,7 +141,11 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 new Address("Calle 80 #5 Los tocones", "51000", "Santiago", "Republica Dominicana"),
                 (UserCredential) admin
         );
-        Person person2 = new Person(
+        Collection<Node> nodes = nodeService.nodeByLocality((long) 1);
+        Locality locality = localityService.findById((long) 1);
+
+
+         Person person2 = new Person(
                 "10110101010",
                 "Administrador 2",
                 "",
@@ -143,9 +159,21 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 (UserCredential) admin2
         );
 
-
         personService.createOrUpdate(person);
         personService.createOrUpdate(person2);
+
+        visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now(),LocalDateTime.now().plusMinutes(10), (float) 10));
+        visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now(),LocalDateTime.now().plusMinutes(20), (float) 10));
+//         visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now().minusDays(9),LocalDateTime.now().minusDays(9).plusHours(2), (float) 10));
+//        visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now().minusDays(10),LocalDateTime.now().minusDays(10).plusHours(2), (float) 10));
+//
+//
+//
+//        visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().minusDays(10).minusHours(1),LocalDateTime.now().minusDays(10).plusHours(3), (float) 10));
+
+        visitService.findAllVisitsCorrelatedTimeAndSpace(person,13);
+
+
     }
 
     private void createDefaultRolesAndPrivilege() {
@@ -328,5 +356,17 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         }
 
         projectStatisticsService.checkTodayStatistics();
+    }
+    private void loadTransmisionProbability(){
+        Collection<InfectionProbability> infectionProbabilities = new ArrayList<>();
+        infectionProbabilities.add(new InfectionProbability(0.007720,"ZERO_TO_TEN"));
+        infectionProbabilities.add(new InfectionProbability(0.006734,"TEN_TO_TWENTY"));
+        infectionProbabilities.add(new InfectionProbability(0.035369,"TWENTY_TO_THIRTY"));
+        infectionProbabilities.add(new InfectionProbability(0.064782,"THIRTY_TO_FORTY"));
+        infectionProbabilities.add(new InfectionProbability(0.075954,"FORTY_TO_FIFTY"));
+        infectionProbabilities.add(new InfectionProbability(0.155723,"FIFTY_TO_SIXTY"));
+        infectionProbabilities.add(new InfectionProbability(0.376402,"SIXTY_TO_SEVENTY"));
+        infectionProbabilities.add(new InfectionProbability(0.520127,"SEVENTY_OR_MORE"));
+        infectionProbabilityService.createAll(infectionProbabilities);
     }
 }

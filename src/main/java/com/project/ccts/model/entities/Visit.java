@@ -107,4 +107,18 @@ public class Visit {
         }
         nodes.add(node);
     }
+
+    @Override
+    public String toString() {
+        return "Visit{" +
+                "id=" + id +
+                ", locality=" + locality +
+                ", nodes=" + nodes +
+                ", person=" + person +
+                ", timeArrived=" + timeArrived +
+                ", timeLeft=" + timeLeft +
+                ", minimunDistance=" + minimunDistance +
+                ", creationDate=" + creationDate +
+                '}';
+    }
 }
