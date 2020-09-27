@@ -4,9 +4,9 @@ import com.project.ccts.model.entities.Visit;
 
 public class VisitAndTimeShared {
     private Visit visit;
-    private Integer timeInMinutes;
+    private Long timeInMinutes;
 
-    public VisitAndTimeShared(Visit visit, Integer timeInMinutes) {
+    public VisitAndTimeShared(Visit visit, Long timeInMinutes) {
         this.visit = visit;
         this.timeInMinutes = timeInMinutes;
     }
@@ -19,11 +19,11 @@ public class VisitAndTimeShared {
         this.visit = visit;
     }
 
-    public Integer getTimeInMinutes() {
+    public Long getTimeInMinutes() {
         return timeInMinutes;
     }
 
-    public void setTimeInMinutes(Integer timeInMinutes) {
+    public void setTimeInMinutes(Long timeInMinutes) {
         this.timeInMinutes = timeInMinutes;
     }
 }

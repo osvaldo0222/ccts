@@ -32,13 +32,17 @@ public class VisitService extends AbstractCrud<Visit, Long> {
     private CredentialService credentialService;
     private NodeService nodeService;
     private PersonService personService;
+    private TestService testService;
+    private HealthStatusService healthStatusService;
 
     @Autowired
-    public VisitService(VisitRepository visitRepository, CredentialService credentialService, NodeService nodeService, PersonService personService) {
+    public VisitService(VisitRepository visitRepository, CredentialService credentialService, NodeService nodeService, PersonService personService,TestService testService,HealthStatusService healthStatusService) {
         this.visitRepository = visitRepository;
         this.credentialService = credentialService;
         this.nodeService = nodeService;
         this.personService = personService;
+        this.testService = testService;
+        this.healthStatusService = healthStatusService;
     }
 
 
@@ -60,6 +64,7 @@ public class VisitService extends AbstractCrud<Visit, Long> {
      */
     public Collection<VisitAndTimeShared> findAllVisitsCorrelatedTimeAndSpace(Person person, int daysBefore){
         //This function receives a person because it was identified with corona-virus, to detect the visits of the person in last days
+        //next collection has all visit related to an user
         Collection<Visit> visits = findAllByTimeArrivedAfterAndPerson(LocalDateTime.now().minusDays(daysBefore),person);
         Collection<VisitAndTimeShared> visitsRelatedToInfectedUser = new ArrayList<>();
 
@@ -67,12 +72,11 @@ public class VisitService extends AbstractCrud<Visit, Long> {
             Collection<Visit> aux = findAllByTimeArrivedBetweenOrTimeLeftBetween(visit.getTimeArrived().minusMinutes(3),visit.getTimeLeft().plusMinutes(3));
             if(aux != null){
                 aux.stream().forEach(visit1 -> {
-                    visitsRelatedToInfectedUser.add(new VisitAndTimeShared(visit1,0));
-//                    if (visit1.getPerson() != visit.getPerson()){
-//                        System.out.println(durationBetweenDates(visit.getTimeArrived().toEpochSecond(ZoneOffset.of("Z")),
-//                                visit.getTimeLeft().toEpochSecond(ZoneOffset.of("Z")),visit1.getTimeArrived().toEpochSecond(ZoneOffset.of("Z")),
-//                                visit1.getTimeLeft().toEpochSecond(ZoneOffset.of("Z")))/60);
-//                    }
+                    if (visit1.getPerson() != visit.getPerson()){
+                        visitsRelatedToInfectedUser.add(new VisitAndTimeShared(visit1,durationBetweenDates(visit.getTimeArrived().toEpochSecond(ZoneOffset.of("Z")),
+                                visit.getTimeLeft().toEpochSecond(ZoneOffset.of("Z")),visit1.getTimeArrived().toEpochSecond(ZoneOffset.of("Z")),
+                                visit1.getTimeLeft().toEpochSecond(ZoneOffset.of("Z")))));
+                    }
                 });
             }
          });
@@ -80,18 +84,19 @@ public class VisitService extends AbstractCrud<Visit, Long> {
     }
 
     public Long durationBetweenDates(Long timeArriveInfected,Long timeLeftInfected,Long timeArrived,Long timeLeft){
-        System.out.println(timeArriveInfected+"-"+timeLeftInfected+"-"+timeArrived+"-"+timeLeft);
-
-        if (timeArriveInfected < timeArrived  &&  timeLeftInfected < timeLeft){
-            return timeLeftInfected - timeArrived;
-        }else if (timeArriveInfected > timeArrived && timeLeftInfected > timeLeft){
-            return timeLeft - timeArriveInfected;
-        }else if (timeArriveInfected < timeArrived && timeLeftInfected > timeLeft){
-            return timeLeft - timeArrived;
-        }else if(timeArriveInfected > timeArrived && timeLeftInfected < timeLeft){
-            return timeLeftInfected - timeArrived;
+        if (timeArriveInfected <= timeArrived  &&  timeLeftInfected <= timeLeft){
+            return (timeLeftInfected - timeArrived)/60;
+        }else if (timeArriveInfected >= timeArrived && timeLeftInfected >= timeLeft){
+            return (timeLeft - timeArriveInfected)/60;
+        }else if (timeArriveInfected <= timeArrived && timeLeftInfected >= timeLeft){
+            return (timeLeft - timeArrived)/60;
         }
         return 0L;
+    }
+
+    public Integer findKInfectorsOfUser(Person person,Integer daysBefore){
+        Collection<VisitAndTimeShared> visitAndTimeShared = findAllVisitsCorrelatedTimeAndSpace(person,daysBefore);
+        return (int) visitAndTimeShared.stream().filter(visit -> healthStatusService.getHealthTestStatus(visit.getVisit().getPerson(), LocalDateTime.now().minusDays(daysBefore))).count();
     }
 
     @Override

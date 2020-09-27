@@ -113,6 +113,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
             admin.setAuthenticated(true);
             admin = credentialService.createOrUpdate(admin);
         }
+
         Credential admin2 = credentialService.findByUsername("admin2");
         if (admin2 == null){
             admin2 = new UserCredential();
@@ -122,6 +123,17 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
             admin2.addRole(roleService.findByName("STAFF_MEDICO"));
             admin2.setAuthenticated(true);
             admin2 = credentialService.createOrUpdate(admin2);
+        }
+
+        Credential admin3 = credentialService.findByUsername("admin3");
+        if (admin3 == null){
+            admin3 = new UserCredential();
+            admin3.setUsername("admin3");
+            admin3.setPassword(passwordEncoder.encode("admin"));
+            admin3.addRole(roleService.findByName("ROLE_USER"));
+            admin3.addRole(roleService.findByName("STAFF_MEDICO"));
+            admin3.setAuthenticated(true);
+            admin3 = credentialService.createOrUpdate(admin3);
         }
 
         Notification notification = new Notification("Bienvenido", "Bienvenido a CCTS", "Bienvenido a CCTS", new NotificationData("Home"), (UserCredential) admin);
@@ -158,21 +170,39 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 new Address("Calle 80 #5 Los tocones", "51000", "Santiago", "Republica Dominicana"),
                 (UserCredential) admin2
         );
+        Person person3 = new Person(
+                "10100123456",
+                "Administrador 3",
+                "",
+                "admin3@ccts",
+                "849-381-9028+1",
+                LocalDate.of(1999, Calendar.JUNE + 1,04),
+                Gender.MALE,
+                CivilStatus.SINGLE,
+                "Ingeniero",
+                new Address("Calle 80 #5 Los tocones", "51000", "Santiago", "Republica Dominicana"),
+                (UserCredential) admin3
+        );
 
         personService.createOrUpdate(person);
         personService.createOrUpdate(person2);
+        personService.createOrUpdate(person3);
 
         visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now(),LocalDateTime.now().plusMinutes(10), (float) 10));
-        visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now(),LocalDateTime.now().plusMinutes(20), (float) 10));
-//         visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now().minusDays(9),LocalDateTime.now().minusDays(9).plusHours(2), (float) 10));
-//        visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now().minusDays(10),LocalDateTime.now().minusDays(10).plusHours(2), (float) 10));
-//
-//
-//
-//        visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().minusDays(10).minusHours(1),LocalDateTime.now().minusDays(10).plusHours(3), (float) 10));
+        visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().plusMinutes(3),LocalDateTime.now().plusMinutes(7), (float) 10));
 
-        visitService.findAllVisitsCorrelatedTimeAndSpace(person,13);
 
+        visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(5).plusMinutes(10), (float) 10));
+        visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().minusDays(5).plusMinutes(2),LocalDateTime.now().minusDays(5).plusMinutes(7), (float) 10));
+        visitService.createOrUpdate(new Visit(nodes,locality,person3,LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(5).plusMinutes(13), (float) 10));
+       // visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().plusMinutes(3),LocalDateTime.now().plusMinutes(7), (float) 10));
+
+
+
+        visitService.findAllVisitsCorrelatedTimeAndSpace(person,13).stream().forEach(visitAndTimeShared -> {
+            Logger.getInstance().getLog(DefaultDataLoader.class).warn("Close contact infected user ID: "+person.getId()
+                    +" UserID: "+visitAndTimeShared.getVisit().getId()+" Time in minutes: "+visitAndTimeShared.getTimeInMinutes());
+        });
 
     }
 

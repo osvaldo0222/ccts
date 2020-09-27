@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,10 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
     @Override
     public JpaRepository<HealthStatus, Long> getDao() {
         return healthStatusRepository;
+    }
+
+    public Boolean getHealthTestStatus(Person person, LocalDateTime localDateTime){
+        return healthStatusRepository.getHealthTestStatus(person,localDateTime);
     }
 
     public List<HealthStatus> findByPersonOrderByStatusDateDesc(Person person, Pageable pageable) {

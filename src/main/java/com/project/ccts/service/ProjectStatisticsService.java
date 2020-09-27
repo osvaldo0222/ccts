@@ -1,6 +1,9 @@
 package com.project.ccts.service;
 
+import com.project.ccts.dto.visitSearch.PersonAndKInfectors;
+import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
 import com.project.ccts.model.entities.HealthStatus;
+import com.project.ccts.model.entities.Person;
 import com.project.ccts.model.entities.ProjectStatistics;
 import com.project.ccts.model.enums.Gender;
 import com.project.ccts.repository.ProjectStatisticsRepository;
@@ -12,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -19,10 +25,12 @@ import java.util.List;
 public class ProjectStatisticsService extends AbstractCrud<ProjectStatistics, Long> {
 
     private ProjectStatisticsRepository projectStatisticsRepository;
+    private VisitService visitService;
 
     @Autowired
-    public void setProjectStatisticsRepository(ProjectStatisticsRepository projectStatisticsRepository) {
+    public void setProjectStatisticsRepository(ProjectStatisticsRepository projectStatisticsRepository,VisitService visitService) {
         this.projectStatisticsRepository = projectStatisticsRepository;
+        this.visitService = visitService;
     }
 
     @Override
@@ -104,4 +112,16 @@ public class ProjectStatisticsService extends AbstractCrud<ProjectStatistics, Lo
     public List<ProjectStatistics> getStatistics(Pageable pageable) {
         return projectStatisticsRepository.findAllByOrderByLocalDateDesc(pageable).getContent();
     }
+
+    public Double probabilityCalculationByIndividual(Person person, Integer daysBefore){
+        Collection<VisitAndTimeShared> visitAndTimeShared =visitService.findAllVisitsCorrelatedTimeAndSpace(person,daysBefore);
+        Collection<PersonAndKInfectors> personAndKInfectors = new ArrayList<>();
+
+        visitAndTimeShared.stream().forEach(visitAndTimeShared1 -> {
+            personAndKInfectors.add(new PersonAndKInfectors(visitAndTimeShared1.getVisit().getPerson(),visitService.findKInfectorsOfUser(visitAndTimeShared1.getVisit().getPerson(),daysBefore)));
+        });
+
+        return 0.2;
+    }
+
 }
