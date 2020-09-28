@@ -47,8 +47,8 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
         return healthStatusRepository;
     }
 
-    public Boolean getHealthTestStatus(Person person, LocalDateTime localDateTime){
-        return healthStatusRepository.getHealthTestStatus(person,localDateTime);
+    public HealthStatus findTopByPersonOrderByStatusDateDesc(Person person){
+        return healthStatusRepository.findTopByPersonOrderByStatusDateDesc(person);
     }
 
     public List<HealthStatus> findByPersonOrderByStatusDateDesc(Person person, Pageable pageable) {

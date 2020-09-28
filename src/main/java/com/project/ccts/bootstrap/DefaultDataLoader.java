@@ -195,14 +195,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(5).plusMinutes(10), (float) 10));
         visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().minusDays(5).plusMinutes(2),LocalDateTime.now().minusDays(5).plusMinutes(7), (float) 10));
         visitService.createOrUpdate(new Visit(nodes,locality,person3,LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(5).plusMinutes(13), (float) 10));
-       // visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().plusMinutes(3),LocalDateTime.now().plusMinutes(7), (float) 10));
 
-
-
-        visitService.findAllVisitsCorrelatedTimeAndSpace(person,13).stream().forEach(visitAndTimeShared -> {
-            Logger.getInstance().getLog(DefaultDataLoader.class).warn("Close contact infected user ID: "+person.getId()
-                    +" UserID: "+visitAndTimeShared.getVisit().getId()+" Time in minutes: "+visitAndTimeShared.getTimeInMinutes());
-        });
 
     }
 

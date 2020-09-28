@@ -1,13 +1,16 @@
 package com.project.ccts.api;
 
+import com.project.ccts.bootstrap.DefaultDataLoader;
 import com.project.ccts.dto.*;
 import com.project.ccts.dto.locality.NodeCreationDTO;
 import com.project.ccts.dto.locality.RealTimeSearch;
 import com.project.ccts.dto.locality.SetUsersToLocality;
+import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
 import com.project.ccts.model.entities.*;
 import com.project.ccts.model.enums.InstitutionType;
 import com.project.ccts.model.enums.NodeStatus;
 import com.project.ccts.service.*;
+import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +36,11 @@ public class DashboardApi {
     private ProjectStatisticsService projectStatisticsService;
     private NodeService nodeService;
     private NotificationService notificationService;
+    private VisitService visitService;
+    @Autowired
+    public void setVisitService(VisitService visitService) {
+        this.visitService = visitService;
+    }
 
     @Autowired
     public void setPersonService(PersonService personService) {
@@ -314,6 +322,13 @@ public class DashboardApi {
             healthStatus.setPerson(person);
             healthStatus = healthStatusService.createOrUpdate(healthStatus);
             projectStatisticsService.addRegisteredTest(healthStatus);
+
+
+            Collection<VisitAndTimeShared> visitAndTimeSharedCollection = visitService.findAllVisitsCorrelatedTimeAndSpace(person,15);
+            Collection<Person> people = visitService.getNearestContactOfVisit(visitAndTimeSharedCollection);
+
+
+
             notificationService.sendNotificationBasedOnStatus(healthStatus);
             return new ResponseEntity<>(createResponse(HttpStatus.OK, "Su solicitud ha sido satisfactoria, Perfil del paciente Actualizado"), HttpStatus.OK);
         } else {

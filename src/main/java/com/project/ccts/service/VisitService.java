@@ -35,18 +35,34 @@ public class VisitService extends AbstractCrud<Visit, Long> {
     private TestService testService;
     private HealthStatusService healthStatusService;
 
+
     @Autowired
-    public VisitService(VisitRepository visitRepository, CredentialService credentialService, NodeService nodeService, PersonService personService,TestService testService,HealthStatusService healthStatusService) {
+    public void setVisitRepository(VisitRepository visitRepository) {
         this.visitRepository = visitRepository;
+    }
+
+    @Autowired
+    public void setCredentialService(CredentialService credentialService) {
         this.credentialService = credentialService;
+    }
+    @Autowired
+    public void setNodeService(NodeService nodeService) {
         this.nodeService = nodeService;
+    }
+    @Autowired
+    public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+    @Autowired
+    public void setTestService(TestService testService) {
         this.testService = testService;
+    }
+    @Autowired
+    public void setHealthStatusService(HealthStatusService healthStatusService) {
         this.healthStatusService = healthStatusService;
     }
 
-
-     /*
+    /*
      * Find all visits in a period
      * */
     public Collection<Visit> findAllByTimeArrivedAfterAndPerson(LocalDateTime localDateTime,Person person){
@@ -94,9 +110,20 @@ public class VisitService extends AbstractCrud<Visit, Long> {
         return 0L;
     }
 
-    public Integer findKInfectorsOfUser(Person person,Integer daysBefore){
-        Collection<VisitAndTimeShared> visitAndTimeShared = findAllVisitsCorrelatedTimeAndSpace(person,daysBefore);
-        return (int) visitAndTimeShared.stream().filter(visit -> healthStatusService.getHealthTestStatus(visit.getVisit().getPerson(), LocalDateTime.now().minusDays(daysBefore))).count();
+    public Collection<Person> getNearestContactOfVisit(Collection<VisitAndTimeShared> allVisitsOfProbablyInfectedUsers){
+        Collection<Person> people = new ArrayList<>();
+        allVisitsOfProbablyInfectedUsers.stream().forEach(visitAndTimeShared -> {
+            Boolean state = false;
+            Person person = visitAndTimeShared.getVisit().getPerson();
+            state = people.contains(person);
+            if (state == false){
+                people.add(person);
+            }
+        });
+        return people;
+    }
+    public void findK_NearestInfectedContactsOfProbablyInfected(Collection<Person> people){
+        people.stream().forEach(person -> {});
     }
 
     @Override

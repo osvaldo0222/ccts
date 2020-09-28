@@ -29,13 +29,29 @@ public class CredentialService extends AbstractCrud<Credential, Long> {
     private NotificationService notificationService;
     private PasswordEncoder passwordEncoder;
 
+
     @Autowired
-    public CredentialService(CredentialRepository credentialRepository, PersonService personService, RoleService roleService, NotificationTokenService notificationTokenService, NotificationService notificationService, PasswordEncoder passwordEncoder) {
+    public void setCredentialRepository(CredentialRepository credentialRepository) {
         this.credentialRepository = credentialRepository;
+    }
+    @Autowired
+    public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+    @Autowired
+    public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
+    }
+    @Autowired
+    public void setNotificationTokenService(NotificationTokenService notificationTokenService) {
         this.notificationTokenService = notificationTokenService;
+    }
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
+    }
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 

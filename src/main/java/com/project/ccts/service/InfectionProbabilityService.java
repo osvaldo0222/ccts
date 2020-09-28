@@ -29,13 +29,4 @@ public class InfectionProbabilityService extends AbstractCrud<InfectionProbabili
         return infectionProbabilityRepository;
     }
 
-//    public void SearchInfectedUsers(Person person,int daysBefore){
-//        Collection<Visit> visits  = visitService.findAllVisitsCorrelatedTimeAndSpace(person,daysBefore);
-//        if (visits != null){
-//            visits.stream().forEach(visit -> {
-//                visitService.findAllByPerson(visit.getPerson());
-//            });
-//            visitService.findAllByPerson(person);
-//        }
-//    }
 }

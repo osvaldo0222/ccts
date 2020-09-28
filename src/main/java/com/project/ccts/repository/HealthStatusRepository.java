@@ -17,6 +17,7 @@ public interface HealthStatusRepository extends JpaRepository<HealthStatus, Long
 
     Page<HealthStatus> findByPersonOrderByStatusDateDesc(Person person, Pageable pageable);
 
-    @Query(value = "SELECT v.test.status FROM HealthStatus v WHERE v.person = :person AND v.statusDate >= :date ORDER BY v.statusDate DESC LIMIT 1",nativeQuery = true)
-    Boolean getHealthTestStatus(Person person, LocalDateTime date);
+    HealthStatus findTopByPersonOrderByStatusDateDesc(Person person);
+
+
 }

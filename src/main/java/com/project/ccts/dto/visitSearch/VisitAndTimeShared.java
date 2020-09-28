@@ -26,4 +26,12 @@ public class VisitAndTimeShared {
     public void setTimeInMinutes(Long timeInMinutes) {
         this.timeInMinutes = timeInMinutes;
     }
+
+    @Override
+    public String toString() {
+        return "VisitAndTimeShared{" +
+                "visit=" + visit +
+                ", timeInMinutes=" + timeInMinutes +
+                '}';
+    }
 }

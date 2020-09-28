@@ -113,15 +113,6 @@ public class ProjectStatisticsService extends AbstractCrud<ProjectStatistics, Lo
         return projectStatisticsRepository.findAllByOrderByLocalDateDesc(pageable).getContent();
     }
 
-    public Double probabilityCalculationByIndividual(Person person, Integer daysBefore){
-        Collection<VisitAndTimeShared> visitAndTimeShared =visitService.findAllVisitsCorrelatedTimeAndSpace(person,daysBefore);
-        Collection<PersonAndKInfectors> personAndKInfectors = new ArrayList<>();
 
-        visitAndTimeShared.stream().forEach(visitAndTimeShared1 -> {
-            personAndKInfectors.add(new PersonAndKInfectors(visitAndTimeShared1.getVisit().getPerson(),visitService.findKInfectorsOfUser(visitAndTimeShared1.getVisit().getPerson(),daysBefore)));
-        });
-
-        return 0.2;
-    }
 
 }

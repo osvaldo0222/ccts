@@ -112,8 +112,6 @@ public class Visit {
     public String toString() {
         return "Visit{" +
                 "id=" + id +
-                ", locality=" + locality +
-                ", nodes=" + nodes +
                 ", person=" + person +
                 ", timeArrived=" + timeArrived +
                 ", timeLeft=" + timeLeft +
