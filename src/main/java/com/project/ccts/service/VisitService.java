@@ -122,8 +122,12 @@ public class VisitService extends AbstractCrud<Visit, Long> {
         });
         return people;
     }
-    public void findK_NearestInfectedContactsOfProbablyInfected(Collection<Person> people){
-        people.stream().forEach(person -> {});
+    public int findK_NearestInfectedContactsOfProbablyInfected(Person person,Integer daysBefore){
+        int k = 0;
+        Collection<VisitAndTimeShared> visitAndTimeShared = findAllVisitsCorrelatedTimeAndSpace(person,daysBefore);
+        Collection<Person> people = getNearestContactOfVisit(visitAndTimeShared);
+        k = (int) people.stream().map(person1 -> healthStatusService.findTopByPersonOrderByStatusDateDesc(person1)).filter(healthStatus -> healthStatus != null && healthStatus.getTest().getStatus()).count();
+        return k;
     }
 
     @Override

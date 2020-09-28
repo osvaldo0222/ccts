@@ -36,6 +36,8 @@ public class Person {
     private Date createDate;
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
     private Collection<HealthStatus> status;
+    @OneToMany(mappedBy = "person")
+    private Collection<PersonAndKInfectors> personAndKInfectors;
 
     public Person() { }
 
@@ -190,6 +192,14 @@ public class Person {
 
     public void setVisits(Collection<Visit> visits) {
         this.visits = visits;
+    }
+
+    public Collection<PersonAndKInfectors> getPersonAndKInfectors() {
+        return personAndKInfectors;
+    }
+
+    public void setPersonAndKInfectors(Collection<PersonAndKInfectors> personAndKInfectors) {
+        this.personAndKInfectors = personAndKInfectors;
     }
 
     public void addHealthStatus(HealthStatus healthStatus){

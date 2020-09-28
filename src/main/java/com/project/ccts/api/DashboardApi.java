@@ -1,16 +1,14 @@
 package com.project.ccts.api;
 
-import com.project.ccts.bootstrap.DefaultDataLoader;
 import com.project.ccts.dto.*;
 import com.project.ccts.dto.locality.NodeCreationDTO;
 import com.project.ccts.dto.locality.RealTimeSearch;
 import com.project.ccts.dto.locality.SetUsersToLocality;
-import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
+import com.project.ccts.model.entities.PersonAndKInfectors;
 import com.project.ccts.model.entities.*;
 import com.project.ccts.model.enums.InstitutionType;
 import com.project.ccts.model.enums.NodeStatus;
 import com.project.ccts.service.*;
-import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +35,12 @@ public class DashboardApi {
     private NodeService nodeService;
     private NotificationService notificationService;
     private VisitService visitService;
+    private PersonAndKInfectorService personAndKInfectorService;
+    @Autowired
+    public void setPersonAndKInfectorService(PersonAndKInfectorService personAndKInfectorService) {
+        this.personAndKInfectorService = personAndKInfectorService;
+    }
+
     @Autowired
     public void setVisitService(VisitService visitService) {
         this.visitService = visitService;
@@ -324,9 +328,9 @@ public class DashboardApi {
             projectStatisticsService.addRegisteredTest(healthStatus);
 
 
-            Collection<VisitAndTimeShared> visitAndTimeSharedCollection = visitService.findAllVisitsCorrelatedTimeAndSpace(person,15);
-            Collection<Person> people = visitService.getNearestContactOfVisit(visitAndTimeSharedCollection);
-
+            Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
+            personAndKInfectorService.createAll(personAndKInfectors);
+            personAndKInfectors.stream().forEach(personAndKInfectors1 -> System.out.println(personAndKInfectors1.toString()));
 
 
             notificationService.sendNotificationBasedOnStatus(healthStatus);
