@@ -1,22 +1,24 @@
 package com.project.ccts.dto;
 
 public class PersonExpositionStatusDTO {
-    private Float percentage;
+    private Double percentage;
     private String comment;
+    private Integer contacts;
 
     public PersonExpositionStatusDTO() {
     }
 
-    public PersonExpositionStatusDTO(Float percentage, String comment) {
+    public PersonExpositionStatusDTO(Double percentage, String comment, Integer contacts) {
         this.percentage = percentage;
         this.comment = comment;
+        this.contacts = contacts;
     }
 
-    public Float getPercentage() {
+    public Double getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(Float percentage) {
+    public void setPercentage(Double percentage) {
         this.percentage = percentage;
     }
 
@@ -26,5 +28,13 @@ public class PersonExpositionStatusDTO {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Integer getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Integer contacts) {
+        this.contacts = contacts;
     }
 }

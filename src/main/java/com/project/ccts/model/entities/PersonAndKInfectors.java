@@ -1,8 +1,9 @@
 package com.project.ccts.model.entities;
 
-import com.project.ccts.model.entities.Person;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 public class PersonAndKInfectors {
@@ -13,12 +14,15 @@ public class PersonAndKInfectors {
     private Person person;
     private Integer k;
     private Double probabilityOfInfection;
+    @CreationTimestamp
+    private Date date;
 
     public PersonAndKInfectors(){}
 
-    public PersonAndKInfectors(Person person, Integer k) {
+    public PersonAndKInfectors(Person person, Integer k, Double probabilityOfInfection) {
         this.person = person;
         this.k = k;
+        this.probabilityOfInfection = probabilityOfInfection;
     }
 
     public Long getId() {
@@ -27,20 +31,6 @@ public class PersonAndKInfectors {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public PersonAndKInfectors(Person person, Integer k, Double probabilityOfInfection) {
-        this.person = person;
-        this.k = k;
-        this.probabilityOfInfection = probabilityOfInfection;
-    }
-
-    public Double getProbabilityOfInfection() {
-        return probabilityOfInfection;
-    }
-
-    public void setProbabilityOfInfection(Double probabilityOfInfection) {
-        this.probabilityOfInfection = probabilityOfInfection;
     }
 
     public Person getPerson() {
@@ -57,6 +47,22 @@ public class PersonAndKInfectors {
 
     public void setK(Integer k) {
         this.k = k;
+    }
+
+    public Double getProbabilityOfInfection() {
+        return probabilityOfInfection;
+    }
+
+    public void setProbabilityOfInfection(Double probabilityOfInfection) {
+        this.probabilityOfInfection = probabilityOfInfection;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override
