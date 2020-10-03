@@ -1,8 +1,10 @@
 package com.project.ccts.model.entities;
 
+import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
 import com.project.ccts.model.entities.Person;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class PersonAndKInfectors {
@@ -13,12 +15,23 @@ public class PersonAndKInfectors {
     private Person person;
     private Integer k;
     private Double probabilityOfInfection;
+    @ManyToMany
+    private Collection<Visit> visits;
+
 
     public PersonAndKInfectors(){}
 
     public PersonAndKInfectors(Person person, Integer k) {
         this.person = person;
         this.k = k;
+    }
+
+    public Collection<Visit> getVisits() {
+        return visits;
+    }
+
+    public void setVisits(Collection<Visit> visits) {
+        this.visits = visits;
     }
 
     public Long getId() {
@@ -34,6 +47,13 @@ public class PersonAndKInfectors {
         this.k = k;
         this.probabilityOfInfection = probabilityOfInfection;
     }
+    public PersonAndKInfectors(Person person, Integer k, Double probabilityOfInfection,Collection<Visit> visits ) {
+        this.person = person;
+        this.k = k;
+        this.probabilityOfInfection = probabilityOfInfection;
+        this.visits = visits;
+    }
+
 
     public Double getProbabilityOfInfection() {
         return probabilityOfInfection;

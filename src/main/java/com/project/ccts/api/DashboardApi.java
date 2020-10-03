@@ -1,6 +1,7 @@
 package com.project.ccts.api;
 
 import com.project.ccts.dto.*;
+import com.project.ccts.dto.infected.InfectedUsersDTO;
 import com.project.ccts.dto.locality.NodeCreationDTO;
 import com.project.ccts.dto.locality.RealTimeSearch;
 import com.project.ccts.dto.locality.SetUsersToLocality;
@@ -88,6 +89,19 @@ public class DashboardApi {
     @Autowired
     public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
+    }
+
+    @GetMapping(path = "test/patient/results/:page")
+    public ResponseEntity<CustomResponseObjectDTO> getAllInfectedCovid(@PathVariable  int page){
+        Collection<HealthStatus> healthStatuses = healthStatusService.findAllPageable(page);
+        if (healthStatuses != null){
+            Collection<InfectedUsersDTO> infectedUsersDTOS = new ArrayList<>();
+            healthStatuses.stream().forEach(healthStatus -> infectedUsersDTOS.add(new InfectedUsersDTO(healthStatus.getPerson().getId(),
+                    healthStatus.getPerson().getPersonalIdentifier(),healthStatus.getStatusDate(),"")));
+            return new ResponseEntity<>(createResponse(HttpStatus.OK,infectedUsersDTOS),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.BAD_REQUEST, "No se han encontrado pacientes positivos al virus"), HttpStatus.BAD_REQUEST);
+
     }
 
     @GetMapping(path = "node-distribution/count",produces = "application/json")
@@ -330,7 +344,10 @@ public class DashboardApi {
 
             Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
             personAndKInfectorService.createAll(personAndKInfectors);
+            System.out.println("--------------------------------------------------------");
             personAndKInfectors.stream().forEach(personAndKInfectors1 -> System.out.println(personAndKInfectors1.toString()));
+            System.out.println("--------------------------------------------------------");
+
 
 
             notificationService.sendNotificationBasedOnStatus(healthStatus);

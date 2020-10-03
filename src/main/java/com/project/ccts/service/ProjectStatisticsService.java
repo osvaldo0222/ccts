@@ -1,10 +1,7 @@
 package com.project.ccts.service;
 
-import com.project.ccts.model.entities.PersonAndKInfectors;
+import com.project.ccts.model.entities.*;
 import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
-import com.project.ccts.model.entities.HealthStatus;
-import com.project.ccts.model.entities.Person;
-import com.project.ccts.model.entities.ProjectStatistics;
 import com.project.ccts.model.enums.Gender;
 import com.project.ccts.model.helpers.InfectionProbability;
 import com.project.ccts.repository.ProjectStatisticsRepository;
@@ -129,17 +126,22 @@ public class ProjectStatisticsService extends AbstractCrud<ProjectStatistics, Lo
         people.stream().forEach(person1 -> {
             Integer k = visitService.findK_NearestInfectedContactsOfProbablyInfected(person1, 15);
             try {
-                personAndKInfectors.add(new PersonAndKInfectors(person1, k, bernoulliDistribution(person1, k)*100));
+                personAndKInfectors.add(new PersonAndKInfectors(person1, k, bernoulliDistribution(person1, k)*100,extractVisitsFromVisitTimeShared(visitAndTimeSharedCollection)));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
         return personAndKInfectors;
     }
+    public Collection<Visit> extractVisitsFromVisitTimeShared(Collection<VisitAndTimeShared> VTS){
+        Collection<Visit> visits = new ArrayList<>();
+        VTS.stream().forEach(visitAndTimeShared -> visits.add(visitAndTimeShared.getVisit()));
+        return visits;
+    }
 
     public double bernoulliDistribution(Person person, Integer k) throws Exception {
         InfectionProbability infectionProbability;
-        Integer age = getAge(person);
+        int age = getAge(person);
         if (age >= 0 && age <= 10) {
             infectionProbability = infectionProbabilityService.findById(1L);
         } else if (age >= 11 && age <= 20) {
@@ -157,7 +159,7 @@ public class ProjectStatisticsService extends AbstractCrud<ProjectStatistics, Lo
         } else {
             infectionProbability = infectionProbabilityService.findById(8L);
         }
-        return (1 - Math.pow((1 - infectionProbability.getProbabilityOfInfection()), k));
+         return (1 - Math.pow((1 - infectionProbability.getProbabilityOfInfection()), k));
     }
 
     public int getAge(Person person) {

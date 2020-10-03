@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +46,15 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
     @Override
     public JpaRepository<HealthStatus, Long> getDao() {
         return healthStatusRepository;
+    }
+
+    public Collection<HealthStatus> findAllPageable(int page){
+        if(page > 0){
+            return healthStatusRepository.findAllByTestStatusEqualsTrue(PageRequest.of(page-1,5)).getContent();
+        }else{
+            return healthStatusRepository.findAllByTestStatusEqualsTrue(PageRequest.of(0 ,5)).getContent();
+
+        }
     }
 
     public HealthStatus findTopByPersonOrderByStatusDateDesc(Person person){

@@ -125,10 +125,16 @@ public class VisitService extends AbstractCrud<Visit, Long> {
     public int findK_NearestInfectedContactsOfProbablyInfected(Person person,Integer daysBefore){
         int k = 0;
         Collection<VisitAndTimeShared> visitAndTimeShared = findAllVisitsCorrelatedTimeAndSpace(person,daysBefore);
-        Collection<Person> people = getNearestContactOfVisit(visitAndTimeShared);
-        k = (int) people.stream().map(person1 -> healthStatusService.findTopByPersonOrderByStatusDateDesc(person1)).filter(healthStatus -> healthStatus != null && healthStatus.getTest().getStatus()).count();
+        if (visitAndTimeShared != null){
+            Collection<Person> people = getNearestContactOfVisit(visitAndTimeShared);
+            if (people != null){
+                k = (int) people.stream().map(person1 -> healthStatusService.findTopByPersonOrderByStatusDateDesc(person1)).filter(healthStatus -> healthStatus != null && healthStatus.getTest().getStatus()).count();
+            }
+        }
         return k;
     }
+
+
 
     @Override
     public JpaRepository<Visit, Long> getDao() {

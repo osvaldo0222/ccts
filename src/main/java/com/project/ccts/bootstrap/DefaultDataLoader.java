@@ -89,7 +89,11 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
 
 
         //Create default persons
-        createDefaultPersons();
+        try {
+            createDefaultPersons();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         loadTransmisionProbability();
@@ -226,7 +230,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         roleService.createRoleIfNotFound("STAFF_MEDICO", medicalStaffPrivilege);
     }
 
-    public void createDefaultPersons() {
+    public void createDefaultPersons() throws Exception {
         Logger.getInstance().getLog(getClass()).info("Creating and updating default persons [...]");
 
         Collection<Person> personCollection = List.of(
@@ -284,6 +288,12 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 )
         );
         personService.createAll(personCollection);
+        Collection<Node> nodes = nodeService.nodeByLocality((long) 1);
+
+        visitService.createOrUpdate(new Visit(nodes,localityService.findById(1L),personService.findPersonByPersonalIdentifier("22222222222"),LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(5).plusMinutes(10), (float) 10));
+        visitService.createOrUpdate(new Visit(nodes,localityService.findById(1L),personService.findPersonByPersonalIdentifier("11111111111"),LocalDateTime.now().minusDays(5).plusMinutes(2),LocalDateTime.now().minusDays(5).plusMinutes(7), (float) 10));
+        visitService.createOrUpdate(new Visit(nodes,localityService.findById(1L),personService.findPersonByPersonalIdentifier("33333333333"),LocalDateTime.now().minusDays(5).plusMinutes(2),LocalDateTime.now().minusDays(5).plusMinutes(7), (float) 10));
+
     }
 
     public void createDefaultLocalities(){

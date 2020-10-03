@@ -39,6 +39,7 @@ public class Person {
     @OneToMany(mappedBy = "person")
     private Collection<PersonAndKInfectors> personAndKInfectors;
 
+
     public Person() { }
 
     public Person(String personalIdentifier, String firstName, String lastName, String email, String cellPhone, LocalDate birthDate, Gender gender, CivilStatus civilStatus, String occupation, Address address, UserCredential userCredential) {

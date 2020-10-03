@@ -18,6 +18,8 @@ public interface HealthStatusRepository extends JpaRepository<HealthStatus, Long
     Page<HealthStatus> findByPersonOrderByStatusDateDesc(Person person, Pageable pageable);
 
     HealthStatus findTopByPersonOrderByStatusDateDesc(Person person);
+    @Query("SELECT v FROM HealthStatus v WHERE v.test.status = true")
+    Page<HealthStatus> findAllByTestStatusEqualsTrue(Pageable pageable);
 
 
 }

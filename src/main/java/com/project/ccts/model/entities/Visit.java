@@ -22,6 +22,8 @@ public class Visit {
     private Float minimunDistance;
     @CreationTimestamp
     private LocalDateTime creationDate;
+    @ManyToMany(mappedBy = "visits")
+    private Collection<PersonAndKInfectors> personAndKInfectors;
 
     public Visit() {
     }
@@ -33,6 +35,18 @@ public class Visit {
         this.timeArrived = timeArrived;
         this.timeLeft = timeLeft;
         this.minimunDistance = minimunDistance;
+    }
+
+    public Collection<PersonAndKInfectors> getPersonAndKInfectors() {
+        return personAndKInfectors;
+    }
+
+    public void setPersonAndKInfectors(Collection<PersonAndKInfectors> personAndKInfectors) {
+        this.personAndKInfectors = personAndKInfectors;
+    }
+
+    public void setNodes(Collection<Node> nodes) {
+        this.nodes = nodes;
     }
 
     public Long getId() {
