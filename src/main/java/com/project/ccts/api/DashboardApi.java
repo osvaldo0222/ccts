@@ -345,19 +345,19 @@ public class DashboardApi {
                 Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
                 personAndKInfectorService.createAll(personAndKInfectors);
 
-<<<<<<< HEAD
-            Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
-            personAndKInfectorService.createAll(personAndKInfectors);
-            System.out.println("--------------------------------------------------------");
-            personAndKInfectors.stream().forEach(personAndKInfectors1 -> System.out.println(personAndKInfectors1.toString()));
-            System.out.println("--------------------------------------------------------");
+
+//            Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
+//            personAndKInfectorService.createAll(personAndKInfectors);
+//            System.out.println("--------------------------------------------------------");
+//            personAndKInfectors.stream().forEach(personAndKInfectors1 -> System.out.println(personAndKInfectors1.toString()));
+//            System.out.println("--------------------------------------------------------");
 
 
-=======
+
                 //Notifications for contacts
                 notificationService.sendNotifications(personAndKInfectors);
             }
->>>>>>> eed74f90337ac5ef17da5396305a9497ed8e2e6a
+
 
             //Notification for person positive or negative
             notificationService.sendNotificationBasedOnStatus(healthStatus);
