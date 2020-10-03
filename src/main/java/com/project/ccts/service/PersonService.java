@@ -47,7 +47,7 @@ public class PersonService extends AbstractCrud<Person, Long> {
             if (healthStatus == null) {
                 status = false;
             } else {
-                status = healthStatus.getTest().getStatus();
+                status = healthStatus.getTest() == null ? false : healthStatus.getTest().getStatus() ;
             }
         }
         return status;

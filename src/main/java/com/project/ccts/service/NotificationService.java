@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -89,5 +90,14 @@ public class NotificationService extends AbstractCrud<Notification, Long> {
                 sendNotificationToUser(new Notification("CCTS-Resultados", "", "Has dado negativo al virus. Revisa tu ultimo reporte!", new NotificationData("HealthStatus"), userCredential));
             }
         }
+    }
+
+    public void sendNotifications(Collection<PersonAndKInfectors> personAndKInfectors) {
+        personAndKInfectors.stream().forEach((person -> {
+            if (person.getPerson().getUserCredential() != null) {
+                Notification notification = new Notification("CCTS-Alerta", "", String.format("Se ha detectado %s contacto cercano con contagiado del COVID-19. Registra tus sintomas...", person.getK().toString()), new NotificationData("HealthStatus", "NewReport"), person.getPerson().getUserCredential());
+                sendNotificationToUser(notification);
+            }
+        }));
     }
 }

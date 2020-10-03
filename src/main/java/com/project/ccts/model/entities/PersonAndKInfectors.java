@@ -1,10 +1,17 @@
 package com.project.ccts.model.entities;
 
+<<<<<<< HEAD
 import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
 import com.project.ccts.model.entities.Person;
 
 import javax.persistence.*;
 import java.util.Collection;
+=======
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import java.util.Date;
+>>>>>>> eed74f90337ac5ef17da5396305a9497ed8e2e6a
 
 @Entity
 public class PersonAndKInfectors {
@@ -15,15 +22,21 @@ public class PersonAndKInfectors {
     private Person person;
     private Integer k;
     private Double probabilityOfInfection;
+<<<<<<< HEAD
     @ManyToMany
     private Collection<Visit> visits;
 
+=======
+    @CreationTimestamp
+    private Date date;
+>>>>>>> eed74f90337ac5ef17da5396305a9497ed8e2e6a
 
     public PersonAndKInfectors(){}
 
-    public PersonAndKInfectors(Person person, Integer k) {
+    public PersonAndKInfectors(Person person, Integer k, Double probabilityOfInfection) {
         this.person = person;
         this.k = k;
+        this.probabilityOfInfection = probabilityOfInfection;
     }
 
     public Collection<Visit> getVisits() {
@@ -42,6 +55,7 @@ public class PersonAndKInfectors {
         this.id = id;
     }
 
+<<<<<<< HEAD
     public PersonAndKInfectors(Person person, Integer k, Double probabilityOfInfection) {
         this.person = person;
         this.k = k;
@@ -63,6 +77,8 @@ public class PersonAndKInfectors {
         this.probabilityOfInfection = probabilityOfInfection;
     }
 
+=======
+>>>>>>> eed74f90337ac5ef17da5396305a9497ed8e2e6a
     public Person getPerson() {
         return person;
     }
@@ -77,6 +93,22 @@ public class PersonAndKInfectors {
 
     public void setK(Integer k) {
         this.k = k;
+    }
+
+    public Double getProbabilityOfInfection() {
+        return probabilityOfInfection;
+    }
+
+    public void setProbabilityOfInfection(Double probabilityOfInfection) {
+        this.probabilityOfInfection = probabilityOfInfection;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override

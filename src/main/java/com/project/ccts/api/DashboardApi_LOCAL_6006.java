@@ -341,11 +341,7 @@ public class DashboardApi {
             healthStatus = healthStatusService.createOrUpdate(healthStatus);
             projectStatisticsService.addRegisteredTest(healthStatus);
 
-            if (healthStatus.getTest().getStatus()) {
-                Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
-                personAndKInfectorService.createAll(personAndKInfectors);
 
-<<<<<<< HEAD
             Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
             personAndKInfectorService.createAll(personAndKInfectors);
             System.out.println("--------------------------------------------------------");
@@ -353,13 +349,7 @@ public class DashboardApi {
             System.out.println("--------------------------------------------------------");
 
 
-=======
-                //Notifications for contacts
-                notificationService.sendNotifications(personAndKInfectors);
-            }
->>>>>>> eed74f90337ac5ef17da5396305a9497ed8e2e6a
 
-            //Notification for person positive or negative
             notificationService.sendNotificationBasedOnStatus(healthStatus);
             return new ResponseEntity<>(createResponse(HttpStatus.OK, "Su solicitud ha sido satisfactoria, Perfil del paciente Actualizado"), HttpStatus.OK);
         } else {

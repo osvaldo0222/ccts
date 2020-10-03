@@ -7,6 +7,7 @@ import com.project.ccts.dto.HealthStatusMobileDTO;
 import com.project.ccts.dto.PersonExpositionStatusDTO;
 import com.project.ccts.model.entities.HealthStatus;
 import com.project.ccts.model.entities.Person;
+import com.project.ccts.model.entities.PersonAndKInfectors;
 import com.project.ccts.model.entities.UserCredential;
 import com.project.ccts.model.enums.Recommendations;
 import com.project.ccts.repository.HealthStatusRepository;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
 
     private HealthStatusRepository healthStatusRepository;
+    private PersonAndKInfectorService personAndKInfectorService;
     private CredentialService credentialService;
 
     @Autowired
@@ -41,6 +43,11 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
     @Autowired
     public void setCredentialService(CredentialService credentialService) {
         this.credentialService = credentialService;
+    }
+
+    @Autowired
+    public void setPersonAndKInfectorService(PersonAndKInfectorService personAndKInfectorService) {
+        this.personAndKInfectorService = personAndKInfectorService;
     }
 
     @Override
@@ -129,12 +136,9 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
     }
 
     public PersonExpositionStatusDTO getStatus(String username) throws CustomApiException {
-        Person person = credentialService.findPersonByUsername(username);
-
-        //TODO
-
-        Float temp = Float.parseFloat((Math.random() * 100) + "");
-
-        return new PersonExpositionStatusDTO(temp, temp < 33.33F ? "bajo" : temp < 66.66 ? "medio" : "alto");
+        PersonAndKInfectors personAndKInfectors = personAndKInfectorService.findTopByPersonOrderByDateDesc(credentialService.findPersonByUsername(username));
+        Double temp = personAndKInfectors != null ? personAndKInfectors.getProbabilityOfInfection() : 0;
+        Integer k = personAndKInfectors != null ? personAndKInfectors.getK() : 0;
+        return new PersonExpositionStatusDTO(temp, temp < 33.33F ? "bajo" : temp < 66.66 ? "medio" : "alto", k);
     }
 }

@@ -1,7 +1,6 @@
 package com.project.ccts.api;
 
 import com.project.ccts.dto.*;
-import com.project.ccts.dto.infected.InfectedUsersDTO;
 import com.project.ccts.dto.locality.NodeCreationDTO;
 import com.project.ccts.dto.locality.RealTimeSearch;
 import com.project.ccts.dto.locality.SetUsersToLocality;
@@ -89,19 +88,6 @@ public class DashboardApi {
     @Autowired
     public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
-    }
-
-    @GetMapping(path = "test/patient/results/:page")
-    public ResponseEntity<CustomResponseObjectDTO> getAllInfectedCovid(@PathVariable  int page){
-        Collection<HealthStatus> healthStatuses = healthStatusService.findAllPageable(page);
-        if (healthStatuses != null){
-            Collection<InfectedUsersDTO> infectedUsersDTOS = new ArrayList<>();
-            healthStatuses.stream().forEach(healthStatus -> infectedUsersDTOS.add(new InfectedUsersDTO(healthStatus.getPerson().getId(),
-                    healthStatus.getPerson().getPersonalIdentifier(),healthStatus.getStatusDate(),"")));
-            return new ResponseEntity<>(createResponse(HttpStatus.OK,infectedUsersDTOS),HttpStatus.OK);
-        }
-        return new ResponseEntity<>(createResponse(HttpStatus.BAD_REQUEST, "No se han encontrado pacientes positivos al virus"), HttpStatus.BAD_REQUEST);
-
     }
 
     @GetMapping(path = "node-distribution/count",produces = "application/json")
@@ -341,25 +327,12 @@ public class DashboardApi {
             healthStatus = healthStatusService.createOrUpdate(healthStatus);
             projectStatisticsService.addRegisteredTest(healthStatus);
 
-            if (healthStatus.getTest().getStatus()) {
-                Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
-                personAndKInfectorService.createAll(personAndKInfectors);
 
-<<<<<<< HEAD
             Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
             personAndKInfectorService.createAll(personAndKInfectors);
-            System.out.println("--------------------------------------------------------");
             personAndKInfectors.stream().forEach(personAndKInfectors1 -> System.out.println(personAndKInfectors1.toString()));
-            System.out.println("--------------------------------------------------------");
 
 
-=======
-                //Notifications for contacts
-                notificationService.sendNotifications(personAndKInfectors);
-            }
->>>>>>> eed74f90337ac5ef17da5396305a9497ed8e2e6a
-
-            //Notification for person positive or negative
             notificationService.sendNotificationBasedOnStatus(healthStatus);
             return new ResponseEntity<>(createResponse(HttpStatus.OK, "Su solicitud ha sido satisfactoria, Perfil del paciente Actualizado"), HttpStatus.OK);
         } else {
