@@ -93,11 +93,13 @@ public class NotificationService extends AbstractCrud<Notification, Long> {
     }
 
     public void sendNotifications(Collection<PersonAndKInfectors> personAndKInfectors) {
-        personAndKInfectors.stream().forEach((person -> {
-            if (person.getPerson().getUserCredential() != null) {
-                Notification notification = new Notification("CCTS-Alerta", "", String.format("Se ha detectado %s contacto cercano con contagiado del COVID-19. Registra tus sintomas...", person.getK().toString()), new NotificationData("HealthStatus", "NewReport"), person.getPerson().getUserCredential());
-                sendNotificationToUser(notification);
-            }
-        }));
+        if (personAndKInfectors != null) {
+            personAndKInfectors.stream().forEach((person -> {
+                if (person != null && person.getPerson() != null && person.getPerson().getUserCredential() != null) {
+                    Notification notification = new Notification("CCTS-Alerta", "", String.format("Se ha detectado %s contacto cercano con contagiado del COVID-19. Registra tus sintomas...", person.getK() != null ? person.getK().toString() : 0), new NotificationData("HealthStatus", "NewReport"), person.getPerson().getUserCredential());
+                    sendNotificationToUser(notification);
+                }
+            }));
+        }
     }
 }
