@@ -1,14 +1,8 @@
 package com.project.ccts.service;
 
-import com.project.ccts.dto.ExpositionDetailDTO;
-import com.project.ccts.dto.HealthStatusMobileAddDTO;
-import com.project.ccts.dto.HealthStatusMobileDTO;
+import com.project.ccts.dto.*;
 
-import com.project.ccts.dto.PersonExpositionStatusDTO;
-import com.project.ccts.model.entities.HealthStatus;
-import com.project.ccts.model.entities.Person;
-import com.project.ccts.model.entities.PersonAndKInfectors;
-import com.project.ccts.model.entities.UserCredential;
+import com.project.ccts.model.entities.*;
 import com.project.ccts.model.enums.Recommendations;
 import com.project.ccts.repository.HealthStatusRepository;
 import com.project.ccts.service.common.AbstractCrud;
@@ -22,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -129,10 +124,35 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
 
     public List<ExpositionDetailDTO> getExposition(String username, Integer page, Integer size) throws CustomApiException {
         Person person = credentialService.findPersonByUsername(username);
+        List<PersonAndKInfectors> personAndKInfectors = personAndKInfectorService.findByPersonOrderByDateDesc(person, PageRequest.of(page, size));
+        List<ExpositionDetailDTO> detailDTOS = new ArrayList<>();
 
-        //TODO
-
-        return List.of();
+        personAndKInfectors.forEach((e) -> {
+            ExpositionDetailDTO detailDTO = new ExpositionDetailDTO();
+            detailDTO.setId(e.getId());
+            detailDTO.setDate(e.getDate());
+            detailDTO.setK(e.getK());
+            detailDTO.setProbabilityOfInfection(e.getProbabilityOfInfection());
+            detailDTO.setVisit(
+                    e.getVisits().stream().map(visit -> new VisitMobileDTO(
+                        visit.getId(),
+                        new LocalityMobileDTO(
+                                visit.getLocality().getName(),
+                                visit.getLocality().getAddress(),
+                                visit.getLocality().getGpsLocation(),
+                                visit.getLocality().getNodes().size(),
+                                5, //TODO
+                                100 //TODO
+                        ),
+                        visit.getNodes().stream().map(node -> new NodeMobileDTO(node.getId(), node.getDescription())).collect(Collectors.toList()),
+                        visit.getTimeArrived(),
+                        visit.getTimeLeft(),
+                        0.7F //TODO
+                    )).collect(Collectors.toList())
+            );
+            detailDTOS.add(detailDTO);
+        });
+        return detailDTOS;
     }
 
     public PersonExpositionStatusDTO getStatus(String username) throws CustomApiException {

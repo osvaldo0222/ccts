@@ -126,16 +126,20 @@ public class ProjectStatisticsService extends AbstractCrud<ProjectStatistics, Lo
         people.stream().forEach(person1 -> {
             Integer k = visitService.findK_NearestInfectedContactsOfProbablyInfected(person1, 15);
             try {
-                personAndKInfectors.add(new PersonAndKInfectors(person1, k, bernoulliDistribution(person1, k)*100,extractVisitsFromVisitTimeShared(visitAndTimeSharedCollection)));
+                personAndKInfectors.add(new PersonAndKInfectors(person1, k, bernoulliDistribution(person1, k)*100, extractVisitsFromVisitTimeShared(visitAndTimeSharedCollection, person1)));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
         return personAndKInfectors;
     }
-    public Collection<Visit> extractVisitsFromVisitTimeShared(Collection<VisitAndTimeShared> VTS){
+    public Collection<Visit> extractVisitsFromVisitTimeShared(Collection<VisitAndTimeShared> VTS, Person person){
         Collection<Visit> visits = new ArrayList<>();
-        VTS.stream().forEach(visitAndTimeShared -> visits.add(visitAndTimeShared.getVisit()));
+        VTS.stream().forEach(visitAndTimeShared -> {
+            if (visitAndTimeShared.getVisit().getPerson().getId().equals(person.getId())) {
+                visits.add(visitAndTimeShared.getVisit());
+            }
+        });
         return visits;
     }
 

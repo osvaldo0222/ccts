@@ -5,9 +5,12 @@ import com.project.ccts.model.entities.PersonAndKInfectors;
 import com.project.ccts.repository.PersonAndKInfectorRepository;
 import com.project.ccts.service.common.AbstractCrud;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -27,5 +30,9 @@ public class PersonAndKInfectorService extends AbstractCrud<PersonAndKInfectors,
 
     public PersonAndKInfectors findTopByPersonOrderByDateDesc(Person person) {
         return personAndKInfectorRepository.findTopByPersonOrderByDateDesc(person);
+    }
+
+    public List<PersonAndKInfectors> findByPersonOrderByDateDesc(Person person, Pageable pageable) {
+        return personAndKInfectorRepository.findByPersonOrderByDateDesc(person, pageable).getContent();
     }
 }

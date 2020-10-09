@@ -1,21 +1,22 @@
 package com.project.ccts.dto;
 
-import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 public class ExpositionDetailDTO {
     private Long id;
-    private String comment;
-    private Boolean exposition;
-    private LocalDateTime date;
-    private VisitMobileDTO visit;
+    private Integer k;
+    private Double probabilityOfInfection;
+    private Date date;
+    private List<VisitMobileDTO> visit;
 
     public ExpositionDetailDTO() {
     }
 
-    public ExpositionDetailDTO(Long id, String comment, Boolean exposition, LocalDateTime date, VisitMobileDTO visit) {
+    public ExpositionDetailDTO(Long id, Integer k, Double probabilityOfInfection, Date date, List<VisitMobileDTO> visit) {
         this.id = id;
-        this.comment = comment;
-        this.exposition = exposition;
+        this.k = k;
+        this.probabilityOfInfection = probabilityOfInfection;
         this.date = date;
         this.visit = visit;
     }
@@ -28,35 +29,35 @@ public class ExpositionDetailDTO {
         this.id = id;
     }
 
-    public String getComment() {
-        return comment;
+    public Integer getK() {
+        return k;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setK(Integer k) {
+        this.k = k;
     }
 
-    public Boolean getExposition() {
-        return exposition;
+    public Double getProbabilityOfInfection() {
+        return probabilityOfInfection;
     }
 
-    public void setExposition(Boolean exposition) {
-        this.exposition = exposition;
+    public void setProbabilityOfInfection(Double probabilityOfInfection) {
+        this.probabilityOfInfection = probabilityOfInfection;
     }
 
-    public LocalDateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
-    public VisitMobileDTO getVisit() {
+    public List<VisitMobileDTO> getVisit() {
         return visit;
     }
 
-    public void setVisit(VisitMobileDTO visit) {
+    public void setVisit(List<VisitMobileDTO> visit) {
         this.visit = visit;
     }
 }
