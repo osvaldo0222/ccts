@@ -1,6 +1,7 @@
 package com.project.ccts.api;
 
 import com.project.ccts.dto.*;
+import com.project.ccts.dto.infected.InfectedDetail;
 import com.project.ccts.dto.infected.InfectedUsersDTO;
 import com.project.ccts.dto.locality.NodeCreationDTO;
 import com.project.ccts.dto.locality.RealTimeSearch;
@@ -91,10 +92,28 @@ public class DashboardApi {
         this.notificationService = notificationService;
     }
 
-    @GetMapping(path = "test/patient/results/:page")
+    @GetMapping(path = "health/status/infection/chain/{id}")
+    public ResponseEntity<CustomResponseObjectDTO> getInfectionChain(@PathVariable Long id) throws Exception {
+        Person person = personService.findById(id);
+        if (person != null){
+            Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
+            if (personAndKInfectors != null){
+               Collection<InfectedDetail> infectedDetails = new ArrayList<>();
+               personAndKInfectors.stream().forEach(personAndKInfectors1 -> infectedDetails.add(new InfectedDetail(personAndKInfectors1.getPerson().getPersonalIdentifier(),personAndKInfectors1.getPerson().getId(),personAndKInfectors1.getProbabilityOfInfection(),personAndKInfectors1.getK(),person.getFirstName()+" "+person.getLastName(),person.getPersonalIdentifier(),person.getCellPhone())));
+               return new ResponseEntity<>(createResponse(HttpStatus.OK,infectedDetails),HttpStatus.OK);
+           }
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.OK,""),HttpStatus.OK);
+    }
+
+    @GetMapping(path = "health/status/count")
+    public ResponseEntity<CustomResponseObjectDTO> getHealthStatusCount(){
+        return new ResponseEntity<>(createResponse(HttpStatus.OK,healthStatusService.count()),HttpStatus.OK);
+    }
+    @GetMapping(path = "test/patient/results/{page}")
     public ResponseEntity<CustomResponseObjectDTO> getAllInfectedCovid(@PathVariable  int page){
         Collection<HealthStatus> healthStatuses = healthStatusService.findAllPageable(page);
-        if (healthStatuses != null){
+         if (healthStatuses != null){
             Collection<InfectedUsersDTO> infectedUsersDTOS = new ArrayList<>();
             healthStatuses.stream().forEach(healthStatus -> infectedUsersDTOS.add(new InfectedUsersDTO(healthStatus.getPerson().getId(),
                     healthStatus.getPerson().getPersonalIdentifier(),healthStatus.getStatusDate(),"")));
@@ -345,16 +364,6 @@ public class DashboardApi {
                 Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
                 personAndKInfectorService.createAll(personAndKInfectors);
 
-
-//            Collection<PersonAndKInfectors> personAndKInfectors = projectStatisticsService.probabilityOfInfection(person,15);
-//            personAndKInfectorService.createAll(personAndKInfectors);
-//            System.out.println("--------------------------------------------------------");
-//            personAndKInfectors.stream().forEach(personAndKInfectors1 -> System.out.println(personAndKInfectors1.toString()));
-//            System.out.println("--------------------------------------------------------");
-
-
-
-                //Notifications for contacts
                 notificationService.sendNotifications(personAndKInfectors);
             }
 

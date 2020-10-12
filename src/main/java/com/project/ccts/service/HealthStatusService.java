@@ -49,6 +49,9 @@ public class HealthStatusService extends AbstractCrud<HealthStatus, Long> {
     public JpaRepository<HealthStatus, Long> getDao() {
         return healthStatusRepository;
     }
+    public long count(){
+        return healthStatusRepository.count();
+    }
 
     public Collection<HealthStatus> findAllPageable(int page){
         if(page > 0){
