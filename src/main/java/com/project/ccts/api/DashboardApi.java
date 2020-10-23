@@ -100,7 +100,9 @@ public class DashboardApi {
             if (personAndKInfectors != null){
                Collection<InfectedDetail> infectedDetails = new ArrayList<>();
                personAndKInfectors.stream().forEach(personAndKInfectors1 -> infectedDetails.add(new InfectedDetail(personAndKInfectors1.getPerson().getPersonalIdentifier(),personAndKInfectors1.getPerson().getId(),personAndKInfectors1.getProbabilityOfInfection(),personAndKInfectors1.getK(),person.getFirstName()+" "+person.getLastName(),person.getPersonalIdentifier(),person.getCellPhone())));
-               return new ResponseEntity<>(createResponse(HttpStatus.OK,infectedDetails),HttpStatus.OK);
+               if (infectedDetails != null){
+                   return new ResponseEntity<>(createResponse(HttpStatus.OK,infectedDetails),HttpStatus.OK);
+               }
            }
         }
         return new ResponseEntity<>(createResponse(HttpStatus.OK,""),HttpStatus.OK);
