@@ -43,6 +43,9 @@ public class GlobalStatisticsService extends AbstractCrud<GlobalStatistics,Long>
     public GlobalStatistics getGlobalStatisticsByDate(LocalDate date){
         return globalStatisticsRepository.findGlobalStatisticsByDate(date);
     }
+    public GlobalStatistics findTopByOrderByDateDesc(){
+        return globalStatisticsRepository.findTopByOrderByDateDesc();
+    }
     public Collection<GenericXYDTO> findAllCasesByDateAndLimit(Pageable pageable){
         return (Collection<GenericXYDTO>)(Object)globalStatisticsRepository.findAllCasesByDateAndLimit(pageable).getContent();
     }

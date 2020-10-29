@@ -23,4 +23,5 @@ public interface GlobalStatisticsRepository extends JpaRepository<GlobalStatisti
     Page<Object> findAllNewCasesByDateAndLimit(Pageable pageable);
     @Query("SELECT u.date,u.cases.recovered FROM GlobalStatistics u ORDER BY u.date DESC ")
     Page<Object> findAllRecoveredByDateAndLimit(Pageable pageable);
+    GlobalStatistics findTopByOrderByDateDesc();
 }
