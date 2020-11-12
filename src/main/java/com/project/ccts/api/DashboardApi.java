@@ -1,11 +1,15 @@
 package com.project.ccts.api;
 
 import com.project.ccts.dto.*;
+import com.project.ccts.dto.chain.InfectionChainDetail;
+import com.project.ccts.dto.chain.Status;
+import com.project.ccts.dto.chain.VisitTrack;
 import com.project.ccts.dto.infected.InfectedDetail;
 import com.project.ccts.dto.infected.InfectedUsersDTO;
 import com.project.ccts.dto.locality.NodeCreationDTO;
 import com.project.ccts.dto.locality.RealTimeSearch;
 import com.project.ccts.dto.locality.SetUsersToLocality;
+import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
 import com.project.ccts.model.entities.PersonAndKInfectors;
 import com.project.ccts.model.entities.*;
 import com.project.ccts.model.enums.InstitutionType;
@@ -101,7 +105,16 @@ public class DashboardApi {
                Collection<InfectedDetail> infectedDetails = new ArrayList<>();
                personAndKInfectors.stream().forEach(personAndKInfectors1 -> infectedDetails.add(new InfectedDetail(personAndKInfectors1.getPerson().getPersonalIdentifier(),personAndKInfectors1.getPerson().getId(),personAndKInfectors1.getProbabilityOfInfection(),personAndKInfectors1.getK(),person.getFirstName()+" "+person.getLastName(),person.getPersonalIdentifier(),person.getCellPhone())));
                if (infectedDetails != null){
-                   return new ResponseEntity<>(createResponse(HttpStatus.OK,infectedDetails),HttpStatus.OK);
+                   HealthStatus healthStatus = healthStatusService.findTopByPersonOrderByStatusDateDesc(person);
+                   Collection<VisitAndTimeShared> visitAndTimeSharedCollection = visitService.findAllVisitsCorrelatedTimeAndSpace(person, 15);
+                   if (healthStatus != null){
+                       Collection<VisitTrack> visitTracks = new ArrayList<>();
+                       visitAndTimeSharedCollection.stream().forEach(visitAndTimeShared -> visitTracks.add(new VisitTrack(visitAndTimeShared.getVisit().getTimeArrived(),visitAndTimeShared.getVisit().getTimeLeft(),visitAndTimeShared.getTimeInMinutes(),visitAndTimeShared.getVisit().getLocality().getName(),visitAndTimeShared.getVisit().getLocality().getId())));
+                       Status status = new Status(healthStatus.isFever(),healthStatus.isCough(),healthStatus.isBreathDifficulty(),healthStatus.isSoreThroat(),healthStatus.isSmellLoss(),healthStatus.isTasteLoss(),healthStatus.getStatusDate(),healthStatus.getTest().getStatus());
+                       InfectionChainDetail infectionChainDetail = new InfectionChainDetail(status,infectedDetails,visitTracks);
+                       return new ResponseEntity<>(createResponse(HttpStatus.OK,infectionChainDetail),HttpStatus.OK);
+                   }
+
                }
            }
         }
@@ -192,15 +205,32 @@ public class DashboardApi {
     public ResponseEntity<CustomResponseObjectDTO> getHealthLocalityContaining(@PathVariable String name){
         Collection<Institution> institutions = institutionService.findAllByTypeAndNameContaining(name,InstitutionType.HEALTH);
         Collection<RealTimeSearch> toLocalities = new ArrayList<>();
-        institutions.stream().forEach(institution -> toLocalities.add(new RealTimeSearch(institution.getName(),institution.getEmail(),institution.getId())));
+        if (institutions != null){
+            institutions.stream().forEach(institution -> toLocalities.add(new RealTimeSearch(institution.getName(),institution.getEmail(),institution.getId())));
+        }
         return new ResponseEntity<>(createResponse(HttpStatus.OK,toLocalities),HttpStatus.OK);
     }
     @GetMapping(path = "locations/containing/{name}",produces = "application/json")
     public ResponseEntity<CustomResponseObjectDTO> getAllLocalityContaining(@PathVariable String name){
         Collection<Locality> institutions = localityService.findByNameContaining(name);
         Collection<RealTimeSearch> toLocalities = new ArrayList<>();
-        institutions.stream().forEach(institution -> toLocalities.add(new RealTimeSearch(institution.getName(),institution.getEmail(),institution.getId())));
+        if(institutions != null){
+            institutions.stream().forEach(institution -> toLocalities.add(new RealTimeSearch(institution.getName(),institution.getEmail(),institution.getId())));
+        }
         return new ResponseEntity<>(createResponse(HttpStatus.OK,toLocalities),HttpStatus.OK);
+    }
+    @GetMapping(path = "person/containing/{id}",produces = "application/json")
+    public ResponseEntity<CustomResponseObjectDTO> getUsersContaining(@PathVariable String id){
+        System.out.println(id);
+        Collection<Person> people = personService.findByPersonalIdentifierContaining(id);
+        Collection<RealTimeSearch> realTimeSearches = new ArrayList<>();
+        if (people != null){
+            people.stream().forEach(person -> {
+                realTimeSearches.add(new RealTimeSearch(person.getFirstName()+" "+person.getLastName(),person.getEmail(),person.getId()));
+                System.out.println(person.getFirstName());
+            });
+        }
+        return new ResponseEntity<>(createResponse(HttpStatus.OK,realTimeSearches),HttpStatus.OK);
     }
 
     @GetMapping(path = "admins/health/unregistered",produces = "application/json")

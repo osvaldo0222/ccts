@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @Service
@@ -29,6 +30,9 @@ public class PersonService extends AbstractCrud<Person, Long> {
 
     public Person findPersonByPersonalIdentifier(String personalIdentifier) {
         return personRepository.findByPersonalIdentifier(personalIdentifier);
+    }
+    public Collection<Person> findByPersonalIdentifierContaining(String id){
+        return personRepository.findByPersonalIdentifierContaining(id);
     }
 
     public Person findByEmail(String email) {
