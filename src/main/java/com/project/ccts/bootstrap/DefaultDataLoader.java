@@ -36,6 +36,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
     private final GlobalStatisticsService globalStatisticsService;
     private final ProjectStatisticsService projectStatisticsService;
     private final InfectionProbabilityService infectionProbabilityService;
+    private final ProvinceStatisticsService provinceStatisticsService;
 
 
     @Autowired
@@ -43,7 +44,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                              PrivilegeService privilegeService, RoleService roleService,
                              PersonService personService, PasswordEncoder passwordEncoder,
                              NotificationService notificationService, LocalityService localityService,
-                             NodeService nodeService, VisitService visitService, GlobalStatisticsService globalStatisticsService, ProjectStatisticsService projectStatisticsService, InfectionProbabilityService infectionProbabilityService) {
+                             NodeService nodeService, VisitService visitService, GlobalStatisticsService globalStatisticsService, ProjectStatisticsService projectStatisticsService, InfectionProbabilityService infectionProbabilityService, ProvinceStatisticsService provinceStatisticsService) {
         this.credentialService = credentialService;
         this.privilegeService = privilegeService;
         this.roleService = roleService;
@@ -57,11 +58,12 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         this.globalStatisticsService = globalStatisticsService;
         this.projectStatisticsService = projectStatisticsService;
         this.infectionProbabilityService = infectionProbabilityService;
+        this.provinceStatisticsService = provinceStatisticsService;
     }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        Logger.getInstance().getLog(this.getClass()).info("Default data bootstrap [...]");
+       Logger.getInstance().getLog(this.getClass()).info("Default data bootstrap [...]");
 
         //Load local statistics
         loadLocalStatistics();
@@ -78,9 +80,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         //Load global statistics
         loadGlobalStatistics();
 
-
         //Creating default superusers
-
         try {
             createDefaultSuperusers();
         } catch (Exception e) {
@@ -95,10 +95,22 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
             e.printStackTrace();
         }
 
-
         loadTransmisionProbability();
 
+        try {
+            loadProvinceStatistics();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         Logger.getInstance().getLog(this.getClass()).info("Ending default data bootstrap [...]");
+    }
+
+    private void loadProvinceStatistics() throws JSONException {
+        Logger.getInstance().getLog(this.getClass()).info("Creating province statistics [...]");
+
+        provinceStatisticsService.getDataFromSheets("Casos y R0", "", "");
+        provinceStatisticsService.getDataFromSheets("Defunciones", "", "");
     }
 
     private void createDefaultSuperusers() throws Exception {
@@ -390,6 +402,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
 
         projectStatisticsService.checkTodayStatistics();
     }
+
     private void loadTransmisionProbability(){
         Collection<InfectionProbability> infectionProbabilities = new ArrayList<>();
         infectionProbabilities.add(new InfectionProbability(0.007720,"ZERO_TO_TEN"));

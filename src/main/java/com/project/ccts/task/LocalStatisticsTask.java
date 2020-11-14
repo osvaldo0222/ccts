@@ -3,6 +3,7 @@ package com.project.ccts.task;
 import com.project.ccts.model.entities.GlobalStatistics;
 import com.project.ccts.service.GlobalStatisticsService;
 import com.project.ccts.service.ProjectStatisticsService;
+import com.project.ccts.service.ProvinceStatisticsService;
 import com.project.ccts.util.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -17,11 +18,13 @@ public class LocalStatisticsTask {
 
     private final ProjectStatisticsService projectStatisticsService;
     private GlobalStatisticsService globalStatisticsService;
+    private ProvinceStatisticsService provinceStatisticsService;
 
     @Autowired
-    public LocalStatisticsTask(ProjectStatisticsService projectStatisticsService, GlobalStatisticsService globalStatisticsService) {
+    public LocalStatisticsTask(ProjectStatisticsService projectStatisticsService, GlobalStatisticsService globalStatisticsService, ProvinceStatisticsService provinceStatisticsService) {
         this.projectStatisticsService = projectStatisticsService;
         this.globalStatisticsService = globalStatisticsService;
+        this.provinceStatisticsService = provinceStatisticsService;
     }
 
     @Scheduled(cron="0 0 0 * * *")
@@ -41,5 +44,12 @@ public class LocalStatisticsTask {
             globalStatisticsService.createOrUpdate(globalStatistics);
             Logger.getInstance().getLog(getClass()).info("Updating today's COVID statistics...");
         }
+    }
+
+    @Scheduled(initialDelay = 43200000, fixedDelay = 43200000)
+    public void provinceStatisticsUpdate() throws JSONException {
+        Logger.getInstance().getLog(getClass()).info("Checking today's provinces statistics...");
+        provinceStatisticsService.getDataFromSheets("Casos y R0", "Fecha", String.format("*/%s/%s", LocalDate.now().getMonthValue(), LocalDate.now().getYear()));
+        provinceStatisticsService.getDataFromSheets("Defunciones", "Fecha", String.format("*/%s/%s", LocalDate.now().getMonthValue(), LocalDate.now().getYear()));
     }
 }
