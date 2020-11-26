@@ -203,16 +203,6 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         personService.createOrUpdate(person);
         personService.createOrUpdate(person2);
         personService.createOrUpdate(person3);
-
-        visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now(),LocalDateTime.now().plusMinutes(10), (float) 10));
-        visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().plusMinutes(3),LocalDateTime.now().plusMinutes(7), (float) 10));
-
-
-        visitService.createOrUpdate(new Visit(nodes,locality,person,LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(5).plusMinutes(10), (float) 10));
-        visitService.createOrUpdate(new Visit(nodes,locality,person2,LocalDateTime.now().minusDays(5).plusMinutes(2),LocalDateTime.now().minusDays(5).plusMinutes(7), (float) 10));
-        visitService.createOrUpdate(new Visit(nodes,locality,person3,LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(5).plusMinutes(13), (float) 10));
-
-
     }
 
     private void createDefaultRolesAndPrivilege() {
@@ -297,15 +287,35 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                         "Estudiante",
                         new Address("Calle 9 Los Prados", "53000", "Navarrete", "Republica Dominicana"),
                         null
+                ),
+                new Person(
+                        "55555555555",
+                        "Rafael",
+                        "Dorville",
+                        null,
+                        "809-802-1978",
+                        LocalDate.of(1990, Calendar.JANUARY + 1,8),
+                        Gender.MALE,
+                        CivilStatus.SINGLE,
+                        "Ingeniero",
+                        new Address("Calle 8 Los Prados", "51000", "Santiago", "Republica Dominicana"),
+                        null
+                ),
+                new Person(
+                        "66666666666",
+                        "Maria",
+                        "Valdez",
+                        null,
+                        "829-886-6826",
+                        LocalDate.of(1969, Calendar.JUNE + 1,18),
+                        Gender.FEMALE,
+                        CivilStatus.SINGLE,
+                        "Abogada",
+                        new Address("Calle 3 Las Americas", "51000", "Santiago", "Republica Dominicana"),
+                        null
                 )
         );
         personService.createAll(personCollection);
-        Collection<Node> nodes = nodeService.nodeByLocality((long) 1);
-
-        visitService.createOrUpdate(new Visit(nodes,localityService.findById(1L),personService.findPersonByPersonalIdentifier("22222222222"),LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(5).plusMinutes(10), (float) 10));
-        visitService.createOrUpdate(new Visit(nodes,localityService.findById(1L),personService.findPersonByPersonalIdentifier("11111111111"),LocalDateTime.now().minusDays(5).plusMinutes(2),LocalDateTime.now().minusDays(5).plusMinutes(7), (float) 10));
-        visitService.createOrUpdate(new Visit(nodes,localityService.findById(1L),personService.findPersonByPersonalIdentifier("33333333333"),LocalDateTime.now().minusDays(5).plusMinutes(2),LocalDateTime.now().minusDays(5).plusMinutes(7), (float) 10));
-
     }
 
     public void createDefaultLocalities(){
@@ -314,10 +324,10 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
         Locality locality = new Locality(
                 "PUCMM-STI",
                 new Address("Autopista Duarte Km 1 1/2","51000","Santiago","Republica Dominicana"),
-                "sample@spring.com",
-                "8097776766");
+                "pucmm@ce.pucmm.edu.do",
+                "8095801962");
         locality.setGpsLocation(new GpsLocation(19.4437142D, -70.68265591D));
-        locality = localityService.createOrUpdate(locality);
+        locality = localityService.findByName("PUCMM-STI") == null ? localityService.createOrUpdate(locality) : localityService.findByName("PUCMM-STI");
 
         Locality locality2 = new Locality(
                 "REFERENCIA",
@@ -325,7 +335,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 "referencia@spring.com",
                 "8099999999");
         locality2.setGpsLocation(new GpsLocation(19.4433342D, -70.68232591D));
-        localityService.createOrUpdate(locality2);
+        locality2 =  localityService.findByName("REFERENCIA") == null ? localityService.createOrUpdate(locality2) : localityService.findByName("REFERENCIA");
 
         Locality locality3 = new Locality(
                 "REFERENCIA LA VEGA",
@@ -333,8 +343,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
                 "referencialavega@spring.com",
                 "8091234567");
         locality3.setGpsLocation(new GpsLocation(19.4433142D, -70.68275591D));
-        locality3 = localityService.createOrUpdate(locality3);
-
+        locality3 =  localityService.findByName("REFERENCIA LA VEGA") == null ? localityService.createOrUpdate(locality3) : localityService.findByName("REFERENCIA LA VEGA");
 
         Institution institution = new Institution(locality2.getName(),locality2.getAddress(),locality2.getEmail(),
                 locality2.getCellPhone(), InstitutionType.HEALTH);
