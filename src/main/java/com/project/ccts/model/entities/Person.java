@@ -74,6 +74,18 @@ public class Person {
         this.address = address;
 
     }
+    public Person(String personalIdentifier, String firstName, String lastName, String email, String occupation, Address address,LocalDate birthDate, CivilStatus civilStatus, Gender gender) {
+        this.personalIdentifier = personalIdentifier;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.occupation = occupation;
+        this.address = address;
+        this.birthDate = birthDate;
+        this.civilStatus = civilStatus;
+        this.gender = gender;
+
+    }
 
     public Long getId() {
         return id;

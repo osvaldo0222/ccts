@@ -18,4 +18,5 @@ public enum CivilStatus {
     public String getStatus() {
         return status;
     }
+
 }

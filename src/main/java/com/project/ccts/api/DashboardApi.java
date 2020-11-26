@@ -12,6 +12,8 @@ import com.project.ccts.dto.locality.SetUsersToLocality;
 import com.project.ccts.dto.visitSearch.VisitAndTimeShared;
 import com.project.ccts.model.entities.PersonAndKInfectors;
 import com.project.ccts.model.entities.*;
+import com.project.ccts.model.enums.CivilStatus;
+import com.project.ccts.model.enums.Gender;
 import com.project.ccts.model.enums.InstitutionType;
 import com.project.ccts.model.enums.NodeStatus;
 import com.project.ccts.service.*;
@@ -341,7 +343,7 @@ public class DashboardApi {
         if (person != null) {
             personDTO = new PersonDTO(person.getFirstName(), person.getLastName(), person.getAddress()
                     , person.getOccupation(), Period.between(person.getBirthDate(), LocalDate.now()).getYears(),
-                    personService.getPersonTestStatus(person), person.getEmail());
+                    personService.getPersonTestStatus(person), person.getEmail(),person.getBirthDate(),person.getCivilStatus().getStatus(),person.getGender().getStatus());
             return new ResponseEntity<>(createResponse(HttpStatus.OK, personDTO), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(createResponse(HttpStatus.ACCEPTED, String.format("El usuario cedula %s no existe, puede proceder al registro",id)), HttpStatus.ACCEPTED);
@@ -412,9 +414,10 @@ public class DashboardApi {
     public ResponseEntity<CustomResponseObjectDTO> createNewUser(@RequestBody Map<String, Object> payload) {
          Person person = personService.findPersonByPersonalIdentifier((String) payload.get("id"));
         if (person == null) {
+                LocalDate localDate = LocalDate.parse((payload.get("birthDate").toString().substring(0,4)+"-"+payload.get("birthDate").toString().substring(4,6)+"-"+payload.get("birthDate").toString().substring(6,8)));
             person = new Person((String) payload.get("id"), (String) payload.get("firstName"), (String) payload.get("lastName"),
                     (String) payload.get("email"), (String) payload.get("occupation"),
-                    new Address((String) payload.get("direction"), Integer.toString((Integer) payload.get("postalCode")), (String) payload.get("city"), (String) payload.get("country")));
+                    new Address((String) payload.get("direction"), Integer.toString((Integer) payload.get("postalCode")), (String) payload.get("city"), (String) payload.get("country")), localDate,CivilStatus.valueOf(payload.get("civilStatus").toString()),Gender.valueOf(payload.get("gender").toString()));
             personService.createOrUpdate(person);
             return new ResponseEntity<>(createResponse(HttpStatus.OK, "Usuario creado sastifactoriamente"), HttpStatus.OK);
         }
