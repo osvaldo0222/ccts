@@ -109,7 +109,7 @@ public class DefaultDataLoader implements ApplicationListener<ContextRefreshedEv
     private void loadProvinceStatistics() throws JSONException {
         Logger.getInstance().getLog(this.getClass()).info("Creating province statistics [...]");
 
-        provinceStatisticsService.getDataFromSheets("Casos y R0", "", "");
+        provinceStatisticsService.getDataFromSheets("Casos-y-R0", "", "");
         provinceStatisticsService.getDataFromSheets("Defunciones", "", "");
     }
 

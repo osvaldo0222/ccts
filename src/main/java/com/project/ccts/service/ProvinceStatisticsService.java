@@ -84,7 +84,7 @@ public class ProvinceStatisticsService extends AbstractCrud<ProvinceStatistics, 
                     }
                     provinceStatistics.setDate(date);
                     provinceStatistics.setDeaths(tab.equalsIgnoreCase("Defunciones") ? object.getLong(entry.getKey()) : provinceStatistics.getDeaths());
-                    provinceStatistics.setInfected(tab.equalsIgnoreCase("Casos y R0") ? object.getLong(entry.getKey()) : provinceStatistics.getInfected());
+                    provinceStatistics.setInfected(tab.equalsIgnoreCase("Casos-y-R0") ? object.getLong(entry.getKey()) : provinceStatistics.getInfected());
                     provinceStatistics.setRecovered(tab.equalsIgnoreCase("Recuperados") ? object.getLong(entry.getKey()) : provinceStatistics.getRecovered());
                     provinceStatistics.setProvince(entry.getValue());
                     createOrUpdate(provinceStatistics);
